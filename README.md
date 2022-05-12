@@ -28,7 +28,7 @@ If you use this library in academic research, consider citing it:
 ```
 
 ### Demo
-If, for whatever reason, you're not yet completely inspired, or you're just like so totally over the general vibe and stuff, checkout our snappy demo website, [basicpitch.spotify.com](https://basicpitch.spotify.com), to experiment with our model on whatever music audio you provide!
+If, for whatever reason, you're not yet completely inspired, or you're just like so totally over the general vibe and stuff, checkout our snappy demo website, [basicpitch.io](https://basicpitch.io), to experiment with our model on whatever music audio you provide!
 
 
 ## Installation

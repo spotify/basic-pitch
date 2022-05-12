@@ -89,7 +89,6 @@ def main() -> None:
     )
     parser.add_argument(
         "--multiple-pitch-bends",
-        type=bool,
         action="store_true",
         help="Allow overlapping notes in midi file to have pitch bends. Note: this will map each "
         "pitch to its own instrument",

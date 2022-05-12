@@ -15,9 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from dataclasses import astuple, dataclass
 import pathlib
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from typing import Dict, List, Optional, Tuple, Union
 import mir_eval
 import librosa

@@ -1,0 +1,45 @@
+name: tox
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    name: test ${{ matrix.py }} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - Ubuntu
+          - Windows
+          - MacOs
+        py:
+          - "3.9"
+          - "3.8"
+          - "3.7"
+    steps:
+      - name: Setup python for test ${{ matrix.py }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.py }}
+      - uses: actions/checkout@v2
+      - name: Install soundlibs Ubuntu
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y --fix-missing pkg-config libsndfile1
+        if: matrix.os == 'Ubuntu'
+      - name: Install soundlibs MacOs
+        run: brew install libsndfile
+        if: matrix.os == 'MacOs'
+      - name: Install soundlibs Windows
+        run: choco install libsndfile
+        if: matrix.os == 'Windows'
+      - name: Install tox
+        run: python -m pip install tox
+      # We will only check this on the minimum python version
+      - name: Check formatting, lint and mypy
+        run: tox -c tox.ini -e check-formatting,lint,mypy
+        if: matrix.py == '3.8'
+      - name: Run test suite
+        run: tox -c tox.ini -e py$(echo ${{ matrix.py }} | tr -d '.'),manifest
+      - name: Check that basic-pitch can be run as a commandline
+        run: pip3 install -e . && basic-pitch --help

@@ -15,7 +15,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from dataclasses import astuple, dataclass
 import pathlib
+from collections import defaultdict, namedtuple
 from typing import Dict, List, Optional, Tuple, Union
 import mir_eval
 import librosa
@@ -51,6 +53,7 @@ def model_output_to_notes(
     min_freq: Optional[float] = None,
     max_freq: Optional[float] = None,
     include_pitch_bends: bool = True,
+    multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
 ) -> Tuple[pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]]]:
     """Convert model output to MIDI
@@ -68,6 +71,8 @@ def model_output_to_notes(
         min_note_len: The minimum allowed note length in frames.
         min_freq: Minimum allowed output frequency, in Hz. If None, all frequencies are used.
         max_freq: Maximum allowed output frequency, in Hz. If None, all frequencies are used.
+        include_pitch_bends: If True, include pitch bends.
+        multiple_pitch_bends: If True, allow overlapping notes in midi file to have pitch bends.
         melodia_trick: Use the melodia post-processing step.
 
     Returns:
@@ -99,7 +104,7 @@ def model_output_to_notes(
         (times_s[note[0]], times_s[note[1]], note[2], note[3], note[4]) for note in estimated_notes_with_pitch_bend
     ]
 
-    return note_events_to_midi(estimated_notes_time_seconds), estimated_notes_time_seconds
+    return note_events_to_midi(estimated_notes_time_seconds, multiple_pitch_bends), estimated_notes_time_seconds
 
 
 def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str]) -> None:
@@ -205,32 +210,37 @@ def get_pitch_bends(
 
 
 def note_events_to_midi(
-    note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]]
+    note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]],
+    multiple_pitch_bends: bool = False,
 ) -> pretty_midi.PrettyMIDI:
     """Create a pretty_midi object from note events
 
     Args:
         note_events : list of tuples [(start_time_seconds, end_time_seconds, pitch_midi, amplitude)]
             where amplitude is a number between 0 and 1
-        save_path : path to save midi file. If None, no midi file is saved
+        multiple_pitch_bends : If True, allow overlapping notes to have pitch bends
+            Note: this will assign each pitch to its own midi instrument, as midi does not yet
+            support per-note pitch bends
 
     Returns:
         pretty_midi.PrettyMIDI() object
 
     """
     mid = pretty_midi.PrettyMIDI()
+    if not multiple_pitch_bends:
+        note_events_with_pitch_bends = drop_overlapping_pitch_bends(note_events_with_pitch_bends)
 
     piano_program = pretty_midi.instrument_name_to_program("Electric Piano 1")
-    instrument_per_piano_key = {i: pretty_midi.Instrument(program=piano_program) for i in range(21, 109)}
+    instruments = defaultdict(lambda: pretty_midi.Instrument(program=piano_program))
     for start_time, end_time, note_number, amplitude, pitch_bend in note_events_with_pitch_bends:
+        instrument = instruments[note_number] if multiple_pitch_bends else instruments[0]
         note = pretty_midi.Note(
             velocity=int(np.round(127 * amplitude)),
             pitch=note_number,
             start=start_time,
             end=end_time,
         )
-
-        instrument_per_piano_key[note_number].notes.append(note)
+        instrument.notes.append(note)
         if not pitch_bend:
             continue
         pitch_bend_times = np.linspace(start_time, end_time, len(pitch_bend))
@@ -240,14 +250,29 @@ def note_events_to_midi(
         pitch_bend_midi_ticks[pitch_bend_midi_ticks > N_PITCH_BEND_TICKS - 1] = N_PITCH_BEND_TICKS - 1
         pitch_bend_midi_ticks[pitch_bend_midi_ticks < -N_PITCH_BEND_TICKS] = -N_PITCH_BEND_TICKS
         for pb_time, pb_midi in zip(pitch_bend_times, pitch_bend_midi_ticks):
-            instrument_per_piano_key[note_number].pitch_bends.append(pretty_midi.PitchBend(pb_midi, pb_time))
-
-    for inst in instrument_per_piano_key.values():
-        # only add instruments with notes
-        if len(inst.notes) > 0:
-            mid.instruments.append(inst)
+            instrument.pitch_bends.append(pretty_midi.PitchBend(pb_midi, pb_time))
+    mid.instruments.extend(instruments.values())
 
     return mid
+
+
+def drop_overlapping_pitch_bends(
+    note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]]
+) -> List[Tuple[float, float, int, float, Optional[List[int]]]]:
+    """Drop pitch bends from any notes that overlap in time with another note
+
+    TODO: naive N^2 implementation!
+    """
+    note_events = list(map(list, note_events_with_pitch_bends))  # tuple to (mutable) list
+    for i, note in enumerate(note_events):
+        start_time, end_time = note[:2]
+        for other_note in note_events[:i]:
+            other_start_time, other_end_time = other_note[:2]
+            if start_time < other_end_time and end_time > other_start_time:
+                note[-1] = None  # last field is pitch_bend
+                other_note[-1] = None
+
+    return list(map(tuple, note_events))
 
 
 def get_infered_onsets(onsets: np.array, frames: np.array, n_diff: int = 2) -> np.array:

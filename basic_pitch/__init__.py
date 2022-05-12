@@ -21,7 +21,7 @@ __author__ = "Spotify"
 __version__ = "0.0.1"
 __email__ = "basic-pitch@spotify.com"
 __demowebsite__ = "https://basicpitch.io"
-__description__ = "Basic Pitch"
+__description__ = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection."
 __url__ = "https://github.com/spotify/basic-pitch"
 
 ICASSP_2022_MODEL_PATH = pathlib.Path(__file__).parent / "saved_models/icassp_2022/nmp"

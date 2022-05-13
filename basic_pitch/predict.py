@@ -87,8 +87,13 @@ def main() -> None:
         default=None,
         help="The maximum allowed note frequency, in Hz.",
     )
+    parser.add_argument(
+        "--multiple-pitch-bends",
+        action="store_true",
+        help="Allow overlapping notes in midi file to have pitch bends. Note: this will map each "
+        "pitch to its own instrument",
+    )
     parser.add_argument("--debug-file", default=None, help="Optional file for debug output for inference.")
-    #
     parser.add_argument("--no-melodia", default=False, action="store_true", help="Skip the melodia trick.")
     args = parser.parse_args()
 
@@ -121,6 +126,7 @@ def main() -> None:
         args.minimum_note_length,
         args.minimum_frequency,
         args.maximum_frequency,
+        args.multiple_pitch_bends,
         not args.no_melodia,
         pathlib.Path(args.debug_file) if args.debug_file else None,
     )

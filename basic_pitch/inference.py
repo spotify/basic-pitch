@@ -20,7 +20,7 @@ import enum
 import json
 import os
 import pathlib
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from tensorflow import Tensor, signal, keras, saved_model
 import numpy as np
@@ -333,7 +333,7 @@ def predict(
 
 
 def predict_and_save(
-    audio_path_list: List[Union[pathlib.Path, str]],
+    audio_path_list: Sequence[Union[pathlib.Path, str]],
     output_directory: Union[pathlib.Path, str],
     save_midi: bool,
     sonify_midi: bool,

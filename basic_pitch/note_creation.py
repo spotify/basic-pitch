@@ -17,7 +17,7 @@
 
 import pathlib
 from collections import defaultdict
-from typing import Dict, List, Optional, Tuple, Union
+from typing import DefaultDict, Dict, List, Optional, Tuple, Union
 import mir_eval
 import librosa
 import resampy
@@ -230,7 +230,9 @@ def note_events_to_midi(
         note_events_with_pitch_bends = drop_overlapping_pitch_bends(note_events_with_pitch_bends)
 
     piano_program = pretty_midi.instrument_name_to_program("Electric Piano 1")
-    instruments = defaultdict(lambda: pretty_midi.Instrument(program=piano_program))
+    instruments: DefaultDict[int, pretty_midi.Instrument] = defaultdict(
+        lambda: pretty_midi.Instrument(program=piano_program)
+    )
     for start_time, end_time, note_number, amplitude, pitch_bend in note_events_with_pitch_bends:
         instrument = instruments[note_number] if multiple_pitch_bends else instruments[0]
         note = pretty_midi.Note(

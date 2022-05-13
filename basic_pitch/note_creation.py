@@ -258,20 +258,16 @@ def note_events_to_midi(
 def drop_overlapping_pitch_bends(
     note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]]
 ) -> List[Tuple[float, float, int, float, Optional[List[int]]]]:
-    """Drop pitch bends from any notes that overlap in time with another note
+    """Drop pitch bends from any notes that overlap in time with another note"""
+    note_events = sorted(note_events_with_pitch_bends)
+    for i in range(len(note_events) - 1):
+        for j in range(i + 1, len(note_events)):
+            if note_events[j][0] >= note_events[i][1]:  # start j > end i
+                break
+            note_events[i] = note_events[i][:-1] + (None,)  # last field is pitch bend
+            note_events[j] = note_events[j][:-1] + (None,)
 
-    TODO: naive N^2 implementation!
-    """
-    note_events = list(map(list, note_events_with_pitch_bends))  # tuple to (mutable) list
-    for i, note in enumerate(note_events):
-        start_time, end_time = note[:2]
-        for other_note in note_events[:i]:
-            other_start_time, other_end_time = other_note[:2]
-            if start_time < other_end_time and end_time > other_start_time:
-                note[-1] = None  # last field is pitch_bend
-                other_note[-1] = None
-
-    return list(map(tuple, note_events))
+    return note_events
 
 
 def get_infered_onsets(onsets: np.array, frames: np.array, n_diff: int = 2) -> np.array:

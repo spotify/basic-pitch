@@ -20,7 +20,7 @@ import enum
 import json
 import os
 import pathlib
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from tensorflow import Tensor, signal, keras, saved_model
 import numpy as np
@@ -261,6 +261,7 @@ def predict(
     minimum_note_length: float = 58,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
+    multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
 ) -> Tuple[Dict[str, np.array], pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]]]:
@@ -274,6 +275,7 @@ def predict(
         minimum_note_length: The minimum allowed note length in frames.
         minimum_freq: Minimum allowed output frequency, in Hz. If None, all frequencies are used.
         maximum_freq: Maximum allowed output frequency, in Hz. If None, all frequencies are used.
+        multiple_pitch_bends: If True, allow overlapping notes in midi file to have pitch bends.
         melodia_trick: Use the melodia post-processing step.
         debug_file: An optional path to output debug data to. Useful for testing/verification.
     Returns:
@@ -299,6 +301,7 @@ def predict(
             min_note_len=min_note_len,  # convert to frames
             min_freq=minimum_frequency,
             max_freq=maximum_frequency,
+            multiple_pitch_bends=multiple_pitch_bends,
             melodia_trick=melodia_trick,
         )
 
@@ -330,7 +333,7 @@ def predict(
 
 
 def predict_and_save(
-    audio_path_list: List[Union[pathlib.Path, str]],
+    audio_path_list: Sequence[Union[pathlib.Path, str]],
     output_directory: Union[pathlib.Path, str],
     save_midi: bool,
     sonify_midi: bool,
@@ -342,6 +345,7 @@ def predict_and_save(
     minimum_note_length: float = 58,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
+    multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
 ) -> None:
@@ -360,6 +364,7 @@ def predict_and_save(
         minimum_note_length: The minimum allowed note length in frames.
         minimum_freq: Minimum allowed output frequency, in Hz. If None, all frequencies are used.
         maximum_freq: Maximum allowed output frequency, in Hz. If None, all frequencies are used.
+        multiple_pitch_bends: If True, allow overlapping notes in midi file to have pitch bends.
         melodia_trick: Use the melodia post-processing step.
         debug_file: An optional path to output debug data to. Useful for testing/verification.
     """
@@ -376,6 +381,7 @@ def predict_and_save(
                 minimum_note_length,
                 minimum_frequency,
                 maximum_frequency,
+                multiple_pitch_bends,
                 melodia_trick,
                 debug_file,
             )

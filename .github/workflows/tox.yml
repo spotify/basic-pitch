@@ -20,10 +20,10 @@ jobs:
           - "3.7"
     steps:
       - name: Setup python for test ${{ matrix.py }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.py }}
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install soundlibs Ubuntu
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y --fix-missing pkg-config libsndfile1
         if: matrix.os == 'Ubuntu'
@@ -40,6 +40,6 @@ jobs:
         run: tox -c tox.ini -e check-formatting,lint,mypy
         if: matrix.py == '3.8'
       - name: Run test suite
-        run: tox -c tox.ini -e py$(echo ${{ matrix.py }} | tr -d '.'),manifest
+        run: tox -c tox.ini -e py,manifest
       - name: Check that basic-pitch can be run as a commandline
         run: pip3 install -e . && basic-pitch --help

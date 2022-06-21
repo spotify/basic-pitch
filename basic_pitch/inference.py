@@ -344,6 +344,7 @@ def predict_and_save(
     model_path: Union[pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
+    sonify_midi_sr: int = 44100,
     minimum_note_length: float = 58,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
@@ -407,7 +408,7 @@ def predict_and_save(
             if sonify_midi:
                 midi_sonify_path = build_output_path(audio_path, output_directory, OutputExtensions.MIDI_SONIFICATION)
                 try:
-                    infer.sonify_midi(midi_data, midi_sonify_path)
+                    infer.sonify_midi(midi_data, midi_sonify_path, sr=sonify_midi_sr)
                     file_saved_confirmation(OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path)
                 except Exception:
                     failed_to_save(OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path)

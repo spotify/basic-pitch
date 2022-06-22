@@ -27,8 +27,8 @@ If you use this library in academic research, consider citing it:
 }
 ```
 
-Note that we have improved Basic Pitch beyond what was presented in this paper. Therefore, if you use the output of Basic Pitch in academic research,
-we recommend that you cite the version of the code that was used.
+**Note that we have improved Basic Pitch beyond what was presented in this paper. Therefore, if you use the output of Basic Pitch in academic research,
+we recommend that you cite the version of the code that was used.**
 
 ### Demo
 If, for whatever reason, you're not yet completely inspired, or you're just like so totally over the general vibe and stuff, checkout our snappy demo website, [basicpitch.io](https://basicpitch.io), to experiment with our model on whatever music audio you provide!

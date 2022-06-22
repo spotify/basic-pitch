@@ -215,17 +215,6 @@ def model(
     x_contours = tfkl.BatchNormalization()(x_contours)
     x_contours = tfkl.ReLU()(x_contours)
 
-    x_contours = tfkl.Conv2D(
-        8,
-        (3, 3 * 13),
-        padding="same",
-        kernel_initializer=_initializer(),
-        kernel_constraint=_kernel_constraint(),
-    )(x)
-
-    x_contours = tfkl.BatchNormalization()(x_contours)
-    x_contours = tfkl.ReLU()(x_contours)
-
     if not no_contours:
         contour_name = "contour"
         x_contours = tfkl.Conv2D(

@@ -205,17 +205,6 @@ def model(
 
     # contour layers - fully convolutional
     x_contours = tfkl.Conv2D(
-        n_filters_contour,
-        (5, 5),
-        padding="same",
-        kernel_initializer=_initializer(),
-        kernel_constraint=_kernel_constraint(),
-    )(x)
-
-    x_contours = tfkl.BatchNormalization()(x_contours)
-    x_contours = tfkl.ReLU()(x_contours)
-
-    x_contours = tfkl.Conv2D(
         8,
         (3, 3 * 13),
         padding="same",

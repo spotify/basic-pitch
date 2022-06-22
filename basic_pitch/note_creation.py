@@ -368,9 +368,6 @@ def output_to_notes_polyphonic(
         list of tuples [(start_time_frames, end_time_frames, pitch_midi, amplitude)]
         representing the note events, where amplitude is a number between 0 and 1
     """
-    if onset_thresh > np.max(onsets):
-        print("warning - adjusted onset_thresh")
-        onset_thresh = np.max(onsets) - (0.5 * np.std(onsets))
 
     n_frames = frames.shape[0]
 
@@ -388,7 +385,6 @@ def output_to_notes_polyphonic(
     onset_freq_idx = onset_idx[1][::-1]  # sort to go backwards in time
 
     remaining_energy = np.zeros(frames.shape)
-    removed_frames = []
     remaining_energy[:, :] = frames[:, :]
 
     # loop over onsets
@@ -415,8 +411,10 @@ def output_to_notes_polyphonic(
             continue
 
         remaining_energy[note_start_idx:i, freq_idx] = 0
-        for j in range(note_start_idx, i):
-            removed_frames.append([j, freq_idx])
+        if freq_idx < MAX_FREQ_IDX:
+            remaining_energy[note_start_idx:i, freq_idx + 1] = 0
+        if freq_idx > 0:
+            remaining_energy[note_start_idx:i, freq_idx - 1] = 0
 
         # add the note
         amplitude = np.mean(frames[note_start_idx:i, freq_idx])
@@ -432,12 +430,6 @@ def output_to_notes_polyphonic(
     if melodia_trick:
 
         energy_shape = remaining_energy.shape
-        # delete semitone neighbors of already used notes
-        for j, freq_idx in removed_frames:
-            if freq_idx < MAX_FREQ_IDX:
-                remaining_energy[j, freq_idx + 1] = 0
-            if freq_idx > 0:
-                remaining_energy[j, freq_idx - 1] = 0
 
         while np.max(remaining_energy) > frame_thresh:
             i_mid, freq_idx = np.unravel_index(np.argmax(remaining_energy), energy_shape)
@@ -447,16 +439,17 @@ def output_to_notes_polyphonic(
             i = i_mid + 1
             k = 0
             while i < n_frames - 1 and k < energy_tol:
-                remaining_energy[i, freq_idx] = 0
-                if freq_idx < MAX_FREQ_IDX:
-                    remaining_energy[i, freq_idx + 1] = 0
-                if freq_idx > 0:
-                    remaining_energy[i, freq_idx - 1] = 0
 
                 if remaining_energy[i, freq_idx] < frame_thresh:
                     k += 1
                 else:
                     k = 0
+
+                remaining_energy[i, freq_idx] = 0
+                if freq_idx < MAX_FREQ_IDX:
+                    remaining_energy[i, freq_idx + 1] = 0
+                if freq_idx > 0:
+                    remaining_energy[i, freq_idx - 1] = 0
 
                 i += 1
 
@@ -466,16 +459,17 @@ def output_to_notes_polyphonic(
             i = i_mid - 1
             k = 0
             while i > 0 and k < energy_tol:
-                remaining_energy[i, freq_idx] = 0
-                if freq_idx < MAX_FREQ_IDX:
-                    remaining_energy[i, freq_idx + 1] = 0
-                if freq_idx > 0:
-                    remaining_energy[i, freq_idx - 1] = 0
 
                 if remaining_energy[i, freq_idx] < frame_thresh:
                     k += 1
                 else:
                     k = 0
+
+                remaining_energy[i, freq_idx] = 0
+                if freq_idx < MAX_FREQ_IDX:
+                    remaining_energy[i, freq_idx + 1] = 0
+                if freq_idx > 0:
+                    remaining_energy[i, freq_idx - 1] = 0
 
                 i -= 1
 
@@ -484,7 +478,7 @@ def output_to_notes_polyphonic(
             assert i_end < n_frames
 
             if i_end - i_start <= min_note_len:
-                # note is too short or too quiet, skip it and remove the energy
+                # note is too short, skip it
                 continue
 
             # add the note

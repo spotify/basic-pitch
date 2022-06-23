@@ -18,7 +18,7 @@
 import pathlib
 
 __author__ = "Spotify"
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __email__ = "basic-pitch@spotify.com"
 __demowebsite__ = "https://basicpitch.io"
 __description__ = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection."

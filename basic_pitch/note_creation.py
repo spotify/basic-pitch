@@ -113,6 +113,7 @@ def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str
     Args:
         midi: A pretty_midi.PrettyMIDI object that will be sonified.
         save_path: Where to save the sonified midi.
+        sr: Sample rate for rendering audio from midi.
     """
     y = midi.synthesize(sr)
     wavfile.write(save_path, sr, y)

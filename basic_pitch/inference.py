@@ -344,7 +344,7 @@ def predict_and_save(
     model_path: Union[pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
-    sonify_midi_sr: int = 44100,
+    sonification_samplerate: int = 44100,
     minimum_note_length: float = 58,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
@@ -364,6 +364,7 @@ def predict_and_save(
         model_path: Path to load the Keras saved model from. Can be local or on GCS.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
+        sonification_samplerate: Sample rate for rendering audio from MIDI.
         minimum_note_length: The minimum allowed note length in frames.
         minimum_freq: Minimum allowed output frequency, in Hz. If None, all frequencies are used.
         maximum_freq: Maximum allowed output frequency, in Hz. If None, all frequencies are used.
@@ -408,7 +409,7 @@ def predict_and_save(
             if sonify_midi:
                 midi_sonify_path = build_output_path(audio_path, output_directory, OutputExtensions.MIDI_SONIFICATION)
                 try:
-                    infer.sonify_midi(midi_data, midi_sonify_path, sr=sonify_midi_sr)
+                    infer.sonify_midi(midi_data, midi_sonify_path, sr=sonification_samplerate)
                     file_saved_confirmation(OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path)
                 except Exception:
                     failed_to_save(OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path)

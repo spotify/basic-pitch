@@ -214,7 +214,7 @@ def run_inference(
 
     for i in range(len(audio_slice_list)):
         audio_original_slice = audio_slice_list[i]
-    
+
         audio_windowed_slice, _, audio_original_length_slice = \
             get_audio_input(audio_original_slice, overlap_len, hop_size)
         output = model(audio_windowed_slice)

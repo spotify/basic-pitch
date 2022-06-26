@@ -94,8 +94,7 @@ def split_unwrapped_data(unwrapped_list: List[Dict[str, np.array]]) -> Dict[str,
 
 def slice_audio(audio_original: np.array) -> List[np.array]:
     """
-    Cut audio Array by AUDIO_SLICE_TIME (default 5 sec) * AUDIO_SAMPLE_RATE 
-    and return slice list
+    Cut audio Array by AUDIO_SLICE_TIME (default 5 sec) * AUDIO_SAMPLE_RATE and return slice list
 
     Returns:
         resList: list of slice

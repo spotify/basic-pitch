@@ -73,11 +73,10 @@ def window_audio_file(audio_original: Tensor, hop_size: int) -> Tuple[Tensor, Li
 
 def split_unwrapped_data(unwrapped_list: List[Dict[str, np.array]]) -> Dict[str, np.array]:
     """
-    split sliced unwrapped data and return completed unwrapped data
+    Merge the split model inference results and return the complete result.
 
     Returns:
-        resDict: dict
-            unwrapped_data.
+        A dictionary with the notes, onsets and contours.
 
     """
     resDict = unwrapped_list[0]
@@ -95,10 +94,11 @@ def split_unwrapped_data(unwrapped_list: List[Dict[str, np.array]]) -> Dict[str,
 
 def slice_audio(audio_original: np.array) -> List[np.array]:
     """
-    cut audio Array by AUDIO_SLICE_TIME (default 5 sec) * AUDIO_SAMPLE_RATE and return slice list
+    Cut audio Array by AUDIO_SLICE_TIME (default 5 sec) * AUDIO_SAMPLE_RATE 
+    and return slice list
 
     Returns:
-        resList: list
+        resList: list of slice
             audio slice list.
 
     """
@@ -120,11 +120,11 @@ def slice_audio(audio_original: np.array) -> List[np.array]:
 
 def read_audio(audio_path: Union[pathlib.Path, str]) -> np.array:
     """
-    Read wave file (as mono) and return audioArray
+    Read wave file (as mono) and return audio signal
 
     Returns:
         audio_original: np.array
-            original audio array.
+            original audio signal.
 
     """
     audio_original, _ = librosa.load(str(audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
@@ -135,7 +135,7 @@ def get_audio_input(
     audio_original: np.array, overlap_len: int, hop_size: int
 ) -> Tuple[Tensor, List[Dict[str, int]], int]:
     """
-    Read wave file (as mono), pad appropriately, and return as
+    padding appropriately of audio signal, and return as
     windowed signal, with window length = AUDIO_N_SAMPLES
 
     Returns:
@@ -231,7 +231,7 @@ def run_inference(
                     },
                     f,
                 )
-    # merge all sliced unwrapped output
+    # merge all
     unwrapped_output = split_unwrapped_data(unwrapped_list)
 
     return unwrapped_output

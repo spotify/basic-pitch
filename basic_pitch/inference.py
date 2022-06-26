@@ -72,8 +72,8 @@ def window_audio_file(audio_original: Tensor, hop_size: int) -> Tuple[Tensor, Li
 
 
 def split_unwrapped_data(
-    unwrapped_list: list
-) -> dict:
+    unwrapped_list: List[Dict[str, np.array]]
+) -> Dict[str, np.array]:
     """
     split sliced unwrapped data and return completed unwrapped data
 
@@ -97,7 +97,7 @@ def split_unwrapped_data(
 
 def slice_audio(
     audio_original: np.array
-) -> list:
+) -> List[np.array]:
     """
     cut audio Array by AUDIO_SLICE_TIME (default 5 sec) * AUDIO_SAMPLE_RATE and return slice list
 
@@ -231,7 +231,7 @@ def run_inference(
                         "audio_original_length_slice": audio_original_length_slice,
                         "hop_size_samples": hop_size,
                         "overlap_length_samples": overlap_len,
-                        "unwrapped_output": {k: v.tolist() for k, v in unwrapped_output.items()},
+                        "unwrapped_output_slice": {k: v.tolist() for k, v in unwrapped_output_slice.items()},
                     },
                     f,
                 )        

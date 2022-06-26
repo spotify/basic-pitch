@@ -71,9 +71,7 @@ def window_audio_file(audio_original: Tensor, hop_size: int) -> Tuple[Tensor, Li
     return audio_windowed, window_times
 
 
-def split_unwrapped_data(
-    unwrapped_list: List[Dict[str, np.array]]
-) -> Dict[str, np.array]:
+def split_unwrapped_data(unwrapped_list: List[Dict[str, np.array]]) -> Dict[str, np.array]:
     """
     split sliced unwrapped data and return completed unwrapped data
 
@@ -95,9 +93,7 @@ def split_unwrapped_data(
     return resDict
 
 
-def slice_audio(
-    audio_original: np.array
-) -> List[np.array]:
+def slice_audio(audio_original: np.array) -> List[np.array]:
     """
     cut audio Array by AUDIO_SLICE_TIME (default 5 sec) * AUDIO_SAMPLE_RATE and return slice list
 
@@ -122,9 +118,7 @@ def slice_audio(
     return resList
 
 
-def read_audio(
-    audio_path: Union[pathlib.Path, str]
-) -> np.array:
+def read_audio(audio_path: Union[pathlib.Path, str]) -> np.array:
     """
     Read wave file (as mono) and return audioArray
 
@@ -215,13 +209,13 @@ def run_inference(
     for i in range(len(audio_slice_list)):
         audio_original_slice = audio_slice_list[i]
 
-        audio_windowed_slice, _, audio_original_length_slice = (
-            get_audio_input(audio_original_slice, overlap_len, hop_size)
+        audio_windowed_slice, _, audio_original_length_slice = get_audio_input(
+            audio_original_slice, overlap_len, hop_size
         )
         output = model(audio_windowed_slice)
-        unwrapped_output_slice = (
-            {k: unwrap_output(output[k], audio_original_length_slice, n_overlapping_frames) for k in output}
-        )
+        unwrapped_output_slice = {
+            k: unwrap_output(output[k], audio_original_length_slice, n_overlapping_frames) for k in output
+        }
         unwrapped_list.append(unwrapped_output_slice)
 
         if debug_file:

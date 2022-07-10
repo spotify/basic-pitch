@@ -107,8 +107,8 @@ def model_output_to_notes(
 
 
 def sonify_midi(
-    midi: pretty_midi.PrettyMIDI, 
-    save_path: Union[pathlib.Path, str], 
+    midi: pretty_midi.PrettyMIDI,
+    save_path: Union[pathlib.Path, str],
     sr: Optional[int] = 44100
 ) -> None:
     """Sonify a pretty_midi midi object and save to a file.

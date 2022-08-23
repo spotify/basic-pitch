@@ -47,6 +47,11 @@ class TestPredict(unittest.TestCase):
         assert all(note_pitch_max)
         assert isinstance(note_events, list)
 
+    def test_predict_rt(self) -> None:
+        inference.predict_rt(
+            ICASSP_2022_MODEL_PATH,
+        )
+
     def test_predict_with_saves(self) -> None:
         test_audio_path = RESOURCES_PATH / "vocadito_10.wav"
         with tempfile.TemporaryDirectory() as tmpdir:

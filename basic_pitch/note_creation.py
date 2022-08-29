@@ -106,15 +106,20 @@ def model_output_to_notes(
     return note_events_to_midi(estimated_notes_time_seconds, multiple_pitch_bends), estimated_notes_time_seconds
 
 
-def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str]) -> None:
+def sonify_midi(
+    midi: pretty_midi.PrettyMIDI,
+    save_path: Union[pathlib.Path, str],
+    sr: Optional[int] = 44100
+) -> None:
     """Sonify a pretty_midi midi object and save to a file.
 
     Args:
         midi: A pretty_midi.PrettyMIDI object that will be sonified.
         save_path: Where to save the sonified midi.
+        sr: Sample rate for rendering audio from midi.
     """
-    y = midi.synthesize(44100)
-    wavfile.write(save_path, 44100, y)
+    y = midi.synthesize(sr)
+    wavfile.write(save_path, sr, y)
 
 
 def sonify_salience(

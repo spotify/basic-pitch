@@ -93,6 +93,12 @@ def main() -> None:
         help="Allow overlapping notes in midi file to have pitch bends. Note: this will map each "
         "pitch to its own instrument",
     )
+    parser.add_argument(
+        "--sonification-samplerate",
+        type=int,
+        default=44100,
+        help="The samplerate for sonified audio files.",
+    )
     parser.add_argument("--debug-file", default=None, help="Optional file for debug output for inference.")
     parser.add_argument("--no-melodia", default=False, action="store_true", help="Skip the melodia trick.")
     args = parser.parse_args()
@@ -101,9 +107,11 @@ def main() -> None:
     print("✨✨✨✨✨✨✨✨✨")
     print("✨ Basic Pitch  ✨")
     print("✨✨✨✨✨✨✨✨✨")
+    print("")
 
     # tensorflow is very slow to import
     # this import is here so that the help messages print faster
+    print("Importing Tensorflow (this may take a few seconds)...")
     from basic_pitch.inference import predict_and_save, verify_output_dir, verify_input_path
 
     output_dir = pathlib.Path(args.output_dir)
@@ -129,6 +137,7 @@ def main() -> None:
         args.multiple_pitch_bends,
         not args.no_melodia,
         pathlib.Path(args.debug_file) if args.debug_file else None,
+        args.sonification_samplerate,
     )
 
     print("\n✨ Done ✨\n")

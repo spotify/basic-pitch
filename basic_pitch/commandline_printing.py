@@ -15,14 +15,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import inspect
 import os
 import pathlib
-import sys
 import threading
-import time
 from contextlib import contextmanager
-from typing import Iterator, Optional, Union
+from typing import Iterator, Union
 
 TF_LOG_LEVEL_KEY = "TF_CPP_MIN_LOG_LEVEL"
 TF_LOG_LEVEL_NO_WARNINGS_VALUE = "3"
@@ -76,59 +73,3 @@ def no_tf_warnings() -> Iterator[None]:
     os.environ[TF_LOG_LEVEL_KEY] = TF_LOG_LEVEL_NO_WARNINGS_VALUE
     yield
     os.environ[TF_LOG_LEVEL_KEY] = tf_logging_level
-
-
-@contextmanager
-def entertaining_waiting(operation_name: Optional[str] = None) -> Iterator[None]:
-    """
-    Display a jazzy loading animation in the commandline for the duration of this context
-
-    Args:
-        operation_name: the name of the operation contained in this context to be displayed in
-        the commandline
-    """
-    if operation_name is None:
-        operation_name = f"Running Command: '{inspect.stack()[2].function}'"
-
-    loading = True
-    loading_states = ["🥁", "🎷", "🎸", "🎻", "🎹", "🪘", "🪗", "🎺", "🪕"]
-    blank_message = " " * (len(loading_states) * 2 + len(operation_name))
-
-    def animate() -> None:
-        emoji_index = 0
-        while loading:
-            if emoji_index >= len(loading_states):
-                emoji_index = 0
-                loading_message = blank_message
-            else:
-                loading_message = "".join(loading_states[0:emoji_index])
-
-            s_flush()
-            s_print(f"\r{operation_name}...  " + loading_message)
-            emoji_index += 1
-            time.sleep(0.3)
-
-    t = threading.Thread(target=animate)
-    t.start()
-
-    yield
-    loading = False
-
-
-def s_print(msg: str) -> None:
-    """
-    Thread safe print function
-
-    Args:
-        msg: the text to be printed to stdout
-    """
-    with s_print_lock:
-        sys.stdout.write(msg)
-
-
-def s_flush() -> None:
-    """
-    Thread safe flush function
-    """
-    with s_print_lock:
-        sys.stdout.flush()

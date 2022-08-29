@@ -106,11 +106,7 @@ def model_output_to_notes(
     return note_events_to_midi(estimated_notes_time_seconds, multiple_pitch_bends), estimated_notes_time_seconds
 
 
-def sonify_midi(
-    midi: pretty_midi.PrettyMIDI,
-    save_path: Union[pathlib.Path, str],
-    sr: Optional[int] = 44100
-) -> None:
+def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str], sr: Optional[int] = 44100) -> None:
     """Sonify a pretty_midi midi object and save to a file.
 
     Args:

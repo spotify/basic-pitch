@@ -20,6 +20,7 @@ import enum
 import json
 import os
 import pathlib
+import traceback
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from tensorflow import Tensor, signal, keras, saved_model
@@ -35,7 +36,6 @@ from basic_pitch.constants import (
 )
 from basic_pitch import ICASSP_2022_MODEL_PATH, note_creation as infer
 from basic_pitch.commandline_printing import (
-    entertaining_waiting,
     generating_file_message,
     no_tf_warnings,
     file_saved_confirmation,
@@ -122,7 +122,9 @@ def unwrap_output(output: Tensor, audio_original_length: int, n_overlapping_fram
 
 
 def run_inference(
-    audio_path: Union[pathlib.Path, str], model: keras.Model, debug_file: Optional[pathlib.Path] = None
+    audio_path: Union[pathlib.Path, str],
+    model: keras.Model,
+    debug_file: Optional[pathlib.Path] = None,
 ) -> Dict[str, np.array]:
     """Run the model on the input audio path.
 
@@ -200,7 +202,9 @@ def verify_output_dir(output_dir: Union[pathlib.Path, str]) -> None:
 
 
 def build_output_path(
-    audio_path: Union[pathlib.Path, str], output_directory: Union[pathlib.Path, str], output_type: OutputExtensions
+    audio_path: Union[pathlib.Path, str],
+    output_directory: Union[pathlib.Path, str],
+    output_type: OutputExtensions,
 ) -> pathlib.Path:
     """Create an output path and make sure it doesn't already exist.
 
@@ -235,7 +239,8 @@ def build_output_path(
 
 
 def save_note_events(
-    note_events: List[Tuple[float, float, int, float, Optional[List[int]]]], save_path: Union[pathlib.Path, str]
+    note_events: List[Tuple[float, float, int, float, Optional[List[int]]]],
+    save_path: Union[pathlib.Path, str],
 ) -> None:
     """Save note events to file
 
@@ -266,7 +271,7 @@ def predict(
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
-) -> Tuple[Dict[str, np.array], pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]]]:
+) -> Tuple[Dict[str, np.array], pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]],]:
     """Run a single prediction.
 
     Args:
@@ -284,7 +289,7 @@ def predict(
         The model output, midi data and note events from a single prediction
     """
 
-    with entertaining_waiting(f"Predicting MIDI for {audio_path}..."), no_tf_warnings():
+    with no_tf_warnings():
         # It's convenient to be able to pass in a keras saved model so if
         # someone wants to place this function in a loop,
         # the model doesn't have to be reloaded every function call
@@ -293,8 +298,9 @@ def predict(
         else:
             model = model_or_model_path
 
-        model_output = run_inference(audio_path, model, debug_file)
+        print(f"Predicting MIDI for {audio_path}...")
 
+        model_output = run_inference(audio_path, model, debug_file)
         min_note_len = int(np.round(minimum_note_length / 1000 * (AUDIO_SAMPLE_RATE / FFT_HOP)))
         midi_data, note_events = infer.model_output_to_notes(
             model_output,
@@ -344,13 +350,13 @@ def predict_and_save(
     model_path: Union[pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
-    sonification_samplerate: int = 44100,
     minimum_note_length: float = 58,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
+    sonification_samplerate: int = 44100,
 ) -> None:
     """Make a prediction and save the results to file.
 
@@ -364,13 +370,13 @@ def predict_and_save(
         model_path: Path to load the Keras saved model from. Can be local or on GCS.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
-        sonification_samplerate: Sample rate for rendering audio from MIDI.
         minimum_note_length: The minimum allowed note length in frames.
         minimum_freq: Minimum allowed output frequency, in Hz. If None, all frequencies are used.
         maximum_freq: Maximum allowed output frequency, in Hz. If None, all frequencies are used.
         multiple_pitch_bends: If True, allow overlapping notes in midi file to have pitch bends.
         melodia_trick: Use the melodia post-processing step.
         debug_file: An optional path to output debug data to. Useful for testing/verification.
+        sonification_samplerate: Sample rate for rendering audio from MIDI.
     """
     model = saved_model.load(str(model_path))
 
@@ -421,5 +427,7 @@ def predict_and_save(
                     file_saved_confirmation(OutputExtensions.NOTE_EVENTS.name, note_events_path)
                 except Exception:
                     failed_to_save(OutputExtensions.NOTE_EVENTS.name, note_events_path)
-        except Exception as e:
-            print(e)
+        except Exception:
+            print("🚨 Something went wrong 😔 - see the traceback below for details.")
+            print("")
+            print(traceback.format_exc())

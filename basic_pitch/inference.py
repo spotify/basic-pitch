@@ -279,7 +279,7 @@ def predict(
         model_or_model_path: Path to load the Keras saved model from. Can be local or on GCS.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
-        minimum_note_length: The minimum allowed note length in frames.
+        minimum_note_length: The minimum allowed note length in milliseconds.
         minimum_freq: Minimum allowed output frequency, in Hz. If None, all frequencies are used.
         maximum_freq: Maximum allowed output frequency, in Hz. If None, all frequencies are used.
         multiple_pitch_bends: If True, allow overlapping notes in midi file to have pitch bends.

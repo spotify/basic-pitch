@@ -265,7 +265,7 @@ def predict(
     model_or_model_path: Union[keras.Model, pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
-    minimum_note_length: float = 58,
+    minimum_note_length: float = 127.70,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
     multiple_pitch_bends: bool = False,

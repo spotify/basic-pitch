@@ -60,7 +60,7 @@ def weighted_transcription_loss(
     Args:
         y_true: The true labels.
         y_pred: The predicted labels.
-        label_smoothing: Smoothing factor. Squeezes labels towards 0.5.
+        label_smoothing: Smoothing factor. Squeeze labels towards 0.5.
         positive_weight: Weighting factor for the positive labels.
 
     Returns:
@@ -87,8 +87,8 @@ def onset_loss(
     """
 
     Args:
-        weighted: Whether or not to use a weighted cross entropy loss.
-        label_smoothing: Smoothing factor. Squeezes labels towards 0.5.
+        weighted: Whether to use a weighted cross entropy loss.
+        label_smoothing: Smoothing factor. Squeeze labels towards 0.5.
         positive_weight: Weighting factor for the positive labels.
 
     Returns:
@@ -108,8 +108,8 @@ def loss(label_smoothing: float = 0.2, weighted: bool = False, positive_weight: 
     the loss for the contour, note and onset posteriorgrams.
 
     Args:
-        label_smoothing: Smoothing factor. Squeezes labels towards 0.5.
-        weighted: Whether or not to use a weighted cross entropy loss.
+        label_smoothing: Smoothing factor. Squeeze labels towards 0.5.
+        weighted: Whether to use a weighted cross entropy loss.
         positive_weight: Weighting factor for the positive labels.
 
     Returns:
@@ -134,7 +134,7 @@ def _kernel_constraint() -> tf.keras.constraints.UnitNorm:
     return tf.keras.constraints.UnitNorm(axis=[0, 1, 2])
 
 
-def get_cqt(inputs: tf.Tensor, n_harmonics: int, use_batchnorm: bool) -> tf.Tensor:
+def get_cqt(inputs: tf.Tensor, n_harmonics: int, use_batch_norm: bool) -> tf.Tensor:
     """Calculate the CQT of the input audio.
 
     Input shape: (batch, number of audio samples, 1)
@@ -144,7 +144,7 @@ def get_cqt(inputs: tf.Tensor, n_harmonics: int, use_batchnorm: bool) -> tf.Tens
         inputs: The audio input.
         n_harmonics: The number of harmonics to capture above the maximum output frequency.
             Used to calculate the number of semitones for the CQT.
-        use_batchnorm: If True, applies batch normalization after computing the CQT
+        use_batch_norm: If True, applies batch normalization after computing the CQT
 
     Returns:
         The log-normalized CQT of the input audio.
@@ -159,20 +159,19 @@ def get_cqt(inputs: tf.Tensor, n_harmonics: int, use_batchnorm: bool) -> tf.Tens
     x = nnaudio.CQT(
         sr=AUDIO_SAMPLE_RATE,
         hop_length=FFT_HOP,
-        fmin=ANNOTATIONS_BASE_FREQUENCY,
+        f_min=ANNOTATIONS_BASE_FREQUENCY,
         n_bins=n_semitones * CONTOURS_BINS_PER_SEMITONE,
         bins_per_octave=12 * CONTOURS_BINS_PER_SEMITONE,
     )(x)
     x = signal.NormalizedLog()(x)
     x = tf.expand_dims(x, -1)
-    if use_batchnorm:
+    if use_batch_norm:
         x = tfkl.BatchNormalization()(x)
     return x
 
 
 def model(
     n_harmonics: int = 8,
-    n_filters_contour: int = 32,
     n_filters_onsets: int = 32,
     n_filters_notes: int = 32,
     no_contours: bool = False,
@@ -181,10 +180,9 @@ def model(
 
     Args:
         n_harmonics: The number of harmonics to use in the harmonic stacking layer.
-        n_filters_contour: Number of filters for the contour convolutional layer.
         n_filters_onsets: Number of filters for the onsets convolutional layer.
         n_filters_notes: Number of filters for the notes convolutional layer.
-        no_contours: Whether or not to include contours in the output.
+        no_contours: Whether to include contours in the output.
     """
     # input representation
     inputs = tf.keras.Input(shape=(AUDIO_N_SAMPLES, 1))  # (batch, time, ch)
@@ -204,17 +202,6 @@ def model(
         )(x)
 
     # contour layers - fully convolutional
-    x_contours = tfkl.Conv2D(
-        n_filters_contour,
-        (5, 5),
-        padding="same",
-        kernel_initializer=_initializer(),
-        kernel_constraint=_kernel_constraint(),
-    )(x)
-
-    x_contours = tfkl.BatchNormalization()(x_contours)
-    x_contours = tfkl.ReLU()(x_contours)
-
     x_contours = tfkl.Conv2D(
         8,
         (3, 3 * 13),

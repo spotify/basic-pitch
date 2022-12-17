@@ -37,7 +37,7 @@ class TestPredict(unittest.TestCase):
             test_audio_path,
             ICASSP_2022_MODEL_PATH,
         )
-        assert set(model_output.keys()) == set(["note", "onset", "contour"])
+        assert set(model_output.keys()) == {"note", "onset", "contour"}
         assert model_output["note"].shape == model_output["onset"].shape
         assert isinstance(midi_data, pretty_midi.PrettyMIDI)
         lowest_supported_midi = 21

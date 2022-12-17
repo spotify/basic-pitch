@@ -43,7 +43,7 @@ def generating_file_message(output_type: str) -> None:
 
 
 def file_saved_confirmation(output_type: str, save_path: Union[pathlib.Path, str]) -> None:
-    """Print a confirmation that the file was saved succesfully
+    """Print a confirmation that the file was saved successfully
 
     Args:
         output_type: The kind of file that is being generated.
@@ -53,15 +53,16 @@ def file_saved_confirmation(output_type: str, save_path: Union[pathlib.Path, str
     print(f"  {OUTPUT_EMOJIS[output_type]} Saved to {save_path}")
 
 
-def failed_to_save(output_type: str, save_path: Union[pathlib.Path, str]) -> None:
+def failed_to_save(output_type: str, save_path: Union[pathlib.Path, str], e: Exception) -> None:
     """Print a failure to save message
 
     Args:
         output_type: The kind of file that is being generated.
         save_path: The path to output file.
+        e: The exception that was raised.
 
     """
-    print(f"\n🚨 Failed to save {output_type.replace('_', ' ').lower()} to {save_path} \n")
+    print(f"\n🚨 Failed to save {output_type.replace('_', ' ').lower()} to {save_path} due to {e}\n")
 
 
 @contextmanager

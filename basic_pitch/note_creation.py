@@ -66,6 +66,7 @@ def model_output_to_notes(
             }
             representing the output of the basic pitch model.
         onset_thresh: Minimum amplitude of an onset activation to be considered an onset.
+        frame_thresh: Minimum amplitude of a frame activation to be considered a frame.
         infer_onsets: If True, add additional onsets when there are large differences in frame amplitudes.
         min_note_len: The minimum allowed note length in frames.
         min_freq: Minimum allowed output frequency, in Hz. If None, all frequencies are used.
@@ -216,7 +217,7 @@ def note_events_to_midi(
     """Create a pretty_midi object from note events
 
     Args:
-        note_events : list of tuples [(start_time_seconds, end_time_seconds, pitch_midi, amplitude)]
+        note_events_with_pitch_bends : list of tuples [(start_time_seconds, end_time_seconds, pitch_midi, amplitude)]
             where amplitude is a number between 0 and 1
         multiple_pitch_bends : If True, allow overlapping notes to have pitch bends
             Note: this will assign each pitch to its own midi instrument, as midi does not yet
@@ -475,7 +476,7 @@ def output_to_notes_polyphonic(
                 i -= 1
 
             i_start = i + 1 + k  # go back to frame above threshold
-            assert i_start >= 0, "{}".format(i_start)
+            assert i_start >= 0, str(i_start)
             assert i_end < n_frames
 
             if i_end - i_start <= min_note_len:

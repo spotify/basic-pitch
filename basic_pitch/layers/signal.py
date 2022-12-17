@@ -50,7 +50,7 @@ class Stft(tf.keras.layers.Layer):
                 If False, then D[:, t] begins at y[t * hop_length].
             pad_mode: Padding to use if center is True. One of "CONSTANT", "REFLECT", or "SYMMETRIC" (case-insensitive).
             name: Name of the layer.
-            dtype: Type used in calcuation.
+            dtype: Type used in calculation.
         """
         super().__init__(trainable=False, name=name, dtype=dtype, dynamic=False)
         self.fft_length = fft_length
@@ -62,12 +62,14 @@ class Stft(tf.keras.layers.Layer):
         self.center = center
         self.pad_mode = pad_mode
 
+        self.spec = None
+
     def build(self, input_shape: tf.TensorShape) -> None:
         if self.window_length < self.fft_length:
             lpad = (self.fft_length - self.window_length) // 2
             rpad = self.fft_length - self.window_length - lpad
 
-            def padded_window(window_length: int, dtype: tf.dtypes.DType = tf.float32) -> tf.Tensor:
+            def padded_window(dtype: tf.dtypes.DType = tf.float32) -> tf.Tensor:
                 # This is a trick to match librosa's way of handling window lengths < their fft_lengths
                 # In that case the window is 0 padded such that the window is centered around 0s
                 # In the Tensorflow case, the window is computed, multiplied against the frame and then
@@ -158,6 +160,13 @@ class NormalizedLog(tf.keras.layers.Layer):
     Only x=1 is supported.
     This layer adds 1e-10 to all values as a way to avoid NaN math.
     """
+
+    def __init__(
+            self, trainable=True, name=None, dtype=None, dynamic=False, **kwargs
+    ):
+        super().__init__(trainable, name, dtype, dynamic, kwargs)
+
+        self.squeeze_batch = None
 
     def build(self, input_shape: tf.Tensor) -> None:
         self.squeeze_batch = lambda batch: batch

@@ -61,9 +61,9 @@ def create_lowpass_filter(
     return tf.constant(filter_kernel, dtype=dtype)
 
 
-def next_power_of_2(A: int) -> int:
-    """A helper function to calculate the next nearest number to the power of 2."""
-    return int(np.ceil(np.log2(A)))
+def next_power_of_2(a: int) -> int:
+    """A helper function to calculate the next the nearest number to the power of 2."""
+    return int(np.ceil(np.log2(a)))
 
 
 def early_downsample(
@@ -75,7 +75,7 @@ def early_downsample(
 ) -> Tuple[Union[float, int], int, int]:
     """Return new sampling rate and hop length after early downsampling"""
     downsample_count = early_downsample_count(nyquist_hz, filter_cutoff_hz, hop_length, n_octaves)
-    downsample_factor = 2 ** (downsample_count)
+    downsample_factor = 2 ** downsample_count
 
     hop_length //= downsample_factor  # Getting new hop_length
     new_sr = sr / float(downsample_factor)  # Getting new sampling rate
@@ -97,15 +97,15 @@ def early_downsample_count(nyquist_hz: float, filter_cutoff_hz: float, hop_lengt
 
 
 def get_early_downsample_params(
-    sr: Union[float, int], hop_length: int, fmax_t: float, Q: float, n_octaves: int, dtype: tf.dtypes.DType
+    sr: Union[float, int], hop_length: int, f_max_t: float, q: float, n_octaves: int, dtype: tf.dtypes.DType
 ) -> Tuple[Union[float, int], int, float, np.array, bool]:
     """Compute downsampling parameters used for early downsampling"""
 
     window_bandwidth = 1.5  # for hann window
-    filter_cutoff = fmax_t * (1 + 0.5 * window_bandwidth / Q)
+    filter_cutoff = f_max_t * (1 + 0.5 * window_bandwidth / q)
     sr, hop_length, downsample_factor = early_downsample(sr, hop_length, n_octaves, sr // 2, filter_cutoff)
     if downsample_factor != 1:
-        earlydownsample = True
+        early_downsample = True
         early_downsample_filter = create_lowpass_filter(
             band_center=1 / downsample_factor,
             kernel_length=256,
@@ -114,19 +114,19 @@ def get_early_downsample_params(
         )
     else:
         early_downsample_filter = None
-        earlydownsample = False
+        early_downsample = False
 
-    return sr, hop_length, downsample_factor, early_downsample_filter, earlydownsample
+    return sr, hop_length, downsample_factor, early_downsample_filter, early_downsample
 
 
-def get_window_dispatch(window: Union[str, Tuple[str, float]], N: int, fftbins: bool = True) -> np.array:
+def get_window_dispatch(window: Union[str, Tuple[str, float]], n: int, fft_bins: bool = True) -> np.array:
     if isinstance(window, str):
-        return scipy.signal.get_window(window, N, fftbins=fftbins)
+        return scipy.signal.get_window(window, n, fftbins=fft_bins)
     elif isinstance(window, tuple):
         if window[0] == "gaussian":
             assert window[1] >= 0
-            sigma = np.floor(-N / 2 / np.sqrt(-2 * np.log(10 ** (-window[1] / 20))))
-            return scipy.signal.get_window(("gaussian", sigma), N, fftbins=fftbins)
+            sigma = np.floor(-n / 2 / np.sqrt(-2 * np.log(10 ** (-window[1] / 20))))
+            return scipy.signal.get_window(("gaussian", sigma), n, fftbins=fft_bins)
         else:
             Warning("Tuple windows may have undesired behaviour regarding Q factor")
     elif isinstance(window, float):
@@ -136,61 +136,59 @@ def get_window_dispatch(window: Union[str, Tuple[str, float]], N: int, fftbins: 
 
 
 def create_cqt_kernels(
-    Q: float,
+    q: float,
     fs: float,
-    fmin: float,
+    f_min: float,
     n_bins: int = 84,
     bins_per_octave: int = 12,
     norm: int = 1,
     window: str = "hann",
-    fmax: Optional[float] = None,
-    topbin_check: bool = True,
+    f_max: Optional[float] = None,
+    top_bin_check: bool = True,
 ) -> Tuple[np.array, int, np.array, np.array]:
     """
     Automatically create CQT kernels in time domain
     """
 
-    fftLen = 2 ** next_power_of_2(np.ceil(Q * fs / fmin))
+    fft_len = 2 ** next_power_of_2(np.ceil(q * fs / f_min))
 
-    if (fmax is not None) and (n_bins is None):
-        n_bins = np.ceil(bins_per_octave * np.log2(fmax / fmin))  # Calculate the number of bins
-        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
+    if (f_max is not None) and (n_bins is None):
+        n_bins = np.ceil(bins_per_octave * np.log2(f_max / f_min))  # Calculate the number of bins
+        freqs = f_min * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
 
-    elif (fmax is None) and (n_bins is not None):
-        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
+    elif (f_max is None) and (n_bins is not None):
+        freqs = f_min * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
 
     else:
-        warnings.warn("If fmax is given, n_bins will be ignored", SyntaxWarning)
-        n_bins = np.ceil(bins_per_octave * np.log2(fmax / fmin))  # Calculate the number of bins
-        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
+        warnings.warn("If f_max is given, n_bins will be ignored", SyntaxWarning)
+        n_bins = np.ceil(bins_per_octave * np.log2(f_max / f_min))  # Calculate the number of bins
+        freqs = f_min * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
 
-    if np.max(freqs) > fs / 2 and topbin_check is True:
-        raise ValueError(
-            "The top bin {}Hz has exceeded the Nyquist frequency, please reduce the n_bins".format(np.max(freqs))
-        )
+    if np.max(freqs) > fs / 2 and top_bin_check is True:
+        raise ValueError(f"The top bin {np.max(freqs)}Hz has exceeded the Nyquist frequency, please reduce the n_bins")
 
-    tempKernel = np.zeros((int(n_bins), int(fftLen)), dtype=np.complex64)
+    temp_kernel = np.zeros((int(n_bins), int(fft_len)), dtype=np.complex64)
 
-    lengths = np.ceil(Q * fs / freqs)
+    lengths = np.ceil(q * fs / freqs)
     for k in range(0, int(n_bins)):
         freq = freqs[k]
-        _l = np.ceil(Q * fs / freq)
+        _l = np.ceil(q * fs / freq)
 
         # Centering the kernels, pad more zeros on RHS
-        start = int(np.ceil(fftLen / 2.0 - _l / 2.0)) - int(_l % 2)
+        start = int(np.ceil(fft_len / 2.0 - _l / 2.0)) - int(_l % 2)
 
         sig = (
-            get_window_dispatch(window, int(_l), fftbins=True)
+            get_window_dispatch(window, int(_l), fft_bins=True)
             * np.exp(np.r_[-_l // 2 : _l // 2] * 1j * 2 * np.pi * freq / fs)
             / _l
         )
 
         if norm:  # Normalizing the filter # Trying to normalize like librosa
-            tempKernel[k, start : start + int(_l)] = sig / np.linalg.norm(sig, norm)
+            temp_kernel[k, start : start + int(_l)] = sig / np.linalg.norm(sig, norm)
         else:
-            tempKernel[k, start : start + int(_l)] = sig
+            temp_kernel[k, start : start + int(_l)] = sig
 
-    return tempKernel, fftLen, lengths, freqs
+    return temp_kernel, fft_len, lengths, freqs
 
 
 def get_cqt_complex(
@@ -201,20 +199,20 @@ def get_cqt_complex(
     padding: tf.keras.layers.Layer,
 ) -> tf.Tensor:
     """Multiplying the STFT result with the cqt_kernel, check out the 1992 CQT paper [1]
-    for how to multiple the STFT result with the CQT kernel
+    for how to multiply the STFT result with the CQT kernel
     [2] Brown, Judith C.C. and Miller Puckette. “An efficient algorithm for the calculation of
     a constant Q transform.” (1992)."""
 
     try:
         x = padding(x)  # When center is True, we need padding at the beginning and ending
-    except Exception:
+    except ValueError:
         warnings.warn(
             f"\ninput size = {x.shape}\tkernel size = {cqt_kernels_real.shape[-1]}\n"
             "padding with reflection mode might not be the best choice, try using constant padding",
             UserWarning,
         )
         x = tf.pad(x, (cqt_kernels_real.shape[-1] // 2, cqt_kernels_real.shape[-1] // 2))
-    CQT_real = tf.transpose(
+    cqt_real = tf.transpose(
         tf.nn.conv1d(
             tf.transpose(x, [0, 2, 1]),
             tf.transpose(cqt_kernels_real, [2, 1, 0]),
@@ -223,7 +221,7 @@ def get_cqt_complex(
         ),
         [0, 2, 1],
     )
-    CQT_imag = -tf.transpose(
+    cqt_imag = -tf.transpose(
         tf.nn.conv1d(
             tf.transpose(x, [0, 2, 1]),
             tf.transpose(cqt_kernels_imag, [2, 1, 0]),
@@ -233,7 +231,7 @@ def get_cqt_complex(
         [0, 2, 1],
     )
 
-    return tf.stack((CQT_real, CQT_imag), axis=-1)
+    return tf.stack((cqt_real, cqt_imag), axis=-1)
 
 
 def downsampling_by_n(x: tf.Tensor, filter_kernel: tf.Tensor, n: float, match_torch_exactly: bool = True) -> tf.Tensor:
@@ -243,7 +241,7 @@ def downsampling_by_n(x: tf.Tensor, filter_kernel: tf.Tensor, n: float, match_to
     and the filter kernel is expected to have shape `(num_output_channels,)` (i.e.: 1D)
 
     If match_torch_exactly is passed, we manually pad the input rather than having TensorFlow do so with "SAME".
-    The result is subtly different than Torch's output, but it is compatible with TensorFlow Lite (as of v2.4.1).
+    The result is subtly different from Torch's output, but it is compatible with TensorFlow Lite (as of v2.4.1).
     """
 
     if match_torch_exactly:
@@ -275,7 +273,7 @@ class ReflectionPad1D(tf.keras.layers.Layer):
         super(ReflectionPad1D, self).__init__(**kwargs)
 
     def compute_output_shape(self, s: List[int]) -> Tuple[int, int, int]:
-        return (s[0], s[1], s[2] + 2 * self.padding if isinstance(self.padding, int) else self.padding[0])
+        return s[0], s[1], s[2] + 2 * self.padding if isinstance(self.padding, int) else self.padding[0]
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
         return tf.pad(x, [[0, 0], [0, 0], [self.padding, self.padding]], "REFLECT")
@@ -293,7 +291,7 @@ class ConstantPad1D(tf.keras.layers.Layer):
         super(ConstantPad1D, self).__init__(**kwargs)
 
     def compute_output_shape(self, s: List[int]) -> Tuple[int, int, int]:
-        return (s[0], s[1], s[2] + 2 * self.padding if isinstance(self.padding, int) else self.padding[0])
+        return s[0], s[1], s[2] + 2 * self.padding if isinstance(self.padding, int) else self.padding[0]
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
         return tf.pad(x, [[0, 0], [0, 0], [self.padding, self.padding]], "CONSTANT", self.value)
@@ -333,8 +331,7 @@ def pad_center(data: np.ndarray, size: int, axis: int = -1, **kwargs: Any) -> np
         Length to pad `data`
     axis : int
         Axis along which to pad and center the data
-    kwargs : additional keyword arguments
-      arguments passed to `np.pad()`
+    kwargs : additional keyword passed to `np.pad()`
 
     Returns
     -------
@@ -362,7 +359,7 @@ def pad_center(data: np.ndarray, size: int, axis: int = -1, **kwargs: Any) -> np
     lengths[axis] = (lpad, int(size - n - lpad))
 
     if lpad < 0:
-        raise ValueError(("Target size ({:d}) must be at least input size ({:d})").format(size, n))
+        raise ValueError(f"Target size {size} must be at least input size {n}")
 
     return np.pad(data, lengths, **kwargs)
 
@@ -399,9 +396,9 @@ class CQT2010v2(tf.keras.layers.Layer):
         Setting the correct sampling rate is very important for calculating the correct frequency.
     hop_length : int
         The hop (or stride) size. Default value is 512.
-    fmin : float
+    f_min : float
         The frequency for the lowest CQT bin. Default is 32.70Hz, which coresponds to the note C0.
-    fmax : float
+    f_max : float
         The frequency for the highest CQT bin. Default is ``None``, therefore the higest CQT bin is
         inferred from the ``n_bins`` and ``bins_per_octave``.  If ``fmax`` is not ``None``, then the
         argument ``n_bins`` will be ignored and ``n_bins`` will be calculated automatically.
@@ -430,10 +427,6 @@ class CQT2010v2(tf.keras.layers.Layer):
         'Complex' will return the STFT result in complex number, shape = ``(num_samples, freq_bins, time_steps, 2)``;
         'Phase' will return the phase of the STFT reuslt, shape = ``(num_samples, freq_bins,time_steps, 2)``.
         The complex number is stored as ``(real, imag)`` in the last axis. Default value is 'Magnitude'.
-    verbose : bool
-        If ``True``, it shows layer information. If ``False``, it suppresses all prints.
-    device : str
-        Choose which device to initialize this layer. Default value is 'cpu'.
     Returns
     -------
     spectrogram : tf.Tensor
@@ -451,8 +444,8 @@ class CQT2010v2(tf.keras.layers.Layer):
         self,
         sr: int = 22050,
         hop_length: int = 512,
-        fmin: float = 32.70,
-        fmax: Optional[float] = None,
+        f_min: float = 32.70,
+        f_max: Optional[float] = None,
         n_bins: int = 84,
         filter_scale: int = 1,
         bins_per_octave: int = 12,
@@ -460,17 +453,18 @@ class CQT2010v2(tf.keras.layers.Layer):
         basis_norm: int = 1,
         window: str = "hann",
         pad_mode: str = "reflect",
-        earlydownsample: bool = True,
+        early_downsample: bool = True,
         trainable: bool = False,
         output_format: str = "Magnitude",
         match_torch_exactly: bool = True,
     ):
         super().__init__()
 
+
         self.sample_rate: Union[float, int] = sr
         self.hop_length = hop_length
-        self.fmin = fmin
-        self.fmax = fmax
+        self.f_min = f_min
+        self.f_max = f_max
         self.n_bins = n_bins
         self.filter_scale = filter_scale
         self.bins_per_octave = bins_per_octave
@@ -478,11 +472,25 @@ class CQT2010v2(tf.keras.layers.Layer):
         self.basis_norm = basis_norm
         self.window = window
         self.pad_mode = pad_mode
-        self.earlydownsample = earlydownsample
+        self.early_downsample = early_downsample
         self.trainable = trainable
         self.output_format = output_format
         self.match_torch_exactly = match_torch_exactly
         self.normalization_type = "librosa"
+
+        self.lowpass_filter = None
+        self.n_octaves = None
+        self.f_min_t = None
+        self.early_downsample_filter = None
+        self.downsample_factor = None
+        self.n_fft = None
+        self.frequencies = None
+        self.lengths = None
+        self.basis = None
+        self.cqt_kernels_real = None
+        self.cqt_kernels_imag = None
+        self.padding = None
+        self.reshape_input = None
 
     def get_config(self) -> Any:
         config = super().get_config().copy()
@@ -490,8 +498,8 @@ class CQT2010v2(tf.keras.layers.Layer):
             {
                 "sample_rate": self.sample_rate,
                 "hop_length": self.hop_length,
-                "fmin": self.fmin,
-                "fmax": self.fmax,
+                "f_min": self.f_min,
+                "f_max": self.f_max,
                 "n_bins": self.n_bins,
                 "filter_scale": self.filter_scale,
                 "bins_per_octave": self.bins_per_octave,
@@ -500,7 +508,7 @@ class CQT2010v2(tf.keras.layers.Layer):
                 "window": self.window,
                 "pad_mode": self.pad_mode,
                 "output_format": self.output_format,
-                "earlydownsample": self.earlydownsample,
+                "early_downsample": self.early_downsample,
                 "trainable": self.trainable,
                 "match_torch_exactly": self.match_torch_exactly,
             }
@@ -509,7 +517,7 @@ class CQT2010v2(tf.keras.layers.Layer):
 
     def build(self, input_shape: tf.TensorShape) -> None:
         # This will be used to calculate filter_cutoff and creating CQT kernels
-        Q = float(self.filter_scale) / (2 ** (1 / self.bins_per_octave) - 1)
+        q = float(self.filter_scale) / (2 ** (1 / self.bins_per_octave) - 1)
 
         self.lowpass_filter = create_lowpass_filter(band_center=0.5, kernel_length=256, transition_bandwidth=0.001)
 
@@ -519,30 +527,28 @@ class CQT2010v2(tf.keras.layers.Layer):
         self.n_octaves = int(np.ceil(float(self.n_bins) / self.bins_per_octave))
 
         # Calculate the lowest frequency bin for the top octave kernel
-        self.fmin_t = self.fmin * 2 ** (self.n_octaves - 1)
+        self.f_min_t = self.f_min * 2 ** (self.n_octaves - 1)
         remainder = self.n_bins % self.bins_per_octave
 
         if remainder == 0:
             # Calculate the top bin frequency
-            fmax_t = self.fmin_t * 2 ** ((self.bins_per_octave - 1) / self.bins_per_octave)
+            f_max_t = self.f_min_t * 2 ** ((self.bins_per_octave - 1) / self.bins_per_octave)
         else:
             # Calculate the top bin frequency
-            fmax_t = self.fmin_t * 2 ** ((remainder - 1) / self.bins_per_octave)
+            f_max_t = self.f_min_t * 2 ** ((remainder - 1) / self.bins_per_octave)
 
-        self.fmin_t = fmax_t / 2 ** (1 - 1 / self.bins_per_octave)  # Adjusting the top minium bins
-        if fmax_t > self.sample_rate / 2:
-            raise ValueError(
-                "The top bin {}Hz has exceeded the Nyquist frequency, please reduce the n_bins".format(fmax_t)
-            )
+        self.f_min_t = f_max_t / 2 ** (1 - 1 / self.bins_per_octave)  # Adjusting the top minium bins
+        if f_max_t > self.sample_rate / 2:
+            raise ValueError(f"The top bin {f_max_t}Hz has exceeded the Nyquist frequency, please reduce the n_bins")
 
-        if self.earlydownsample is True:  # Do early downsampling if this argument is True
+        if self.early_downsample is True:  # Do early downsampling if this argument is True
             (
                 self.sample_rate,
                 self.hop_length,
                 self.downsample_factor,
                 early_downsample_filter,
-                self.earlydownsample,
-            ) = get_early_downsample_params(self.sample_rate, self.hop_length, fmax_t, Q, self.n_octaves, self.dtype)
+                self.early_downsample,
+            ) = get_early_downsample_params(self.sample_rate, self.hop_length, f_max_t, q, self.n_octaves, self.dtype)
 
             self.early_downsample_filter = early_downsample_filter
         else:
@@ -550,23 +556,23 @@ class CQT2010v2(tf.keras.layers.Layer):
 
         # Preparing CQT kernels
         basis, self.n_fft, _, _ = create_cqt_kernels(
-            Q,
+            q,
             self.sample_rate,
-            self.fmin_t,
+            self.f_min_t,
             n_filters,
             self.bins_per_octave,
             norm=self.basis_norm,
-            topbin_check=False,
+            top_bin_check=False,
         )
 
         # For the normalization in the end
         # The freqs returned by create_cqt_kernels cannot be used
         # Since that returns only the top octave bins
         # We need the information for all freq bin
-        freqs = self.fmin * 2.0 ** (np.r_[0 : self.n_bins] / np.float(self.bins_per_octave))
+        freqs = self.f_min * 2.0 ** (np.r_[0: self.n_bins] / np.float(self.bins_per_octave))
         self.frequencies = freqs
 
-        self.lengths = np.ceil(Q * self.sample_rate / freqs)
+        self.lengths = np.ceil(q * self.sample_rate / freqs)
 
         self.basis = basis
         # NOTE(psobot): this is where the implementation here starts to differ from CQT2010.
@@ -599,49 +605,49 @@ class CQT2010v2(tf.keras.layers.Layer):
     def call(self, x: tf.Tensor) -> tf.Tensor:
         x = self.reshape_input(x)  # type: ignore
 
-        if self.earlydownsample is True:
+        if self.early_downsample is True:
             x = downsampling_by_n(x, self.early_downsample_filter, self.downsample_factor, self.match_torch_exactly)
 
         hop = self.hop_length
 
         # Getting the top octave CQT
-        CQT = get_cqt_complex(x, self.cqt_kernels_real, self.cqt_kernels_imag, hop, self.padding)
+        cqt = get_cqt_complex(x, self.cqt_kernels_real, self.cqt_kernels_imag, hop, self.padding)
 
         x_down = x  # Preparing a new variable for downsampling
 
         for _ in range(self.n_octaves - 1):
             hop = hop // 2
             x_down = downsampling_by_n(x_down, self.lowpass_filter, 2, self.match_torch_exactly)
-            CQT1 = get_cqt_complex(x_down, self.cqt_kernels_real, self.cqt_kernels_imag, hop, self.padding)
-            CQT = tf.concat((CQT1, CQT), axis=1)
+            cqt1 = get_cqt_complex(x_down, self.cqt_kernels_real, self.cqt_kernels_imag, hop, self.padding)
+            cqt = tf.concat((cqt1, cqt), axis=1)
 
-        CQT = CQT[:, -self.n_bins :, :]  # Removing unwanted bottom bins
+        cqt = cqt[:, -self.n_bins :, :]  # Removing unwanted bottom bins
 
         # Normalizing the output with the downsampling factor, 2**(self.n_octaves-1) is make it
         # same mag as 1992
-        CQT = CQT * self.downsample_factor
+        cqt = cqt * self.downsample_factor
 
         # Normalize again to get same result as librosa
         if self.normalization_type == "librosa":
-            CQT *= tf.math.sqrt(tf.cast(self.lengths.reshape((-1, 1, 1)), self.dtype))
+            cqt *= tf.math.sqrt(tf.cast(self.lengths.reshape((-1, 1, 1)), self.dtype))
         elif self.normalization_type == "convolutional":
             pass
         elif self.normalization_type == "wrap":
-            CQT *= 2
+            cqt *= 2
         else:
             raise ValueError("The normalization_type %r is not part of our current options." % self.normalization_type)
 
         # Transpose the output to match the output of the other spectrogram layers.
         if self.output_format.lower() == "magnitude":
             # Getting CQT Amplitude
-            return tf.transpose(tf.math.sqrt(tf.math.reduce_sum(tf.math.pow(CQT, 2), axis=-1)), [0, 2, 1])
+            return tf.transpose(tf.math.sqrt(tf.math.reduce_sum(tf.math.pow(cqt, 2), axis=-1)), [0, 2, 1])
 
         elif self.output_format.lower() == "complex":
-            return CQT
+            return cqt
 
         elif self.output_format.lower() == "phase":
-            phase_real = tf.math.cos(tf.math.atan2(CQT[:, :, :, 1], CQT[:, :, :, 0]))
-            phase_imag = tf.math.sin(tf.math.atan2(CQT[:, :, :, 1], CQT[:, :, :, 0]))
+            phase_real = tf.math.cos(tf.math.atan2(cqt[:, :, :, 1], cqt[:, :, :, 0]))
+            phase_imag = tf.math.sin(tf.math.atan2(cqt[:, :, :, 1], cqt[:, :, :, 0]))
             return tf.stack((phase_real, phase_imag), axis=-1)
 
 

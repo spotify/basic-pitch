@@ -35,13 +35,14 @@ tfkl = tf.keras.layers
 
 
 class TestHarmonicStacking(unittest.TestCase):
-    def _audio_data_gen(self) -> Iterator[Tuple[np.array, np.array]]:
+    @staticmethod
+    def _audio_data_gen() -> Iterator[Tuple[np.array, np.array]]:
         while True:
             audio = np.random.uniform(size=(BATCH_SIZE, AUDIO_N_SAMPLES, 1)).astype(np.float32)
             output = np.random.uniform(size=(BATCH_SIZE, ANNOT_N_FRAMES, ANNOTATIONS_N_SEMITONES * 3, 1)).astype(
                 np.float32
             )
-            yield (audio, output)
+            yield audio, output
 
     def _dummy_dataset(self) -> tf.data.Dataset:
         ds = tf.data.Dataset.from_generator(

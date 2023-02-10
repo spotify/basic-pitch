@@ -429,7 +429,6 @@ def output_to_notes_polyphonic(
         )
 
     if melodia_trick:
-
         energy_shape = remaining_energy.shape
 
         while np.max(remaining_energy) > frame_thresh:
@@ -440,7 +439,6 @@ def output_to_notes_polyphonic(
             i = i_mid + 1
             k = 0
             while i < n_frames - 1 and k < energy_tol:
-
                 if remaining_energy[i, freq_idx] < frame_thresh:
                     k += 1
                 else:
@@ -460,7 +458,6 @@ def output_to_notes_polyphonic(
             i = i_mid - 1
             k = 0
             while i > 0 and k < energy_tol:
-
                 if remaining_energy[i, freq_idx] < frame_thresh:
                     k += 1
                 else:

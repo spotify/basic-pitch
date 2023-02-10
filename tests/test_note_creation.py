@@ -19,7 +19,6 @@ from basic_pitch.note_creation import drop_overlapping_pitch_bends
 
 
 def test_drop_overlapping_pitch_bends() -> None:
-
     # events are: (start, end, pitch, amplitude, pitch_bend)
     note_events_with_pitch_bends = [
         (0.0, 0.1, 60, 1.0, None),

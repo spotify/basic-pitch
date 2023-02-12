@@ -128,7 +128,7 @@ predict_and_save(
     <save-midi>,
     <sonify-midi>,
     <save-model-outputs>,
-    <save-note-events>,
+    <save-notes>,
 )
 ```
 
@@ -141,7 +141,7 @@ where:
         - *bool* to control saving a WAV audio rendering of the MIDI file to the `<output-directory>`
    - `<save-model-outputs>`
         - *bool* to control saving the raw model output as a NPZ file to the `<output-directory>`
-   - `<save-note-events>`
+   - `<save-notes>`
         - *bool* to control saving predicted note events as a CSV file `<output-directory>`
 
 

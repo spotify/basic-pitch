@@ -271,6 +271,7 @@ def predict(
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
+    midi_tempo: float = 120,
 ) -> Tuple[Dict[str, np.array], pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]],]:
     """Run a single prediction.
 
@@ -311,6 +312,7 @@ def predict(
             max_freq=maximum_frequency,
             multiple_pitch_bends=multiple_pitch_bends,
             melodia_trick=melodia_trick,
+            midi_tempo=midi_tempo,
         )
 
     if debug_file:
@@ -357,6 +359,7 @@ def predict_and_save(
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
     sonification_samplerate: int = 44100,
+    midi_tempo: float = 120,
 ) -> None:
     """Make a prediction and save the results to file.
 
@@ -394,6 +397,7 @@ def predict_and_save(
                 multiple_pitch_bends,
                 melodia_trick,
                 debug_file,
+                midi_tempo,
             )
 
             if save_model_outputs:

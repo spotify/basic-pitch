@@ -99,6 +99,12 @@ def main() -> None:
         default=44100,
         help="The samplerate for sonified audio files.",
     )
+    parser.add_argument(
+        "--midi-tempo",
+        type=float,
+        default=120,
+        help="The tempo for the midi file.",
+    )
     parser.add_argument("--debug-file", default=None, help="Optional file for debug output for inference.")
     parser.add_argument("--no-melodia", default=False, action="store_true", help="Skip the melodia trick.")
     args = parser.parse_args()
@@ -138,6 +144,7 @@ def main() -> None:
         not args.no_melodia,
         pathlib.Path(args.debug_file) if args.debug_file else None,
         args.sonification_samplerate,
+        args.midi_tempo,
     )
 
     print("\n✨ Done ✨\n")

@@ -104,7 +104,10 @@ def model_output_to_notes(
         (times_s[note[0]], times_s[note[1]], note[2], note[3], note[4]) for note in estimated_notes_with_pitch_bend
     ]
 
-    return note_events_to_midi(estimated_notes_time_seconds, multiple_pitch_bends, midi_tempo), estimated_notes_time_seconds
+    return (
+        note_events_to_midi(estimated_notes_time_seconds, multiple_pitch_bends, midi_tempo),
+        estimated_notes_time_seconds,
+    )
 
 
 def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str], sr: Optional[int] = 44100) -> None:

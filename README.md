@@ -86,7 +86,7 @@ Import `basic-pitch` into your own Python code and run the [`predict`](basic_pit
 from basic_pitch.inference import predict
 from basic_pitch import ICASSP_2022_MODEL_PATH
 
-model_output, midi_data, note_activations = predict(<input-audio-path>)
+model_output, midi_data, note_events = predict(<input-audio-path>)
 ```
 
 - `<minimum-frequency>` & `<maximum-frequency>` (*float*s) set the maximum and minimum allowed note frequency, in Hz, returned by the model. Pitch events with frequencies outside of this range will be excluded from the prediction results.
@@ -108,7 +108,7 @@ basic_pitch_model = tf.saved_model.load(str(ICASSP_2022_MODEL_PATH))
 
 for x in range():
     ...
-    model_output, midi_data, note_activations = predict(
+    model_output, midi_data, note_events = predict(
         <loop-x-input-audio-path>,
         basic_pitch_model,
     )
@@ -128,7 +128,7 @@ predict_and_save(
     <save-midi>,
     <sonify-midi>,
     <save-model-outputs>,
-    <save-note-events>,
+    <save-notes>,
 )
 ```
 
@@ -141,7 +141,7 @@ where:
         - *bool* to control saving a WAV audio rendering of the MIDI file to the `<output-directory>`
    - `<save-model-outputs>`
         - *bool* to control saving the raw model output as a NPZ file to the `<output-directory>`
-   - `<save-note-events>`
+   - `<save-notes>`
         - *bool* to control saving predicted note events as a CSV file `<output-directory>`
 
 

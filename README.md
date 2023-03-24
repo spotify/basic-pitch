@@ -59,6 +59,11 @@ This library offers a command line tool interface. A basic prediction command wi
 basic-pitch <output-directory> <input-audio-path>
 ```
 
+For example: 
+```
+basic-pitch /output/directory/path /input/audio/path
+```
+
 To process more than one audio file at a time:
 
 ```bash

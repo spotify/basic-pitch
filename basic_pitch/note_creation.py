@@ -54,6 +54,7 @@ def model_output_to_notes(
     include_pitch_bends: bool = True,
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
+    midi_tempo: float = 120,
 ) -> Tuple[pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]]]:
     """Convert model output to MIDI
 
@@ -103,7 +104,10 @@ def model_output_to_notes(
         (times_s[note[0]], times_s[note[1]], note[2], note[3], note[4]) for note in estimated_notes_with_pitch_bend
     ]
 
-    return note_events_to_midi(estimated_notes_time_seconds, multiple_pitch_bends), estimated_notes_time_seconds
+    return (
+        note_events_to_midi(estimated_notes_time_seconds, multiple_pitch_bends, midi_tempo),
+        estimated_notes_time_seconds,
+    )
 
 
 def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str], sr: Optional[int] = 44100) -> None:
@@ -212,6 +216,7 @@ def get_pitch_bends(
 def note_events_to_midi(
     note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]],
     multiple_pitch_bends: bool = False,
+    midi_tempo: float = 120,
 ) -> pretty_midi.PrettyMIDI:
     """Create a pretty_midi object from note events
 
@@ -226,7 +231,7 @@ def note_events_to_midi(
         pretty_midi.PrettyMIDI() object
 
     """
-    mid = pretty_midi.PrettyMIDI()
+    mid = pretty_midi.PrettyMIDI(initial_tempo=midi_tempo)
     if not multiple_pitch_bends:
         note_events_with_pitch_bends = drop_overlapping_pitch_bends(note_events_with_pitch_bends)
 
@@ -429,7 +434,6 @@ def output_to_notes_polyphonic(
         )
 
     if melodia_trick:
-
         energy_shape = remaining_energy.shape
 
         while np.max(remaining_energy) > frame_thresh:
@@ -440,7 +444,6 @@ def output_to_notes_polyphonic(
             i = i_mid + 1
             k = 0
             while i < n_frames - 1 and k < energy_tol:
-
                 if remaining_energy[i, freq_idx] < frame_thresh:
                     k += 1
                 else:
@@ -460,7 +463,6 @@ def output_to_notes_polyphonic(
             i = i_mid - 1
             k = 0
             while i > 0 and k < energy_tol:
-
                 if remaining_energy[i, freq_idx] < frame_thresh:
                     k += 1
                 else:

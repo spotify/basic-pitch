@@ -265,12 +265,13 @@ def predict(
     model_or_model_path: Union[keras.Model, pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
-    minimum_note_length: float = 58,
+    minimum_note_length: float = 127.70,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
+    midi_tempo: float = 120,
 ) -> Tuple[Dict[str, np.array], pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]],]:
     """Run a single prediction.
 
@@ -279,7 +280,7 @@ def predict(
         model_or_model_path: Path to load the Keras saved model from. Can be local or on GCS.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
-        minimum_note_length: The minimum allowed note length in frames.
+        minimum_note_length: The minimum allowed note length in milliseconds.
         minimum_freq: Minimum allowed output frequency, in Hz. If None, all frequencies are used.
         maximum_freq: Maximum allowed output frequency, in Hz. If None, all frequencies are used.
         multiple_pitch_bends: If True, allow overlapping notes in midi file to have pitch bends.
@@ -311,6 +312,7 @@ def predict(
             max_freq=maximum_frequency,
             multiple_pitch_bends=multiple_pitch_bends,
             melodia_trick=melodia_trick,
+            midi_tempo=midi_tempo,
         )
 
     if debug_file:
@@ -357,6 +359,7 @@ def predict_and_save(
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
     sonification_samplerate: int = 44100,
+    midi_tempo: float = 120,
 ) -> None:
     """Make a prediction and save the results to file.
 
@@ -394,6 +397,7 @@ def predict_and_save(
                 multiple_pitch_bends,
                 melodia_trick,
                 debug_file,
+                midi_tempo,
             )
 
             if save_model_outputs:

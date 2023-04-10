@@ -7,7 +7,7 @@ on:
 jobs:
   publish-tag:
     name: Build and publish Python distributions to PyPI
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout source
         uses: actions/checkout@v2

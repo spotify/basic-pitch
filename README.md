@@ -175,6 +175,10 @@ This model can process any size or length of audio, but processing of larger/lon
 
 Input audio maybe be of any sample rate, however, all audio will be resampled to 22050 Hz before processing.
 
+### VST
+
+Thanks to DamRsn for developing this working VST version of basic-pitch! - https://github.com/DamRsn/NeuralNote
+
 
 ## Contributing
 

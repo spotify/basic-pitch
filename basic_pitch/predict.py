@@ -18,6 +18,7 @@
 import argparse
 import os
 import pathlib
+import traceback
 
 from basic_pitch import ICASSP_2022_MODEL_PATH
 
@@ -127,28 +128,34 @@ def main() -> None:
     for audio_path in audio_path_list:
         verify_input_path(audio_path)
 
-    predict_and_save(
-        audio_path_list,
-        output_dir,
-        args.save_midi,
-        args.sonify_midi,
-        args.save_model_outputs,
-        args.save_note_events,
-        pathlib.Path(args.model_path),
-        args.onset_threshold,
-        args.frame_threshold,
-        args.minimum_note_length,
-        args.minimum_frequency,
-        args.maximum_frequency,
-        args.multiple_pitch_bends,
-        not args.no_melodia,
-        pathlib.Path(args.debug_file) if args.debug_file else None,
-        args.sonification_samplerate,
-        args.midi_tempo,
-    )
-
-    print("\n✨ Done ✨\n")
-
+    try:
+        predict_and_save(
+            audio_path_list,
+            output_dir,
+            args.save_midi,
+            args.sonify_midi,
+            args.save_model_outputs,
+            args.save_note_events,
+            pathlib.Path(args.model_path),
+            args.onset_threshold,
+            args.frame_threshold,
+            args.minimum_note_length,
+            args.minimum_frequency,
+            args.maximum_frequency,
+            args.multiple_pitch_bends,
+            not args.no_melodia,
+            pathlib.Path(args.debug_file) if args.debug_file else None,
+            args.sonification_samplerate,
+            args.midi_tempo,
+        )
+        print("\n✨ Done ✨\n")
+    except IOError as ioe:
+        print(ioe)
+    except Exception as e:
+        print("🚨 Something went wrong 😔 - see the traceback below for details.")
+        print("")
+        print(e)
+        print(traceback.format_exc())
 
 if __name__ == "__main__":
     main()

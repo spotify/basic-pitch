@@ -20,7 +20,6 @@ import enum
 import json
 import os
 import pathlib
-import traceback
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from tensorflow import Tensor, signal, keras, saved_model
@@ -405,33 +404,38 @@ def predict_and_save(
                 try:
                     np.savez(model_output_path, basic_pitch_model_output=model_output)
                     file_saved_confirmation(OutputExtensions.MODEL_OUTPUT_NPZ.name, model_output_path)
-                except Exception:
+                except Exception as e:
                     failed_to_save(OutputExtensions.MODEL_OUTPUT_NPZ.name, model_output_path)
+                    raise e
 
             if save_midi:
-                midi_path = build_output_path(audio_path, output_directory, OutputExtensions.MIDI)
+                try:
+                    midi_path = build_output_path(audio_path, output_directory, OutputExtensions.MIDI)
+                except IOError as e:
+                    raise e
                 try:
                     midi_data.write(str(midi_path))
                     file_saved_confirmation(OutputExtensions.MIDI.name, midi_path)
-                except Exception:
+                except Exception as e:
                     failed_to_save(OutputExtensions.MIDI.name, midi_path)
+                    raise e
 
             if sonify_midi:
                 midi_sonify_path = build_output_path(audio_path, output_directory, OutputExtensions.MIDI_SONIFICATION)
                 try:
                     infer.sonify_midi(midi_data, midi_sonify_path, sr=sonification_samplerate)
                     file_saved_confirmation(OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path)
-                except Exception:
+                except Exception as e:
                     failed_to_save(OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path)
+                    raise e
 
             if save_notes:
                 note_events_path = build_output_path(audio_path, output_directory, OutputExtensions.NOTE_EVENTS)
                 try:
                     save_note_events(note_events, note_events_path)
                     file_saved_confirmation(OutputExtensions.NOTE_EVENTS.name, note_events_path)
-                except Exception:
+                except Exception as e:
                     failed_to_save(OutputExtensions.NOTE_EVENTS.name, note_events_path)
-        except Exception:
-            print("🚨 Something went wrong 😔 - see the traceback below for details.")
-            print("")
-            print(traceback.format_exc())
+                    raise e
+        except Exception as e:
+            raise e

@@ -117,6 +117,7 @@ def unwrap_output(output: Tensor, audio_original_length: int, n_overlapping_fram
     output_shape = raw_output.shape
     n_output_frames_original = int(np.floor(audio_original_length * (ANNOTATIONS_FPS / AUDIO_SAMPLE_RATE)))
     unwrapped_output = raw_output.reshape(output_shape[0] * output_shape[1], output_shape[2])
+    print("unwrapped_output:\n",unwrapped_output[:n_output_frames_original, :])
     return unwrapped_output[:n_output_frames_original, :]  # trim to original audio length
 
 
@@ -351,7 +352,7 @@ def predict_and_save(
     model_path: Union[pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
-    minimum_note_length: float = 58,
+    minimum_note_length: float = 127.70,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
     multiple_pitch_bends: bool = False,

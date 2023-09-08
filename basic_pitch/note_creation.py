@@ -48,7 +48,7 @@ def model_output_to_notes(
     onset_thresh: float,
     frame_thresh: float,
     infer_onsets: bool = True,
-    min_note_len: int = 5,
+    min_note_len: int = 11,
     min_freq: Optional[float] = None,
     max_freq: Optional[float] = None,
     include_pitch_bends: bool = True,
@@ -396,6 +396,7 @@ def output_to_notes_polyphonic(
     # loop over onsets
     note_events = []
     for note_start_idx, freq_idx in zip(onset_time_idx, onset_freq_idx):
+        print("freq_idx: ", freq_idx)
         # if we're too close to the end of the audio, continue
         if note_start_idx >= n_frames - 1:
             continue
@@ -494,5 +495,6 @@ def output_to_notes_polyphonic(
                     amplitude,
                 )
             )
-
+    print(note_events)
+    
     return note_events

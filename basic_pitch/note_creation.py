@@ -396,7 +396,6 @@ def output_to_notes_polyphonic(
     # loop over onsets
     note_events = []
     for note_start_idx, freq_idx in zip(onset_time_idx, onset_freq_idx):
-        print("freq_idx: ", freq_idx)
         # if we're too close to the end of the audio, continue
         if note_start_idx >= n_frames - 1:
             continue
@@ -495,6 +494,5 @@ def output_to_notes_polyphonic(
                     amplitude,
                 )
             )
-    print(note_events)
     
     return note_events

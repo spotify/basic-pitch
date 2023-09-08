@@ -494,5 +494,5 @@ def output_to_notes_polyphonic(
                     amplitude,
                 )
             )
-    
+
     return note_events

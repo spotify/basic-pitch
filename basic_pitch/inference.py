@@ -117,7 +117,6 @@ def unwrap_output(output: Tensor, audio_original_length: int, n_overlapping_fram
     output_shape = raw_output.shape
     n_output_frames_original = int(np.floor(audio_original_length * (ANNOTATIONS_FPS / AUDIO_SAMPLE_RATE)))
     unwrapped_output = raw_output.reshape(output_shape[0] * output_shape[1], output_shape[2])
-    print("unwrapped_output:\n",unwrapped_output[:n_output_frames_original, :])
     return unwrapped_output[:n_output_frames_original, :]  # trim to original audio length
 
 

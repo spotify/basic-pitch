@@ -73,7 +73,7 @@ def main() -> None:
     parser.add_argument(
         "--minimum-note-length",
         type=float,
-        default=58,
+        default=127.70,
         help="The minimum allowed note length, in miliseconds.",
     )
     parser.add_argument(

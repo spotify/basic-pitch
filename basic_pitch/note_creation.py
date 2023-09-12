@@ -48,7 +48,7 @@ def model_output_to_notes(
     onset_thresh: float,
     frame_thresh: float,
     infer_onsets: bool = True,
-    min_note_len: int = 5,
+    min_note_len: int = 11,
     min_freq: Optional[float] = None,
     max_freq: Optional[float] = None,
     include_pitch_bends: bool = True,

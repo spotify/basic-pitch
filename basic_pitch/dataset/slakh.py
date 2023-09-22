@@ -18,6 +18,7 @@
 import argparse
 import logging
 import os
+import os.path as op
 import sys
 import time
 from typing import List, Tuple
@@ -184,24 +185,18 @@ class SlakhToTfExample(beam.DoFn):
 
 def create_input_data() -> List[Tuple[str, str]]:
     slakh = mirdata.initialize("slakh")
+    slakh.download()
 
     return [(track_id, track.data_split) for track_id, track in slakh.load_tracks().items()]
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    commandline.add_default(parser)
-    commandline.add_split(parser)
-    known_args, pipeline_args = parser.parse_known_args(sys.argv)
-
+def main(known_args, pipeline_args):
     time_created = int(time.time())
     destination = commandline.resolve_destination(known_args, "slakh", time_created)
 
     pipeline_options = {
         "runner": known_args.runner,
-        "project": "audio-understanding",
         "job_name": f"slakh-tfrecords-{time_created}",
-        "region": "europe-west1",
         "machine_type": "e2-standard-4",
         "num_workers": 25,
         "disk_size_gb": 128,
@@ -221,4 +216,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    commandline.add_default(parser, op.basename(op.splittext(__file__)[0]))
+    commandline.add_split(parser)
+    known_args, pipeline_args = parser.parse_known_args()  # sys.argv)
+
+    main(known_args, pipeline_args)

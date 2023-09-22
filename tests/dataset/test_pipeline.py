@@ -6,7 +6,7 @@ import tensorflow as tf
 from apache_beam.testing.test_pipeline import TestPipeline
 from apache_beam.testing.util import assert_that, equal_to
 
-from spotify_audio_to_midi.dataset import pipeline
+from basic_pitch.dataset import pipeline
 
 
 def test_write_batch_to_tf_record():

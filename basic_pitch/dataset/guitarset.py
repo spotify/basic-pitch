@@ -18,6 +18,7 @@
 import argparse
 import logging
 import os
+import os.path as op
 import random
 import sys
 import time
@@ -28,7 +29,7 @@ import mirdata
 
 from basic_pitch.dataset import commandline, pipeline
 
-GUITARSET_DIR = "GuitarSet"
+GUITARSET_DIR = "guitarset"  # "GuitarSet"
 
 
 class GuitarSetInvalidTracks(beam.DoFn):
@@ -47,7 +48,7 @@ class GuitarSetToTfExample(beam.DoFn):
         import apache_beam as beam
         import mirdata
 
-        self.guitarset_remote = mirdata.initialize("guitarset", data_home=os.path.join(self.source, "GuitarSet"))
+        self.guitarset_remote = mirdata.initialize("guitarset", data_home=os.path.join(self.source, GUITARSET_DIR))
         self.filesystem = beam.io.filesystems.FileSystems()
 
     def process(self, element: List[str]):
@@ -144,24 +145,19 @@ def create_input_data(
         return "test"
 
     guitarset = mirdata.initialize("guitarset")
+    guitarset.download()
 
     return [(track_id, determine_split()) for track_id in guitarset.track_ids]
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    commandline.add_default(parser)
-    commandline.add_split(parser)
-    known_args, pipeline_args = parser.parse_known_args(sys.argv)
-
+def main(known_args, pipeline_args):
     time_created = int(time.time())
     destination = commandline.resolve_destination(known_args, GUITARSET_DIR, time_created)
+    input_data = create_input_data(known_args.train_percent, known_args.validation_percent, known_args.split_seed)
 
     pipeline_options = {
         "runner": known_args.runner,
-        "project": "audio-understanding",
         "job_name": f"guitarset-tfrecords-{time_created}",
-        "region": "europe-west1",
         "machine_type": "e2-standard-4",
         "num_workers": 25,
         "disk_size_gb": 128,
@@ -169,7 +165,6 @@ def main():
         "save_main_session": True,
         "worker_harness_container_image": known_args.worker_harness_container_image,
     }
-    input_data = create_input_data(known_args.train_percent, known_args.validation_percent, known_args.split_seed)
     pipeline.run(
         pipeline_options,
         input_data,
@@ -181,4 +176,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    commandline.add_default(parser, op.basename(op.splittext(__file__)[0]))
+    commandline.add_split(parser)
+    known_args, pipeline_args = parser.parse_known_args()  # parser.parse_known_args(sys.argv)
+
+    main(known_args, pipeline_args)

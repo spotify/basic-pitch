@@ -24,7 +24,6 @@ import tensorflow as tf
 
 # import tensorflow_addons as tfa
 
-
 from basic_pitch.constants import (
     ANNOTATIONS_FPS,
     ANNOT_N_FRAMES,
@@ -54,7 +53,6 @@ def prepare_datasets(
         training_shuffle_buffer_size : size of shuffle buffer (only for training set)
         batch_size : ..
     """
-
     assert batch_size > 0
     assert validation_steps is not None and validation_steps > 0
     assert training_shuffle_buffer_size is not None
@@ -170,7 +168,6 @@ def sample_datasets(
     pairs=False,
     num_parallel_calls=6,
 ):
-
     assert split in ["train", "validation"]
     if split == "validation":
         n_shuffle = 0
@@ -179,6 +176,7 @@ def sample_datasets(
             n_samples_per_track = 5
 
     ds_list = []
+
 
     file_generator, random_seed = transcription_file_generator(
         split,
@@ -227,7 +225,6 @@ def transcription_file_generator(
     """
     dataset_names: list of dataset dataset_names
     """
-
     file_dict = {
         dataset_name: tf.data.Dataset.list_files(
             os.path.join(datasets_base_path, dataset_name, "splits", split, "*tfrecord")

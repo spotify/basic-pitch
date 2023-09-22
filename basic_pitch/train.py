@@ -130,8 +130,8 @@ def main(
     )
 
     logging.info("--- Model Training specs ---")
-    logging.info("  train_ds: {train_ds}")
-    logging.info("  validation_ds: {validation_ds}")
+    logging.info(f"  train_ds: {train_ds}")
+    logging.info(f"  validation_ds: {validation_ds}")
     model.summary()
 
     model.fit(
@@ -194,7 +194,7 @@ def console_entry_point():
     )
     for dataset in DATASET_SAMPLING_FREQUENCY.keys():
         parser.add_argument(
-            f"--{dataset}",
+            f"--{dataset.lower()}",
             action="store_true",
             default=False,
             help=f"Use {dataset} dataset in training",
@@ -220,12 +220,12 @@ def console_entry_point():
 
     args = parser.parse_args()
     datasets_to_use = [
-        dataset for dataset in DATASET_SAMPLING_FREQUENCY.keys() if getattr(args, dataset.replace("-", "_"))
+        dataset.lower() for dataset in DATASET_SAMPLING_FREQUENCY.keys() if getattr(args, dataset.lower().replace("-", "_"))
     ]
     dataset_sampling_frequency = [
         frequency
         for dataset, frequency in DATASET_SAMPLING_FREQUENCY.items()
-        if getattr(args, dataset.replace("-", "_"))
+        if getattr(args, dataset.lower().replace("-", "_"))
     ]
     dataset_sampling_frequency = dataset_sampling_frequency / np.sum(dataset_sampling_frequency)
 

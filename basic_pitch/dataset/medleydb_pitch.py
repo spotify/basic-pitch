@@ -18,6 +18,7 @@
 import argparse
 import logging
 import os
+import os.path as op
 import random
 import sys
 import time
@@ -150,24 +151,18 @@ def create_input_data(train_percent: float, seed: Optional[int] = None) -> List[
         return "validation"
 
     medleydb_pitch = mirdata.initialize("medleydb_pitch")
+    medleydb_pitch.download()
 
     return [(track_id, determine_split()) for track_id in medleydb_pitch.track_ids]
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    commandline.add_default(parser)
-    commandline.add_split(parser)
-    known_args, pipeline_args = parser.parse_known_args(sys.argv)
-
+def main(known_args, pipeline_args):
     time_created = int(time.time())
     destination = commandline.resolve_destination(known_args, "MedleyDB-Pitch", time_created)
 
     pipeline_options = {
         "runner": known_args.runner,
-        "project": "audio-understanding",
         "job_name": f"medleydb-pitch-tfrecords-{time_created}",
-        "region": "europe-west1",
         "machine_type": "e2-standard-4",
         "num_workers": 25,
         "disk_size_gb": 128,
@@ -187,4 +182,9 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser()
+    commandline.add_default(parser, op.basename(op.splittext(__file__)[0]))
+    commandline.add_split(parser)
+    known_args, pipeline_args = parser.parse_known_args(sys.argv)
+
+    main(known_args, pipeline_args)

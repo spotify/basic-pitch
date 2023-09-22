@@ -16,35 +16,28 @@
 # limitations under the License.
 
 import argparse
+import inspect
 import os
+import os.path as op
+import pdb
 
 
-def add_default(parser: argparse.ArgumentParser):
+def add_default(parser: argparse.ArgumentParser, dataset_name: str):
+    parser.add_argument("source", nargs='?', default=op.join(op.expanduser('~'), 'mir_datasets'),
+                        help="Source directory for mir data. Defaults to local mir_datasets folder.")
+    parser.add_argument("destination", nargs='?',
+                        default=op.join(op.expanduser('~'), 'data', 'basic_pitch', dataset_name),
+                        help="Output directory to write results to. Defaults to local ~/data/basic_pitch/{dataset}/")
     parser.add_argument("--runner", choices=["DataflowRunner", "DirectRunner"], default="DirectRunner")
-    parser.add_argument(
-        "source",
-        help="Source directory for mir data.",
-    )
-    parser.add_argument(
-        "destination",
-        help="Output directory to write results to.",
-    )
-    parser.add_argument(
-        "--timestamped",
-        default=False,
-        action="store_true",
-        help="If passed, the dataset will be put into a timestamp directory instead of 'splits'",
-    )
+    parser.add_argument("--timestamped", default=False, action="store_true",
+                        help="If passed, the dataset will be put into a timestamp directory instead of 'splits'")
     parser.add_argument("--batch-size", default=5, type=int, help="Number of examples per tfrecord")
-    parser.add_argument(
-        "--worker-harness-container-image",
-        default="",
-        help="Container image to run dataset generation job with. Required due to non-python dependencies",
-    )
+    parser.add_argument("--worker-harness-container-image", default="",
+                        help="Container image to run dataset generation job with. Required due to non-python dependencies")
 
 
 def resolve_destination(namespace: argparse.Namespace, dataset: str, time_created: int) -> str:
-    return os.path.join(namespace.destination, dataset, str(time_created) if namespace.timestamped else "splits")
+    return os.path.join(namespace.destination, str(time_created) if namespace.timestamped else "splits")
 
 
 def add_split(

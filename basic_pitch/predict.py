@@ -21,6 +21,7 @@ import pathlib
 import traceback
 
 from basic_pitch import ICASSP_2022_MODEL_PATH
+from basic_pitch.inference import Model
 
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -35,7 +36,9 @@ def main() -> None:
         "--model_path",
         type=str,
         default=ICASSP_2022_MODEL_PATH,
-        help="path to the saved model directory. Defaults to a ICASSP 2022 model",
+        help="path to the saved model directory. Defaults to a ICASSP 2022 model. "
+        "The preferred model is determined by the first library available in "
+        "[tensorflow]",
     )
     parser.add_argument(
         "--save-midi",
@@ -136,7 +139,7 @@ def main() -> None:
             args.sonify_midi,
             args.save_model_outputs,
             args.save_note_events,
-            pathlib.Path(args.model_path),
+            Model(pathlib.Path(args.model_path)),
             args.onset_threshold,
             args.frame_threshold,
             args.minimum_note_length,

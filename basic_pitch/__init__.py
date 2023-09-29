@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import pathlib
 
 __author__ = "Spotify"
@@ -24,4 +25,20 @@ __demowebsite__ = "https://basicpitch.io"
 __description__ = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection."
 __url__ = "https://github.com/spotify/basic-pitch"
 
-ICASSP_2022_MODEL_PATH = pathlib.Path(__file__).parent / "saved_models/icassp_2022/nmp"
+
+try:
+    import tensorflow as tf
+
+    TF_PRESENT = True
+except ImportError:
+    TF_PRESENT = False
+    logging.warning(
+        "Tensorflow is not installed. "
+        "If you plan to use a TF Saved Model, "
+        "reinstall basic-pitch with `pip install 'basic-pitch[tf]'`"
+    )
+
+if TF_PRESENT:
+    _filename = "nmp"
+
+ICASSP_2022_MODEL_PATH = pathlib.Path(__file__).parent / "saved_models/icassp_2022" / _filename

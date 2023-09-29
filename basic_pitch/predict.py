@@ -38,7 +38,7 @@ def main() -> None:
         default=ICASSP_2022_MODEL_PATH,
         help="path to the saved model directory. Defaults to a ICASSP 2022 model. "
         "The preferred model is determined by the first library available in "
-        "[tensorflow]",
+        "[tensorflow, onnx]",
     )
     parser.add_argument(
         "--save-midi",

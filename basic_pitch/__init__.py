@@ -38,7 +38,21 @@ except ImportError:
         "reinstall basic-pitch with `pip install 'basic-pitch[tf]'`"
     )
 
+try:
+    import onnxruntime as ort
+
+    ONNX_PRESENT = True
+except ImportError:
+    ONNX_PRESENT = False
+    logging.warning(
+        "onnxruntime is not installed. "
+        "If you plan to use an ONNX Model, "
+        "reinstall basic-pitch with `pip install 'basic-pitch[onnx]'`"
+    )
+
 if TF_PRESENT:
     _filename = "nmp"
+elif ONNX_PRESENT:
+    _filename = "nmp.onnx"
 
 ICASSP_2022_MODEL_PATH = pathlib.Path(__file__).parent / "saved_models/icassp_2022" / _filename

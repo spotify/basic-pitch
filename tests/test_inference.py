@@ -20,10 +20,12 @@ import os
 import pathlib
 import tempfile
 import unittest
+from typing import Dict, List
 
 import librosa
 import pretty_midi
 import numpy as np
+import numpy.typing as npt
 
 from basic_pitch import ICASSP_2022_MODEL_PATH, inference
 from basic_pitch.constants import (
@@ -153,8 +155,8 @@ class TestPredict(unittest.TestCase):
         audio, _ = librosa.load(str(test_audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
         overlap_len = 30 * FFT_HOP
         audio = np.concatenate([np.zeros((overlap_len // 2,), dtype=np.float32), audio])
-        audio_windowed = []
-        window_times = []
+        audio_windowed: List[npt.NDArray[np.float32]] = []
+        window_times: List[Dict[str, int]] = []
         for audio_window, window_time, original_length in inference.get_audio_input(
             test_audio_path, overlap_len, AUDIO_N_SAMPLES - overlap_len
         ):

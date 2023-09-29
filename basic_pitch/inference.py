@@ -20,7 +20,7 @@ import enum
 import json
 import os
 import pathlib
-from typing import Dict, List, Optional, Sequence, Tuple, Union, cast
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, Union, cast
 
 
 try:
@@ -116,11 +116,11 @@ class Model:
         if self.model_type == Model.MODEL_TYPES.TENSORFLOW:
             return {k: v.numpy() for k, v in cast(tf.keras.Model, self.model(x)).items()}
         elif self.model_type == Model.MODEL_TYPES.COREML:
-            return cast(ct.models.MLModel, self.model.predict({"input": x.tolist()}))
+            return cast(ct.models.MLModel, self.model.predict({"input": x.tolist()}))  # type: ignore
         elif self.model_type == Model.MODEL_TYPES.TFLITE:
-            return cast(tflite.Interpreter, self.model)(x)
+            return cast(tflite.Interpreter, self.model)(x)  # type: ignore
         elif self.model_type == Model.MODEL_TYPES.ONNX:
-            return cast(ort.InferenceSession, self.model).run(["note", "onset", "contour"], {"input": x})
+            return cast(ort.InferenceSession, self.model).run(["note", "onset", "contour"], {"input": x})  # type: ignore
 
 
 def window_audio_file(
@@ -157,7 +157,7 @@ def window_audio_file(
 
 def get_audio_input(
     audio_path: Union[pathlib.Path, str], overlap_len: int, hop_size: int
-) -> Tuple[npt.NDArray[np.float32], List[Dict[str, int]], int]:
+) -> Iterable[Tuple[npt.NDArray[np.float32], Dict[str, int], int]]:
     """
     Read wave file (as mono), pad appropriately, and return as
     windowed signal, with window length = AUDIO_N_SAMPLES
@@ -226,7 +226,7 @@ def run_inference(
     overlap_len = n_overlapping_frames * FFT_HOP
     hop_size = AUDIO_N_SAMPLES - overlap_len
 
-    output = {"note": [], "onset": [], "contour": []}
+    output: Dict[str, Any] = {"note": [], "onset": [], "contour": []}
     for audio_windowed, _, audio_original_length in get_audio_input(audio_path, overlap_len, hop_size):
         for k, v in model.predict(audio_windowed).items():
             output[k].append(v)

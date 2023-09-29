@@ -54,7 +54,7 @@ from basic_pitch.constants import (
     ANNOTATIONS_FPS,
     FFT_HOP,
 )
-from basic_pitch import ONNX_PRESENT, TF_PRESENT
+from basic_pitch import ONNX_PRESENT, TF_PRESENT, TFLITE_PRESENT
 from basic_pitch.commandline_printing import (
     generating_file_message,
     no_tf_warnings,
@@ -67,6 +67,7 @@ import basic_pitch.note_creation as infer
 class Model:
     class MODEL_TYPES(enum.Enum):
         TENSORFLOW = enum.auto()
+        TFLITE = enum.auto()
         ONNX = enum.auto()
 
     def __init__(self, model_path: Union[pathlib.Path, str]):
@@ -74,6 +75,17 @@ class Model:
             try:
                 self.model_type = Model.MODEL_TYPES.TENSORFLOW
                 self.model = tf.saved_model.load(model_path)
+                return
+            except Exception:
+                pass
+
+
+        if TFLITE_PRESENT:
+            try:
+                self.model_type = Model.MODEL_TYPES.TFLITE
+                self.interpreter = tflite.Interpreter(model_path=model_path)
+                self.interpreter.allocate_tensors()
+                self.model = self.interpreter.get_signature_runner()
                 return
             except Exception:
                 pass
@@ -95,6 +107,8 @@ class Model:
     def predict(self, x: npt.NDArray[np.float32]) -> Dict[str, npt.NDArray[np.float32]]:
         if self.model_type == Model.MODEL_TYPES.TENSORFLOW:
             return {k: v.numpy() for k, v in cast(tf.keras.Model, self.model(x)).items()}
+        elif self.model_type == Model.MODEL_TYPES.TFLITE:
+            return cast(tflite.Interpreter, self.model)(x)
         elif self.model_type == Model.MODEL_TYPES.ONNX:
             return cast(ort.InferenceSession, self.model).run(["note", "onset", "contour"], {"input": x})
 

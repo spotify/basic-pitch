@@ -39,6 +39,19 @@ except ImportError:
     )
 
 try:
+    import tflite_runtime.interpreter as tflite
+
+    TFLITE_PRESENT = True
+except ImportError:
+    TFLITE_PRESENT = False
+    logging.warning(
+        "tflite-runtime is not installed. "
+        "If you plan to use a TFLite Model, "
+        "reinstall basic-pitch with `pip install 'basic-pitch tflite-runtime'` or "
+        "`pip install 'basic-pitch[tf]'"
+    )
+
+try:
     import onnxruntime as ort
 
     ONNX_PRESENT = True
@@ -52,6 +65,8 @@ except ImportError:
 
 if TF_PRESENT:
     _filename = "nmp"
+elif TFLITE_PRESENT:
+    _filename = "nmp.tflite"
 elif ONNX_PRESENT:
     _filename = "nmp.onnx"
 

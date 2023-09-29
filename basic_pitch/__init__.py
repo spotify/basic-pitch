@@ -39,6 +39,18 @@ except ImportError:
     )
 
 try:
+    import coremltools as ct
+
+    CT_PRESENT = True
+except ImportError:
+    CT_PRESENT = False
+    logging.warning(
+        "Coremltools is not installed. "
+        "If you plan to use a CoreML Saved Model, "
+        "reinstall basic-pitch with `pip install 'basic-pitch[coreml]'`"
+    )
+
+try:
     import tflite_runtime.interpreter as tflite
 
     TFLITE_PRESENT = True
@@ -65,6 +77,8 @@ except ImportError:
 
 if TF_PRESENT:
     _filename = "nmp"
+elif CT_PRESENT:
+    _filename = "nmp.mlpackage"
 elif TFLITE_PRESENT:
     _filename = "nmp.tflite"
 elif ONNX_PRESENT:

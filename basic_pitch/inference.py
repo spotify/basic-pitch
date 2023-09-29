@@ -120,7 +120,9 @@ class Model:
         elif self.model_type == Model.MODEL_TYPES.TFLITE:
             return cast(tflite.Interpreter, self.model)(x)  # type: ignore
         elif self.model_type == Model.MODEL_TYPES.ONNX:
-            return cast(ort.InferenceSession, self.model).run(["note", "onset", "contour"], {"input": x})  # type: ignore
+            return cast(ort.InferenceSession, self.model).run(  # type: ignore
+                ["note", "onset", "contour"], {"input": x}
+            )
 
 
 def window_audio_file(

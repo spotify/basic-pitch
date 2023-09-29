@@ -26,7 +26,12 @@ import pretty_midi
 import numpy as np
 
 from basic_pitch import ICASSP_2022_MODEL_PATH, inference
-from basic_pitch.constants import ANNOTATIONS_N_SEMITONES
+from basic_pitch.constants import (
+    AUDIO_SAMPLE_RATE,
+    AUDIO_N_SAMPLES,
+    ANNOTATIONS_N_SEMITONES,
+    FFT_HOP,
+)
 
 RESOURCES_PATH = pathlib.Path(__file__).parent / "resources"
 
@@ -71,7 +76,12 @@ class TestPredict(unittest.TestCase):
             expected_npz_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.npz")
             expected_sonif_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.wav")
 
-            for output_path in [expected_midi_path, expected_csv_path, expected_npz_path, expected_sonif_path]:
+            for output_path in [
+                expected_midi_path,
+                expected_csv_path,
+                expected_npz_path,
+                expected_sonif_path,
+            ]:
                 assert os.path.exists(output_path)
 
     def test_predict_onset_threshold(self) -> None:
@@ -127,3 +137,34 @@ class TestPredict(unittest.TestCase):
             max_freq_midi = np.round(librosa.hz_to_midi(maximum_frequency))
             note_pitch = [n[2] <= max_freq_midi for n in note_events]
             assert all(note_pitch)
+
+    def test_window_audio_file(self) -> None:
+        test_audio_path = RESOURCES_PATH / "vocadito_10.wav"
+        audio, _ = librosa.load(str(test_audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
+        audio_windowed, window_times = inference.window_audio_file(audio, AUDIO_N_SAMPLES - 30 * FFT_HOP)
+        assert len(audio_windowed) == 6
+        assert len(window_times) == 6
+        for time in window_times:
+            assert time["start"] <= time["end"]
+        np.testing.assert_equal(audio[:AUDIO_N_SAMPLES], np.squeeze(audio_windowed[0]))
+
+    def test_get_audio_input(self) -> None:
+        test_audio_path = RESOURCES_PATH / "vocadito_10.wav"
+        audio, _ = librosa.load(str(test_audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
+        overlap_len = 30 * FFT_HOP
+        audio = np.concatenate([np.zeros((overlap_len // 2,), dtype=np.float32), audio])
+        audio_windowed = []
+        window_times = []
+        for audio_window, window_time, original_length in inference.get_audio_input(
+            test_audio_path, overlap_len, AUDIO_N_SAMPLES - overlap_len
+        ):
+            audio_windowed.append(audio_window)
+            window_times.append(window_time)
+        audio_windowed = np.array(audio_windowed)
+        assert len(audio_windowed) == 6
+        assert len(window_times) == 6
+        for time in window_times:
+            assert time["start"] <= time["end"]
+        np.testing.assert_equal(audio[:AUDIO_N_SAMPLES], np.squeeze(audio_windowed[0]))
+
+        assert original_length == 200607

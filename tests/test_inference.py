@@ -70,7 +70,13 @@ class TestPredict(unittest.TestCase):
         test_audio_path = RESOURCES_PATH / "vocadito_10.wav"
         with tempfile.TemporaryDirectory() as tmpdir:
             inference.predict_and_save(
-                [test_audio_path], tmpdir, True, True, True, True, model=inference.Model(ICASSP_2022_MODEL_PATH)
+                [test_audio_path],
+                tmpdir,
+                True,
+                True,
+                True,
+                True,
+                model=inference.Model(ICASSP_2022_MODEL_PATH),
             )
             expected_midi_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.mid")
             expected_csv_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.csv")
@@ -142,7 +148,7 @@ class TestPredict(unittest.TestCase):
     def test_window_audio_file(self) -> None:
         test_audio_path = RESOURCES_PATH / "vocadito_10.wav"
         audio, _ = librosa.load(str(test_audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
-        audio_windowed, window_times = inference.window_audio_file(audio, AUDIO_N_SAMPLES - 30 * FFT_HOP)
+        audio_windowed, window_times = zip(*inference.window_audio_file(audio, AUDIO_N_SAMPLES - 30 * FFT_HOP))
         assert len(audio_windowed) == 6
         assert len(window_times) == 6
         for time in window_times:
@@ -155,7 +161,7 @@ class TestPredict(unittest.TestCase):
         overlap_len = 30 * FFT_HOP
         audio = np.concatenate([np.zeros((overlap_len // 2,), dtype=np.float32), audio])
         audio_windowed: List[npt.NDArray[np.float32]] = []
-        window_times: List[Dict[str, int]] = []
+        window_times: List[Dict[str, float]] = []
         for audio_window, window_time, original_length in inference.get_audio_input(
             test_audio_path, overlap_len, AUDIO_N_SAMPLES - overlap_len
         ):

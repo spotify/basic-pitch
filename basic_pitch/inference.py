@@ -127,7 +127,7 @@ class Model:
 
 def window_audio_file(
     audio_original: npt.NDArray[np.float32], hop_size: int
-) -> Tuple[npt.NDArray[np.float32], List[Dict[str, int]]]:
+) -> Iterable[Tuple[npt.NDArray[np.float32], Dict[str, float]]]:
     """
     Pad appropriately an audio file, and return as
     windowed signal, with window length = AUDIO_N_SAMPLES
@@ -138,28 +138,24 @@ def window_audio_file(
         window_times: list of {'start':.., 'end':...} objects (times in seconds)
 
     """
-    audio_windowed = np.expand_dims(
-        librosa.util.frame(
-            librosa.util.fix_length(audio_original, size=(audio_original.shape[0] // hop_size + 2) * hop_size),
-            frame_length=AUDIO_N_SAMPLES,
-            hop_length=hop_size,
-            axis=0,
-        ),
-        axis=-1,
-    )
-    window_times = [
-        {
+    for i in range(0, audio_original.shape[0], hop_size):
+        window = audio_original[i : i + AUDIO_N_SAMPLES]
+        if len(window) < AUDIO_N_SAMPLES:
+            window = np.pad(
+                window,
+                pad_width=[[0, AUDIO_N_SAMPLES - len(window)]],
+            )
+        t_start = float(i) / AUDIO_SAMPLE_RATE
+        window_time = {
             "start": t_start,
             "end": t_start + (AUDIO_N_SAMPLES / AUDIO_SAMPLE_RATE),
         }
-        for t_start in np.arange(audio_windowed.shape[0]) * hop_size / AUDIO_SAMPLE_RATE
-    ]
-    return audio_windowed, window_times
+        yield np.expand_dims(window, axis=-1), window_time
 
 
 def get_audio_input(
     audio_path: Union[pathlib.Path, str], overlap_len: int, hop_size: int
-) -> Iterable[Tuple[npt.NDArray[np.float32], Dict[str, int], int]]:
+) -> Iterable[Tuple[npt.NDArray[np.float32], Dict[str, float], int]]:
     """
     Read wave file (as mono), pad appropriately, and return as
     windowed signal, with window length = AUDIO_N_SAMPLES
@@ -178,12 +174,15 @@ def get_audio_input(
 
     original_length = audio_original.shape[0]
     audio_original = np.concatenate([np.zeros((int(overlap_len / 2),), dtype=np.float32), audio_original])
-    audio_windowed, window_times = window_audio_file(audio_original, hop_size)
-    for window, window_time in zip(audio_windowed, window_times):
+    for window, window_time in window_audio_file(audio_original, hop_size):
         yield np.expand_dims(window, axis=0), window_time, original_length
 
 
-def unwrap_output(output: npt.NDArray[np.float32], audio_original_length: int, n_overlapping_frames: int) -> np.array:
+def unwrap_output(
+    output: npt.NDArray[np.float32],
+    audio_original_length: int,
+    n_overlapping_frames: int,
+) -> np.array:
     """Unwrap batched model predictions to a single matrix.
 
     Args:

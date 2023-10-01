@@ -17,15 +17,18 @@ classifiers = [
 	"Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
+	"coremltools; platform_system == 'Darwin' and python_version < '3.11'",
 	"librosa>=0.8.0",
 	"mir_eval>=0.6",
 	"numpy>=1.18",
+	"onnxruntime; platform_system == 'Windows' and python_version < '3.11'",
 	"pretty_midi>=0.2.9",
 	"resampy>=0.2.2",
 	"scipy>=1.4.1",
+	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
 	"typing_extensions",
-	"tensorflow>=2.4.1; platform_system != 'Darwin'",
-	"tensorflow-macos>=2.4.1; platform_system == 'Darwin'",
+	"tensorflow>=2.4.1; platform_system != 'Darwin' and python_version >= '3.11'",
+	"tensorflow-macos>=2.4.1; platform_system == 'Darwin' and python_version >= '3.11'",
 ]
 
 [metadata]
@@ -51,9 +54,15 @@ test = [
 	"pytest>=6.1.1",
 	"pytest-mock",
 ]
+tf = [
+	"tensorflow>=2.4.1; platform_system != 'Darwin'",
+	"tensorflow-macos>=2.4.1; platform_system == 'Darwin' and python_version > '3.7'",
+]
+coreml = ["coremltools"] 
+onnx = ["onnxruntime"]
 docs = ["mkdocs>=1.0.4"]
 dev = [
-	"basic_pitch[test,docs]",
+	"basic_pitch[test,tf,coreml,onnx,docs]",
 	"mypy",
 	"tox",
 ]
@@ -63,6 +72,7 @@ universal = true
 
 [build-system]
 requires = [
-	"setuptools",
+	"setuptools>=40.8.0",
 	"wheel",
+	"cython",
 ]

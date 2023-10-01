@@ -28,7 +28,7 @@ __url__ = "https://github.com/spotify/basic-pitch"
 
 
 try:
-    import tensorflow as tf
+    import tensorflow
 
     TF_PRESENT = True
 except ImportError:
@@ -40,7 +40,7 @@ except ImportError:
     )
 
 try:
-    import coremltools as ct
+    import coremltools
 
     CT_PRESENT = True
 except ImportError:
@@ -52,7 +52,7 @@ except ImportError:
     )
 
 try:
-    import tflite_runtime.interpreter as tflite
+    import tflite_runtime.interpreter
 
     TFLITE_PRESENT = True
 except ImportError:
@@ -65,7 +65,7 @@ except ImportError:
     )
 
 try:
-    import onnxruntime as ort
+    import onnxruntime
 
     ONNX_PRESENT = True
 except ImportError:

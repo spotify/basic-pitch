@@ -20,7 +20,11 @@ import os
 import pathlib
 import traceback
 
-from basic_pitch import ICASSP_2022_MODEL_PATH
+from basic_pitch import (
+    ICASSP_2022_MODEL_PATH,
+    FilenameSuffix,
+    build_icassp_2022_model_path,
+)
 from basic_pitch.inference import Model
 
 
@@ -31,14 +35,25 @@ def main() -> None:
     """Handle command line arguments. Entrypoint for this script."""
     parser = argparse.ArgumentParser(description="Predict midi from audio.")
     parser.add_argument("output_dir", type=str, help="directory to save outputs")
-    parser.add_argument("audio_paths", type=str, nargs="+", help="Space separated paths to the input audio files.")
     parser.add_argument(
-        "--model_path",
+        "audio_paths",
+        type=str,
+        nargs="+",
+        help="Space separated paths to the input audio files.",
+    )
+    parser.add_argument(
+        "--model-path",
         type=str,
         default=ICASSP_2022_MODEL_PATH,
         help="path to the saved model directory. Defaults to a ICASSP 2022 model. "
         "The preferred model is determined by the first library available in "
         "[tensorflow, coreml, tensorflow-lite, onnx]",
+    )
+    parser.add_argument(
+        "--model-type",
+        type=str,
+        choices=["tf", "coreml", "tflite", "onnx"],
+        help="If used, --model-path is ignored and instead the model serialization type" "specified is used.",
     )
     parser.add_argument(
         "--save-midi",
@@ -109,8 +124,17 @@ def main() -> None:
         default=120,
         help="The tempo for the midi file.",
     )
-    parser.add_argument("--debug-file", default=None, help="Optional file for debug output for inference.")
-    parser.add_argument("--no-melodia", default=False, action="store_true", help="Skip the melodia trick.")
+    parser.add_argument(
+        "--debug-file",
+        default=None,
+        help="Optional file for debug output for inference.",
+    )
+    parser.add_argument(
+        "--no-melodia",
+        default=False,
+        action="store_true",
+        help="Skip the melodia trick.",
+    )
     args = parser.parse_args()
 
     print("")
@@ -122,7 +146,11 @@ def main() -> None:
     # tensorflow is very slow to import
     # this import is here so that the help messages print faster
     print("Importing Tensorflow (this may take a few seconds)...")
-    from basic_pitch.inference import predict_and_save, verify_output_dir, verify_input_path
+    from basic_pitch.inference import (
+        predict_and_save,
+        verify_output_dir,
+        verify_input_path,
+    )
 
     output_dir = pathlib.Path(args.output_dir)
     verify_output_dir(output_dir)
@@ -130,6 +158,11 @@ def main() -> None:
     audio_path_list = [pathlib.Path(audio_path) for audio_path in args.audio_paths]
     for audio_path in audio_path_list:
         verify_input_path(audio_path)
+
+    if args.model_type:
+        model = Model(build_icassp_2022_model_path(FilenameSuffix[args.model_type]))
+    else:
+        model = Model(args.model_path)
 
     try:
         predict_and_save(
@@ -139,7 +172,7 @@ def main() -> None:
             args.sonify_midi,
             args.save_model_outputs,
             args.save_note_events,
-            Model(pathlib.Path(args.model_path)),
+            model,
             args.onset_threshold,
             args.frame_threshold,
             args.minimum_note_length,

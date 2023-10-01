@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import enum
 import logging
 import pathlib
 
@@ -75,13 +76,26 @@ except ImportError:
         "reinstall basic-pitch with `pip install 'basic-pitch[onnx]'`"
     )
 
-if TF_PRESENT:
-    _filename = "nmp"
-elif CT_PRESENT:
-    _filename = "nmp.mlpackage"
-elif TFLITE_PRESENT:
-    _filename = "nmp.tflite"
-elif ONNX_PRESENT:
-    _filename = "nmp.onnx"
 
-ICASSP_2022_MODEL_PATH = pathlib.Path(__file__).parent / "saved_models/icassp_2022" / _filename
+class FilenameSuffix(enum.Enum):
+    tf = "nmp"
+    coreml = "nmp.mlpackage"
+    tflite = "nmp.tflite"
+    onnx = "nmp.onnx"
+
+
+if TF_PRESENT:
+    _default_model_type = FilenameSuffix.tf
+elif CT_PRESENT:
+    _default_model_type = FilenameSuffix.coreml
+elif TFLITE_PRESENT:
+    _default_model_type = FilenameSuffix.tflite
+elif ONNX_PRESENT:
+    _default_model_type = FilenameSuffix.onnx
+
+
+def build_icassp_2022_model_path(suffix: FilenameSuffix) -> pathlib.Path:
+    return pathlib.Path(__file__).parent / "saved_models/icassp_2022" / suffix.value
+
+
+ICASSP_2022_MODEL_PATH = build_icassp_2022_model_path(_default_model_type)

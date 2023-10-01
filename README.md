@@ -44,13 +44,30 @@ To update Basic Pitch to the latest version, add `--upgrade` to the above comman
 
 #### Compatible Environments:
 - MacOS, Windows and Ubuntu operating systems
-- Python versions 3.7, 3.8, 3.9, 3.10
+- Python versions 3.7, 3.8, 3.9, 3.10, 3.11
 - **For Mac M1 hardware, we currently only support python version 3.10. Otherwise, we suggest using a virtual machine.**
 
+
+### Model Runtime
+
+Basic Pitch comes with the original TensorFlow model and the TensorFlow model converted to [CoreML](https://developer.apple.com/documentation/coreml), [TensorFlowLite](https://www.tensorflow.org/lite), and [ONNX](https://onnx.ai/). By default, Basic Pitch will _not_ install TensorFlow as a dependency *unless you are using Python>=3.11*. Instead, by default, CoreML will be installed on MacOS, TensorFlowLite will be installed on Linux and ONNX will be installed on Windows. If you want to install TensorFlow along with the default model inference runtime, you can install TensorFlow via `pip install basic-pitch[tf]`.
 
 ## Usage
 
 ### Model Prediction
+
+### Model Runtime
+
+By default, Basic Pitch will attempt to load a model in the following order:
+
+1. TensorFlow
+2. CoreML
+3. TensorFlowLite
+4. ONNX
+
+Additionally, the module variable ICASSP_2022_MODEL_PATH will default to the first available version in the list.
+
+We will explain how to override this priority list below. Because all other model serializations were converted from TensorFlow, we recommend using TensorFlow when possible.
 
 #### Command Line Tool
 
@@ -77,6 +94,8 @@ Optionally, you may append any of the following flags to your prediction command
 - `--save-model-outputs` to additionally save raw model outputs as an NPZ file
 - `--save-note-events` to additionally save the predicted note events as a CSV file
 
+If you want to use a non-default model type (e.g., use CoreML instead of TF), use the `--model-type` argument. The CLI will change the loaded model to the type you prefer.
+
 To discover more parameter control, run:
 ```bash
 basic-pitch --help
@@ -100,6 +119,8 @@ model_output, midi_data, note_events = predict(<input-audio-path>)
 - `midi_data` is the transcribed MIDI data derived from the `model_output`
 - `note_events` is a list of note events derived from the `model_output`
 
+Note: As mentioned previously, ICASSP_2022_MODEL_PATH will default to the runtime first supported in the list TensorFlow, CoreML, TensorFlowLite, ONNX.
+
 **predict() in a loop**
 
 To run prediction within a loop, you'll want to load the model yourself and provide `predict()` with the loaded model object itself to be used for repeated prediction calls, in order to avoid redundant and sluggish model loading.
@@ -107,10 +128,10 @@ To run prediction within a loop, you'll want to load the model yourself and prov
 ```python
 import tensorflow as tf
 
-from basic_pitch.inference import predict
+from basic_pitch.inference import predict, Model
 from basic_pitch import ICASSP_2022_MODEL_PATH
 
-basic_pitch_model = tf.saved_model.load(str(ICASSP_2022_MODEL_PATH))
+basic_pitch_model = Model(ICASSP_2022_MODEL_PATH))
 
 for x in range():
     ...

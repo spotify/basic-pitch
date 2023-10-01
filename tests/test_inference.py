@@ -76,7 +76,7 @@ class TestPredict(unittest.TestCase):
                 True,
                 True,
                 True,
-                model=inference.Model(ICASSP_2022_MODEL_PATH),
+                model_or_model_path=ICASSP_2022_MODEL_PATH,
             )
             expected_midi_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.mid")
             expected_csv_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.csv")
@@ -96,7 +96,7 @@ class TestPredict(unittest.TestCase):
         for onset_threshold in [0, 0.3, 0.8, 1]:
             inference.predict(
                 test_audio_path,
-                inference.Model(ICASSP_2022_MODEL_PATH),
+                ICASSP_2022_MODEL_PATH,
                 onset_threshold=onset_threshold,
             )
 
@@ -105,7 +105,7 @@ class TestPredict(unittest.TestCase):
         for frame_threshold in [0, 0.3, 0.8, 1]:
             inference.predict(
                 test_audio_path,
-                inference.Model(ICASSP_2022_MODEL_PATH),
+                ICASSP_2022_MODEL_PATH,
                 frame_threshold=frame_threshold,
             )
 
@@ -114,7 +114,7 @@ class TestPredict(unittest.TestCase):
         for minimum_note_length in [10, 100, 1000]:
             _, _, note_events = inference.predict(
                 test_audio_path,
-                inference.Model(ICASSP_2022_MODEL_PATH),
+                ICASSP_2022_MODEL_PATH,
                 minimum_note_length=minimum_note_length,
             )
             min_len_s = minimum_note_length / 1000.0
@@ -126,7 +126,7 @@ class TestPredict(unittest.TestCase):
         for minimum_frequency in [40, 80, 200, 2000]:
             _, _, note_events = inference.predict(
                 test_audio_path,
-                inference.Model(ICASSP_2022_MODEL_PATH),
+                ICASSP_2022_MODEL_PATH,
                 minimum_frequency=minimum_frequency,
             )
             min_freq_midi = np.round(librosa.hz_to_midi(minimum_frequency))
@@ -138,7 +138,7 @@ class TestPredict(unittest.TestCase):
         for maximum_frequency in [40, 80, 200, 2000]:
             _, _, note_events = inference.predict(
                 test_audio_path,
-                inference.Model(ICASSP_2022_MODEL_PATH),
+                ICASSP_2022_MODEL_PATH,
                 maximum_frequency=maximum_frequency,
             )
             max_freq_midi = np.round(librosa.hz_to_midi(maximum_frequency))

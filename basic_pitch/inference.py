@@ -209,19 +209,24 @@ def unwrap_output(
 
 def run_inference(
     audio_path: Union[pathlib.Path, str],
-    model: Model,
+    model_or_model_path: Union[Model, pathlib.Path, str],
     debug_file: Optional[pathlib.Path] = None,
 ) -> Dict[str, np.array]:
     """Run the model on the input audio path.
 
     Args:
         audio_path: The audio to run inference on.
-        model: A loaded model to run inference with.
+        model_or_model_path: A loaded Model or path to a serialized model to load.
         debug_file: An optional path to output debug data to. Useful for testing/verification.
 
     Returns:
        A dictionary with the notes, onsets and contours from model inference.
     """
+    if isinstance(model_or_model_path, Model):
+        model = model_or_model_path
+    else:
+        model = Model(model_or_model_path)
+
     # overlap 30 frames
     n_overlapping_frames = 30
     overlap_len = n_overlapping_frames * FFT_HOP
@@ -352,7 +357,7 @@ def save_note_events(
 
 def predict(
     audio_path: Union[pathlib.Path, str],
-    model: Model,
+    model_or_model_path: Union[Model, pathlib.Path, str],
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
     minimum_note_length: float = 127.70,
@@ -367,7 +372,7 @@ def predict(
 
     Args:
         audio_path: File path for the audio to run inference on.
-        model: A loaded Model.
+        model_or_model_path: A loaded Model or path to a serialized model to load.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
         minimum_note_length: The minimum allowed note length in milliseconds.
@@ -383,7 +388,7 @@ def predict(
     with no_tf_warnings():
         print(f"Predicting MIDI for {audio_path}...")
 
-        model_output = run_inference(audio_path, model, debug_file)
+        model_output = run_inference(audio_path, model_or_model_path, debug_file)
         min_note_len = int(np.round(minimum_note_length / 1000 * (AUDIO_SAMPLE_RATE / FFT_HOP)))
         midi_data, note_events = infer.model_output_to_notes(
             model_output,
@@ -431,7 +436,7 @@ def predict_and_save(
     sonify_midi: bool,
     save_model_outputs: bool,
     save_notes: bool,
-    model: Model,
+    model_or_model_path: Union[Model, str, pathlib.Path],
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
     minimum_note_length: float = 127.70,
@@ -452,7 +457,7 @@ def predict_and_save(
         sonify_midi: Whether or not to render audio from the MIDI and output it to a file.
         save_model_outputs: True to save contours, onsets and notes from the model prediction.
         save_notes: True to save note events.
-        model: A loaded model.
+        model_or_model_path: A loaded Model or path to a serialized model to load.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
         minimum_note_length: The minimum allowed note length in milliseconds.
@@ -468,7 +473,7 @@ def predict_and_save(
         try:
             model_output, midi_data, note_events = predict(
                 pathlib.Path(audio_path),
-                model,
+                model_or_model_path,
                 onset_threshold,
                 frame_threshold,
                 minimum_note_length,

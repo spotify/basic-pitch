@@ -50,7 +50,7 @@ def main() -> None:
         "[tensorflow, coreml, tensorflow-lite, onnx]",
     )
     parser.add_argument(
-        "--model-type",
+        "--model-serialization",
         type=str,
         choices=["tf", "coreml", "tflite", "onnx"],
         help="If used, --model-path is ignored and instead the model serialization type" "specified is used.",
@@ -159,8 +159,8 @@ def main() -> None:
     for audio_path in audio_path_list:
         verify_input_path(audio_path)
 
-    if args.model_type:
-        model = Model(build_icassp_2022_model_path(FilenameSuffix[args.model_type]))
+    if args.model_serialization:
+        model = Model(build_icassp_2022_model_path(FilenameSuffix[args.model_serialization]))
     else:
         model = Model(args.model_path)
 

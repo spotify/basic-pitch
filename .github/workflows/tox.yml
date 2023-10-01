@@ -43,6 +43,6 @@ jobs:
         run: tox -c tox.ini -e check-formatting,lint,mypy
         if: matrix.py == '3.8'
       - name: Run test suite
-        run: tox -c tox.ini -e py,manifest
+        run: tox -c tox.ini -e py,manifest,full
       - name: Check that basic-pitch can be run as a commandline
         run: pip3 install -e . && basic-pitch --help

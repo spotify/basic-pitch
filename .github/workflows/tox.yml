@@ -13,7 +13,7 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
-          - macos-13
+          - macos-latest
         py:
           - "3.11"
           - "3.10"

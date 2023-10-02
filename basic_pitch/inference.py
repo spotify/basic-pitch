@@ -24,6 +24,8 @@ import pathlib
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, Union, cast
 
 
+from basic_pitch import CT_PRESENT, ONNX_PRESENT, TF_PRESENT, TFLITE_PRESENT
+
 try:
     import tensorflow as tf
 except ImportError:
@@ -37,7 +39,8 @@ except ImportError:
 try:
     import tflite_runtime.interpreter as tflite
 except ImportError:
-    pass
+    if TF_PRESENT:
+        import tensorflow.lite as tflite
 
 try:
     import onnxruntime as ort
@@ -55,7 +58,6 @@ from basic_pitch.constants import (
     ANNOTATIONS_FPS,
     FFT_HOP,
 )
-from basic_pitch import CT_PRESENT, ONNX_PRESENT, TF_PRESENT, TFLITE_PRESENT
 from basic_pitch.commandline_printing import (
     generating_file_message,
     no_tf_warnings,
@@ -106,7 +108,7 @@ class Model:
                         e.__repr__(),
                     )
 
-        if TFLITE_PRESENT:
+        if TFLITE_PRESENT or TF_PRESENT:
             present.append("TensorFlowLite")
             try:
                 self.model_type = Model.MODEL_TYPES.TFLITE
@@ -153,11 +155,22 @@ class Model:
         elif self.model_type == Model.MODEL_TYPES.COREML:
             return cast(ct.models.MLModel, self.model.predict({"input": x.tolist()}))  # type: ignore
         elif self.model_type == Model.MODEL_TYPES.TFLITE:
-            return cast(tflite.SignatureRunner, self.model)(x)  # type: ignore
+            return self.model(input_2=x)  # type: ignore
         elif self.model_type == Model.MODEL_TYPES.ONNX:
-            return cast(ort.InferenceSession, self.model).run(  # type: ignore
-                ["note", "onset", "contour"], {"input": x}
-            )
+            return {
+                k: v
+                for k, v in zip(
+                    ["note", "onset", "contour"],
+                    cast(ort.InferenceSession, self.model).run(
+                        [
+                            "StatefulPartitionedCall:1",
+                            "StatefulPartitionedCall:2",
+                            "StatefulPartitionedCall:0",
+                        ],
+                        {"serving_default_input_2:0": x},
+                    ),
+                )
+            }
 
 
 def window_audio_file(

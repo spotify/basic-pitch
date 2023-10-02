@@ -19,17 +19,6 @@ import enum
 import logging
 import pathlib
 
-try:
-    import tensorflow
-
-    TF_PRESENT = True
-except ImportError:
-    TF_PRESENT = False
-    logging.warning(
-        "Tensorflow is not installed. "
-        "If you plan to use a TF Saved Model, "
-        "reinstall basic-pitch with `pip install 'basic-pitch[tf]'`"
-    )
 
 try:
     import coremltools
@@ -66,6 +55,19 @@ except ImportError:
         "onnxruntime is not installed. "
         "If you plan to use an ONNX Model, "
         "reinstall basic-pitch with `pip install 'basic-pitch[onnx]'`"
+    )
+
+
+try:
+    import tensorflow
+
+    TF_PRESENT = True
+except ImportError:
+    TF_PRESENT = False
+    logging.warning(
+        "Tensorflow is not installed. "
+        "If you plan to use a TF Saved Model, "
+        "reinstall basic-pitch with `pip install 'basic-pitch[tf]'`"
     )
 
 

@@ -153,7 +153,7 @@ class Model:
         if self.model_type == Model.MODEL_TYPES.TENSORFLOW:
             return {k: v.numpy() for k, v in cast(tf.keras.Model, self.model(x)).items()}
         elif self.model_type == Model.MODEL_TYPES.COREML:
-            return cast(ct.models.MLModel, self.model.predict({"input": x.tolist()}))  # type: ignore
+            return cast(ct.models.MLModel, self.model.predict({"input": x}))  # type: ignore
         elif self.model_type == Model.MODEL_TYPES.TFLITE:
             return self.model(input_2=x)  # type: ignore
         elif self.model_type == Model.MODEL_TYPES.ONNX:

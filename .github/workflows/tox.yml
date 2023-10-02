@@ -6,14 +6,14 @@ on:
 jobs:
   test:
     name: test ${{ matrix.py }} - ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os:
-          - Ubuntu
-          - Windows
-          - MacOs
+          - ubuntu-latest
+          - windows-latest
+          - macos-13
         py:
           - "3.11"
           - "3.10"

@@ -156,7 +156,12 @@ class Model:
             print(f"isfinite: {np.all(np.isfinite(x))}", flush=True)
             print(f"shape: {x.shape}", flush=True)
             print(f"dtype: {x.dtype}", flush=True)
-            return cast(ct.models.MLModel, self.model).predict({"input": x})  # type: ignore
+            result = cast(ct.models.MLModel, self.model).predict({"input_2": x})
+            return {
+                "note": result["Identity_1"],
+                "onset": result["Identity_2"],
+                "contour": result["Identity"],
+            }
         elif self.model_type == Model.MODEL_TYPES.TFLITE:
             return self.model(input_2=x)  # type: ignore
         elif self.model_type == Model.MODEL_TYPES.ONNX:

@@ -29,6 +29,7 @@ dependencies = [
 	"typing_extensions",
 	"tensorflow>=2.4.1; platform_system != 'Darwin' and python_version >= '3.11'",
 	"tensorflow-macos>=2.4.1; platform_system == 'Darwin' and python_version >= '3.11'",
+	"scikit-learn<=1.1.2"
 ]
 
 [metadata]

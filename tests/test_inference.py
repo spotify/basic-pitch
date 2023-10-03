@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import faulthandler
 import os
 import pathlib
 import tempfile
@@ -35,6 +36,8 @@ from basic_pitch.constants import (
 )
 
 RESOURCES_PATH = pathlib.Path(__file__).parent / "resources"
+
+faulthandler.enable()
 
 
 class TestPredict(unittest.TestCase):

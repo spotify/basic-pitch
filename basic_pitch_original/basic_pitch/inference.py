@@ -105,7 +105,7 @@ def unwrap_output(output: Tensor, audio_original_length: int, n_overlapping_fram
     Returns:
         array (n_times, n_freqs)
     """
-    raw_output = output.numpy()
+    raw_output = output#.numpy()
     if len(raw_output.shape) != 3:
         return None
 

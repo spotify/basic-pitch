@@ -90,9 +90,9 @@ basic-pitch <output-directory> <input-audio-path-1> <input-audio-path-2> <input-
 
 Optionally, you may append any of the following flags to your prediction command to save additional formats of the prediction output to the `<output-directory>`:
 
-- `--sonify-midi` to additionally save a `.wav` audio rendering of the MIDI file
-- `--save-model-outputs` to additionally save raw model outputs as an NPZ file
-- `--save-note-events` to additionally save the predicted note events as a CSV file
+- `--sonify-midi` to additionally save a `.wav` audio rendering of the MIDI file.
+- `--save-model-outputs` to additionally save raw model outputs as an NPZ file.
+- `--save-note-events` to additionally save the predicted note events as a CSV file.
 
 If you want to use a non-default model type (e.g., use CoreML instead of TF), use the `--model-serialization` argument. The CLI will change the loaded model to the type you prefer.
 

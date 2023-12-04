@@ -148,3 +148,7 @@ junit.xml
 
 # intellij
 .idea/
+
+# cache 
+*_set_cache_*.index
+*_set_cache_*.data*

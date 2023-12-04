@@ -220,7 +220,8 @@ def console_entry_point():
 
     args = parser.parse_args()
     datasets_to_use = [
-        dataset.lower() for dataset in DATASET_SAMPLING_FREQUENCY.keys() if getattr(args, dataset.lower().replace("-", "_"))
+        dataset.lower() for dataset in DATASET_SAMPLING_FREQUENCY.keys()
+        if getattr(args, dataset.lower().replace("-", "_"))
     ]
     dataset_sampling_frequency = [
         frequency

@@ -39,13 +39,13 @@ N_SAMPLES_PER_TRACK = 20
 
 
 def prepare_datasets(
-    datasets_base_path,
-    training_shuffle_buffer_size,
-    batch_size,
-    validation_steps,
+    datasets_base_path: str,
+    training_shuffle_buffer_size: int,
+    batch_size: int,
+    validation_steps: int,
     datasets_to_use: List[str],
     dataset_sampling_frequency: np.ndarray,
-):
+) -> tf.data.Dataset:
     """
     Return a training and a testing dataset.
 
@@ -177,7 +177,6 @@ def sample_datasets(
 
     ds_list = []
 
-
     file_generator, random_seed = transcription_file_generator(
         split,
         datasets,
@@ -213,7 +212,7 @@ def sample_datasets(
     choice_dataset = tf.data.Dataset.range(
         n_datasets
     ).repeat()  # this repeat is critical! if not, only n_dataset points will be sampled!!
-    return tf.data.experimental.choose_from_datasets(ds_list, choice_dataset)
+    return tf.data.Datasets.choose_from_datasets(ds_list, choice_dataset)
 
 
 def transcription_file_generator(

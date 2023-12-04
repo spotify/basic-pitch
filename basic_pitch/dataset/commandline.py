@@ -16,10 +16,8 @@
 # limitations under the License.
 
 import argparse
-import inspect
 import os
 import os.path as op
-import pdb
 
 
 def add_default(parser: argparse.ArgumentParser, dataset_name: str):
@@ -33,7 +31,8 @@ def add_default(parser: argparse.ArgumentParser, dataset_name: str):
                         help="If passed, the dataset will be put into a timestamp directory instead of 'splits'")
     parser.add_argument("--batch-size", default=5, type=int, help="Number of examples per tfrecord")
     parser.add_argument("--worker-harness-container-image", default="",
-                        help="Container image to run dataset generation job with. Required due to non-python dependencies")
+                        help="Container image to run dataset generation job with. \
+                        Required due to non-python dependencies.")
 
 
 def resolve_destination(namespace: argparse.Namespace, dataset: str, time_created: int) -> str:

@@ -20,7 +20,6 @@ import logging
 import os
 import os.path as op
 import random
-import sys
 import time
 from typing import List, Tuple, Optional
 

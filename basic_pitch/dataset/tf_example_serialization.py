@@ -87,7 +87,7 @@ def to_transcription_tfexample(
     contours_values: List[float],
     notes_onsets_shape: Tuple[int, int],
     contours_shape: Tuple[int, int],
-):
+) -> tf.train.Example:
     """
     - `file_id` string
     - `source` string  (e.g., "maestro")

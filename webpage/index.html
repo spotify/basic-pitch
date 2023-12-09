@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Audio Music Transcriber</title>
+
+    <script src="_libraries/jquery-3.6.0.min.js"></script>
+    <script src="transcribe.js"></script>
+</head>
+<body>
+    <h1>AI Audio Music Transcriber</h1>
+    <form id="transcribe_form" method="post" enctype="multipart/form-data">
+        <input type="file" id="audio" name="audio" accept="audio/*" required />
+        <select name="model" required>
+            <option value="" selected disabled>Choose a model...</option>
+            <option value="Our model (trained on MAESTRO dataset)">Onsets and Frames with Wave Separation</option>
+            <option value="Spotify-trained ()">Onsets and Frames</option>
+        </select>
+        <button type="submit" id="transcribe-button">Transcribe</button>
+    </form>
+    <br><br>
+    <div id="response"></div>
+</body>
+</html>

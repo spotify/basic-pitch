@@ -1,4 +1,0 @@
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.3\extras\CUPTI\lib64
-C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.3\extras\CUPTI\include
-C:\tools\cudnn-windows-x86_64-8.9.6.50_cuda12-archive\include
-C:\tools\cudnn-windows-x86_64-8.9.6.50_cuda12-archive\bin

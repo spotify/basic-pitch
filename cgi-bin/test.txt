@@ -1,0 +1,26 @@
+Terminal
+[
+    'c:\\xampp\\htdocs\\FALL2023_IndependentStudy\\audio_to_midi_vst\\cgi-bin', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\python38.zip', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\DLLs', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber', 
+    'C:\\Users\\Alex\\AppData\\Roaming\\Python\\Python38\\site-packages', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib\\site-packages', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib\\site-packages\\win32', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib\\site-packages\\win32\\lib', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib\\site-packages\\Pythonwin'
+]    
+
+Web browser
+[
+    'C:\\xampp\\htdocs\\FALL2023_IndependentStudy\\audio_to_midi_vst\\cgi-bin', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib\\site-packages', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\python38.zip', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\DLLs', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib\\site-packages\\win32', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib\\site-packages\\win32\\lib', 
+    'C:\\Users\\Alex\\anaconda3\\envs\\MusicTranscriber\\lib\\site-packages\\Pythonwin'
+]

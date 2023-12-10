@@ -1,7 +1,8 @@
 $(document).ready(function() {
     $('form#transcribe_form').submit(function(event) { 
         event.preventDefault();
-        var formData = new FormData($(this)[0]);
+        var formData = new FormData(this);
+        console.log(formData)
 
         // call python script to transcribe audio
         server_request('../cgi-bin/transcribe.py', 'POST', formData).then(function(response) {

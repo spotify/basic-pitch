@@ -4,6 +4,7 @@ print("Content-Type: text/html\r\n\r\n")
 import sys
 
 print(sys.path)
+
 import cgi
 import os
 import json

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="style.css">
+    <title>Midi Transcriber</title>
+	<script src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.4.0"></script>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+</head>
+<body>
+    <div id="overlay"></div>
+
+    <div id="navbar">
+        <p id="navbar-title">Midi Transcriber</p>
+    </div>
+
+    <label for="audio-input" id="drop-area">
+        <p>Drag & Drop your audio file here</p>
+        <p>or</p>
+        <span id="browse-button">Browse for a file</span>
+        <input type="file" accept="audio/*" required id="audio-input">
+    </label>
+    </div>
+	<div class="button-container">
+        <button id="play-button">Play</button>
+        <button id="pause-button">Pause</button>
+		<button id="download-button">Download MIDI</button>
+    </div>
+	<h2 style="color: #00ccff;"> Audio Input:</h2>
+	<div id="waveform"></div>
+	<p id="midi-output-title">Midi Output:</p>
+    <div id="midi-output">
+		<section id="section3">
+			<h1 id="midi-output-title">Midi Output:</h1>
+			<midi-visualizer
+			  src="./assets/ThisOldGuitar.mid">
+			</midi-visualizer>
+			</section>
+    </div><br>
+	<midi-player
+	src="./assets/ThisOldGuitar.mid"
+	sound-font visualizer="#section3 midi-visualizer">
+  </midi-player>
+  <script src="script.js"></script>
+</body>
+</html>

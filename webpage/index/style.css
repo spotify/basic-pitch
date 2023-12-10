@@ -1,0 +1,140 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-image: url("../assets/background.jpeg");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#navbar {
+    width: 100%;
+    padding: 15px;
+    background-color: #1a1a1a;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#navbar-title {
+    margin: 0;
+    font-size: 24px;
+    color: #00ccff;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+#drop-area {
+    
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 70px;
+    background-color: rgb(132, 129, 129);
+    width: 20%;
+    max-width: 800px;
+    z-index: 1;
+}
+
+#audio-input {
+    margin-left: 40px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+#waveform {
+    width: 80%;
+    max-width: 800px;
+    height: 160px;
+    margin: 20px 0;
+    border: 2px solid rgba(0, 0, 0, 0.1); 
+    border-radius: 8px;
+    background-color: rgb(132, 129, 129); 
+    background-image: url("../assets/back.jpeg");
+    z-index: 1; 
+}
+
+#midi-output {
+    width: 80%;
+    max-width: 800px;
+    height: 400px;
+    margin-top: 20px; 
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: rgb(132, 129, 129); 
+    background-image: url("../assets/back.jpeg");
+    position: relative;
+    z-index: 1;
+}
+
+#midi-output-title {
+    margin-bottom: 60px;
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+    color: #00ccff; 
+    z-index: 2; 
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    max-width: 800px;
+    margin-top: 10px; 
+    z-index: 1; 
+}
+
+button {
+    flex: 1; 
+    padding: 10px; 
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #00ccff;
+}
+
+#browse-button {
+    flex: 2;
+    padding: 10px;
+    font-size: 16px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #00ccff;
+    color: #fff;
+    transition: background-color 0.3s;
+}
+
+#browse-button:hover {
+    background-color: #0088cc;
+}
+#volume-control-container {
+    width: 50px;
+    margin-top: 20px;
+    z-index: 1;
+    transform: rotate(270deg);
+    transform-origin: 0% 0%;
+    margin-left: -35px;
+}

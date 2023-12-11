@@ -2,21 +2,58 @@ $(document).ready(function() {
     $('form#transcribe_form').submit(function(event) { 
         event.preventDefault();
         var formData = new FormData(this);
-        console.log(formData)
-
-        // call python script to transcribe audio
-        server_request('../cgi-bin/transcribe.py', 'POST', formData).then(function(response) {
-            if (response.status == 'success') {
-                parse_response(response.data)
-            } else {
-                console.log(response.data)
-            }
-        });
+        
+        transcribe_audio(formData);
     });
 });
 
-function parse_response(data) {
+function transcribe_audio(formData) {
+    // disable transcribe button and show loading animation
+    $('#transcribe_button').prop('disabled', true);
+    $("#input_select_model").prop('disabled', true);
+    $("#model_results").hide();
+    $("#results_error").hide();
+    $("#results_error").html('');
+    $('#results_loading').show();
+
+    // call python script to transcribe audio
+    server_request('../../cgi-bin/transcribe.py', 'POST', formData).then(function(response) {
+        switch (response.status) {
+            case 'success':
+                display_midi(response.data);
+                break;
+            case 'failure':
+                display_error(response.data);
+                break;
+            case 'error':
+                display_error(response.data);
+                break;
+            default:
+                console.log(response)
+                break;
+        }
+    });
+}
+
+function display_midi(data) {
     console.log(data)
+
+    $('#transcribe_button').prop('disabled', false);
+    $("#input_select_model").prop('disabled', false);
+    $("#results_error").hide();
+    $("#results_error").html('');
+    $('#results_loading').hide();
+    
+    load_midi("../" + data)
+    $("#model_results").show();
+}
+
+function display_error(message) {
+    $('#transcribe_button').prop('disabled', false);
+    $("#input_select_model").prop('disabled', false);
+    $("#results_error").html(message);
+    $("#results_error").show();
+    $('#results_loading').hide();
 }
 
 function server_request(url, method, data = null) {

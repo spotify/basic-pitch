@@ -1,0 +1,158 @@
+html {
+    background-color: black;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: black;
+}
+
+.blue_title {
+    color: #00ccff;
+    font-size: 32px;
+    font-weight: bold;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
+
+.content {
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+.background_parent img {
+    margin: 0;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    left: 0%;
+    bottom: 0%;
+    z-index: -1;
+    object-fit:cover;
+    opacity: 33%;
+
+  
+    /* makes undraggable */
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.content_area {
+    border: 2px solid rgba(0, 0, 0, 0.5); 
+    border-radius: 8px;
+    height: fit-content;
+    z-index: 1; 
+    position: relative;
+}
+
+.content_area.audio_wave {
+    min-height: 128px;
+}
+
+.content_area.midi_visualizer {
+    min-height: 200px;
+}
+
+.content_area .content_background {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    left: 0%;
+    bottom: 0%;
+    z-index: -1;
+    border-radius:8px;
+    object-fit:cover;
+    position: absolute;
+
+  
+    /* makes undraggable */
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.content_area .content {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 5;
+    border-radius: 8px;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+#file_label {
+    color: black;
+    font-weight: bold;
+}
+
+#drop-area {
+    width: 100%;
+    height: 175px;
+    border: 2px solid rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.custom_button {
+    border-radius: 8px;
+    border:rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.3s ease; /* Add a smooth transition effect */
+    transition: color 0.3s ease;
+}
+
+.custom_button.blue {
+    background-color: #00ccff;
+}
+
+.custom_button.red {
+    background-color: #ff0000b3;
+}
+
+/* Define the hover effect */
+.custom_button:hover {
+    background-color: white;
+    color: black;
+}
+
+.custom_button:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.custom_button:disabled:hover {
+    background-color: #cccccc;
+    color: #666666;
+}
+
+#volume-control-container {
+    width: 50px;
+    margin-top: 20px;
+    z-index: 1;
+    transform: rotate(270deg);
+    transform-origin: 0% 0%;
+    margin-left: -35px;
+}
+
+div.piano-roll-visualizer {
+    height: 100%;
+}
+
+div.loading {
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
+}

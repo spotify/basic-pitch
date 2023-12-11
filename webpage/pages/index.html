@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../_css/style.css">
+    <link rel="stylesheet" href="../_css/bootstrap_styles.css">
+    <title>Midi Transcriber</title>
+    <script src="../_libraries/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.4.0"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/wavesurfer.js"></script>
+    <script src="../_js/script.js"></script>
+    <script src="../_js/transcribe.js"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container px-4 px-lg-5">
+            <a class="navbar-brand" href="index.html">AI Audio Music Transcriber</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <a href="https://github.com/alexfishy12/audio_to_midi_vst" class="nav-link text-decoration-none text-primary me-3">
+                    Github
+                    <i class="bi bi-github"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="overlay"></div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col text-center">
+                <form id="transcribe_form" method="post" enctype="multipart/form-data">
+                    <label for="audio-input" id="drop-area">
+                        <p>Drag & Drop your audio file here</p>
+                        <p>or</p>
+                        <span id="browse-button">Browse for a file</span>
+                        <input type="file" name="audio" accept="audio/*" id="audio-input" required>
+                    </label>
+                    <br>
+                    <select class="form-control" name="model" required>
+                        <option value="" selected disabled>Choose a model...</option>
+                        <option value="our_model">Our model (trained on MAESTRO dataset)</option>
+                        <option value="spotify_model">Spotify's model (ICASSP 2022)</option>
+                    </select>
+                    <button class="btn btn-outline-dark" type="submit" id="transcribe-button">Transcribe</button>
+                </form>
+    
+                <div class="button-container">
+                    <button id="play-button">Play</button>
+                    <button id="pause-button">Pause</button>
+                    <button id="download-button">Download MIDI</button>
+                </div>
+                
+                <h2 style="color: #00ccff;">Audio Input:</h2>
+                <div id="waveform"></div>
+                <p id="midi-output-title">Midi Output:</p>
+                <div id="midi-output">
+                    <section id="section3">
+                        <midi-visualizer src="../_assets/ThisOldGuitar.mid"></midi-visualizer>
+                    </section>
+                </div><br>
+                <midi-player
+                    src="../_assets/ThisOldGuitar.mid"
+                    sound-font visualizer="#section3 midi-visualizer">
+                </midi-player>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

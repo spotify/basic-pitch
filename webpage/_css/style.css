@@ -1,93 +1,143 @@
-body {
+html {
+    background-color: black;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-image: url("../_assets/background.jpeg");
-    background-size: cover;
-    background-repeat: no-repeat;
+}
+
+body {
+    background-color: black;
+}
+
+.blue_title {
+    color: #00ccff;
+    font-size: 32px;
+    font-weight: bold;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
 }
 
 .content {
     margin-left: 15%;
     margin-right: 15%;
-    padding-bottom: 5%;
+}
+
+.background_parent img {
+    margin: 0;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    left: 0%;
+    bottom: 0%;
+    z-index: -1;
+    object-fit:cover;
+    opacity: 33%;
+
+  
+    /* makes undraggable */
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.content_area {
+    border: 2px solid rgba(0, 0, 0, 0.5); 
+    border-radius: 8px;
+    height: fit-content;
+    z-index: 1; 
+    position: relative;
+}
+
+.content_area.audio_wave {
+    min-height: 128px;
+}
+
+.content_area.midi_visualizer {
+    min-height: 200px;
+}
+
+.content_area .content_background {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    left: 0%;
+    bottom: 0%;
+    z-index: -1;
+    border-radius:8px;
+    object-fit:cover;
+    position: absolute;
+
+  
+    /* makes undraggable */
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.content_area .content {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 5;
+    border-radius: 8px;
 }
 
 input[type="file"] {
     display: none;
 }
 
+#file_label {
+    color: black;
+    font-weight: bold;
+}
+
 #drop-area {
-    
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    width: 100%;
+    height: 175px;
+    border: 2px solid rgba(0, 0, 0, 0.5);
     padding: 30px;
     text-align: center;
     cursor: pointer;
-    margin-top: 70px;
-    background-color: rgb(132, 129, 129);
-    width: 20%;
-    max-width: 800px;
-    z-index: 1;
 }
 
-#audio-input {
-    margin-left: 40px;
-    width: 100%;
-    margin-top: 10px;
-}
-
-#waveform {
-    height: 160px;
-    margin: 20px 0;
-    border: 2px solid rgba(0, 0, 0, 0.1); 
+.custom_button {
     border-radius: 8px;
-    background-color: rgb(132, 129, 129); 
-    background-image: url("../_assets/back.jpeg");
-    z-index: 1; 
-}
-
-#midi-output {
-    height: 400px;
-    border: 2px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    background-color: rgb(132, 129, 129); 
-    background-image: url("../_assets/back.jpeg");
-    position: relative;
-    z-index: 1;
-}
-
-
-
-button {
-    flex: 1; 
-    padding: 10px; 
-    font-size: 16px;
-    margin: 5px;
-    cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #00ccff;
-}
-
-#browse-button {
-    flex: 2;
+    border:rgba(0, 0, 0, 0.2);
     padding: 10px;
     font-size: 16px;
-    margin: 5px;
     cursor: pointer;
-    border: none;
-    border-radius: 4px;
-    background-color: #00ccff;
     color: #fff;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease; /* Add a smooth transition effect */
+    transition: color 0.3s ease;
 }
 
-#browse-button:hover {
-    background-color: #0088cc;
+.custom_button.blue {
+    background-color: #00ccff;
 }
+
+.custom_button.red {
+    background-color: #ff0000b3;
+}
+
+/* Define the hover effect */
+.custom_button:hover {
+    background-color: white;
+    color: black;
+}
+
+.custom_button:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+}
+
+.custom_button:disabled:hover {
+    background-color: #cccccc;
+    color: #666666;
+}
+
 #volume-control-container {
     width: 50px;
     margin-top: 20px;
@@ -95,4 +145,14 @@ button:hover {
     transform: rotate(270deg);
     transform-origin: 0% 0%;
     margin-left: -35px;
+}
+
+div.piano-roll-visualizer {
+    height: 100%;
+}
+
+div.loading {
+    color: white;
+    font-size: 32px;
+    font-weight: bold;
 }

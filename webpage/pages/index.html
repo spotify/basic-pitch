@@ -16,7 +16,7 @@
     <script src="../_js/script.js"></script>
     <script src="../_js/transcribe.js"></script>
 </head>
-<body>
+<body style="background: transparent;">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container px-4 px-lg-5">
             <a class="navbar-brand" href="index.html">AI Audio Music Transcriber</a>
@@ -29,48 +29,99 @@
             </div>
         </div>
     </nav>
-
-    <div id="overlay"></div>
-
-    <div class="container">
+    <div class="container mt-5 mb-5">
         <div class="row justify-content-center">
             <div class="col text-center">
-                <form id="transcribe_form" method="post" enctype="multipart/form-data">
-                    <label for="audio-input" id="drop-area">
-                        <p>Drag & Drop your audio file here</p>
-                        <p>or</p>
-                        <span id="browse-button">Browse for a file</span>
-                        <input type="file" name="audio" accept="audio/*" id="audio-input" required>
-                    </label>
-                    <br>
-                    <select class="form-control" name="model" required>
+                <div class="blue_title">Audio Input:</div>
+                <form class="row mb-4" id="transcribe_form" method="post" enctype="multipart/form-data">
+                    <div class="col">
+                        <label for="audio-input" class="content_area file_input" id="drop-area">
+                            <img class="content_background" src="../_assets/back.jpeg"></img>
+                            <div class="content">
+                                <div id="file_label">
+                                    Drag & drop your audio file here <br> or
+                                </div>
+                                <br>
+                                <div class="custom_button blue" id="browse-button">
+                                    Browse for a file
+                                    <bi class="bi bi-folder2-open ms-2"></bi>
+                                </div>
+                                <input type="file" name="audio" accept="audio/*" id="audio-input" required>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="col text-center  align-items-center">
+                        <div class="content_area audio_wave">
+                            <img class="content_background" src="../_assets/back.jpeg"></img>
+                            <div class="content" id="waveform-container">
+
+                            </div>
+                        </div>
+              
+                        <div class="row">
+                            <div class="col text-center">
+                                <button class="custom_button blue" id="play-button" form="" style="width: 100%;">
+                                    Play
+                                    <bi class="bi bi-play-fill"></bi>
+                                </button>
+                            </div>
+                            <div class="col text-center">
+                                <button class="custom_button blue" id="pause-button" form="" style="width: 100%;">
+                                    Pause
+                                    <bi class="bi bi-pause-fill"></bi>
+                                </button>
+                            </div>
+                            <div class="col text-center">
+                                <button class="custom_button red" id="reset-button" form="" style="width: 100%;">
+                                    Reset
+                                    <bi class="bi bi-arrow-counterclockwise"></bi>
+                                </button>
+                            </div>
+                        </div>
+                           
+                    </div>
+                </form>
+                <div class="input-group mb-3">
+                    <select id="input_select_model" class="form-control" name="model" form="transcribe_form" required>
                         <option value="" selected disabled>Choose a model...</option>
                         <option value="our_model">Our model (trained on MAESTRO dataset)</option>
                         <option value="spotify_model">Spotify's model (ICASSP 2022)</option>
                     </select>
-                    <button class="btn btn-outline-dark" type="submit" id="transcribe-button">Transcribe</button>
-                </form>
-    
-                <div class="button-container">
-                    <button id="play-button">Play</button>
-                    <button id="pause-button">Pause</button>
-                    <button id="download-button">Download MIDI</button>
+                    <button class="custom_button blue" type="submit" id="transcribe_button" form="transcribe_form">Transcribe!</button>
                 </div>
-                
-                <h2 style="color: #00ccff;">Audio Input:</h2>
-                <div id="waveform"></div>
-                <p id="midi-output-title">Midi Output:</p>
-                <div id="midi-output">
-                    <section id="section3">
-                        <midi-visualizer src="../_assets/ThisOldGuitar.mid"></midi-visualizer>
-                    </section>
-                </div><br>
-                <midi-player
-                    src="../_assets/ThisOldGuitar.mid"
-                    sound-font visualizer="#section3 midi-visualizer">
-                </midi-player>
+                <div id="results_loading" style="display:none;">
+                    <div class="loading mt-5">Transcribing! Please wait...</div><br><br>
+                    <div class="spinner-border text-white" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+                <div id="results_error" style="display:none;">
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Error!</h4>
+                        <p id="error_message"></p>
+                    </div>
+                </div>
+                <div id="model_results" style="display:none;">
+                    <div class="blue_title">MIDI Output:</div>
+                    <div class="content_area midi_visualizer">
+                        <img class="content_background" src="../_assets/back.jpeg"></img>
+                        <div class="content">
+                            <midi-visualizer id="midi-visualizer"></midi-visualizer>
+                        </div>
+                    </div><br>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <midi-player sound-font visualizer="#midi-visualizer" id="midi-player" ></midi-player>
+                        <button class="custom_button blue ms-3" id="download-button" form="">
+                            Download MIDI
+                            <bi class="bi bi-download ms-2"></bi>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
+    <div class="background_parent">
+        <img class='' src='../_assets/background.jpeg'></img>
     </div>
 </body>
 </html>

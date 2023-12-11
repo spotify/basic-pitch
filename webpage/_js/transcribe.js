@@ -88,7 +88,12 @@ function server_request(url, method, data = null) {
                     data: "AJAX ERROR (" + textStatus + ")\n" + errorThrown
                 };
                 resolve(response);
-            }
+            },
+            statusCode: {
+                500: function() {
+                    alert("Internal server error. Please try again later.");
+                 }
+              },
         })
     });
 }

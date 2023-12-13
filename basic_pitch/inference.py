@@ -70,7 +70,7 @@ def window_audio_file(audio_original: Tensor, hop_size: int) -> Tuple[Tensor, Li
 
 
 def get_audio_input(
-    audio_path: Union[pathlib.Path, str], overlap_len: int, hop_size: int
+    audio_path_or_array: Union[pathlib.Path, str, np.ndarray], sample_rate: int, overlap_len: int, hop_size: int
 ) -> Tuple[Tensor, List[Dict[str, int]], int]:
     """
     Read wave file (as mono), pad appropriately, and return as
@@ -86,7 +86,17 @@ def get_audio_input(
     """
     assert overlap_len % 2 == 0, "overlap_length must be even, got {}".format(overlap_len)
 
-    audio_original, _ = librosa.load(str(audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
+    if isinstance(audio_path_or_array, np.ndarray):
+        # convert to mono if necessary
+        if audio_path_or_array.ndim != 1:
+            audio_path_or_array = librosa.to_mono(audio_path_or_array)
+        if sample_rate is None:
+            raise ValueError("Please provide sample rate of audio!")
+        # resample if necessary
+        elif sample_rate != AUDIO_SAMPLE_RATE:
+            audio_original = librosa.resample(audio_path_or_array, orig_sr=sample_rate, target_sr=AUDIO_SAMPLE_RATE)
+    else:
+        audio_original, _ = librosa.load(str(audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
 
     original_length = audio_original.shape[0]
     audio_original = np.concatenate([np.zeros((int(overlap_len / 2),), dtype=np.float32), audio_original])
@@ -121,14 +131,16 @@ def unwrap_output(output: Tensor, audio_original_length: int, n_overlapping_fram
 
 
 def run_inference(
-    audio_path: Union[pathlib.Path, str],
+    audio_path_or_array: Union[pathlib.Path, str, np.ndarray],
+    sample_rate: None,
     model: keras.Model,
     debug_file: Optional[pathlib.Path] = None,
 ) -> Dict[str, np.array]:
     """Run the model on the input audio path.
 
     Args:
-        audio_path: The audio to run inference on.
+        audio_path_or_array: The audio to run inference on.
+        sample_rate: Sample rate of the audio file. Only used if audio_path_or_array is a np array.
         model: A loaded keras model to run inference with.
         debug_file: An optional path to output debug data to. Useful for testing/verification.
 
@@ -140,7 +152,7 @@ def run_inference(
     overlap_len = n_overlapping_frames * FFT_HOP
     hop_size = AUDIO_N_SAMPLES - overlap_len
 
-    audio_windowed, _, audio_original_length = get_audio_input(audio_path, overlap_len, hop_size)
+    audio_windowed, _, audio_original_length = get_audio_input(audio_path_or_array, sample_rate, overlap_len, hop_size)
 
     output = model(audio_windowed)
     unwrapped_output = {k: unwrap_output(output[k], audio_original_length, n_overlapping_frames) for k in output}
@@ -260,7 +272,8 @@ def save_note_events(
 
 
 def predict(
-    audio_path: Union[pathlib.Path, str],
+    audio_path_or_array: Union[pathlib.Path, str, np.ndarray],
+    sample_rate: int = None,
     model_or_model_path: Union[keras.Model, pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
@@ -275,7 +288,8 @@ def predict(
     """Run a single prediction.
 
     Args:
-        audio_path: File path for the audio to run inference on.
+        audio_path_or_array: File path for the audio to run inference on or array of audio samples.
+        sample_rate: Sample rate of the audio file. Only used if audio_path_or_array is a np array.
         model_or_model_path: Path to load the Keras saved model from. Can be local or on GCS.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
@@ -298,9 +312,10 @@ def predict(
         else:
             model = model_or_model_path
 
-        print(f"Predicting MIDI for {audio_path}...")
+        if not isinstance(audio_path_or_array, np.ndarray):
+            print(f"Predicting MIDI for {audio_path_or_array}...")
 
-        model_output = run_inference(audio_path, model, debug_file)
+        model_output = run_inference(audio_path_or_array, sample_rate, model, debug_file)
         min_note_len = int(np.round(minimum_note_length / 1000 * (AUDIO_SAMPLE_RATE / FFT_HOP)))
         midi_data, note_events = infer.model_output_to_notes(
             model_output,

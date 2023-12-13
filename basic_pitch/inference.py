@@ -75,6 +75,7 @@ def get_audio_input(
     """
     Read wave file (as mono), pad appropriately, and return as
     windowed signal, with window length = AUDIO_N_SAMPLES
+    If audio samples are provided, convert to mono and resample to AUDIO_SAMPLE_RATE if necessary.
 
     Returns:
         audio_windowed: tensor with shape (n_windows, AUDIO_N_SAMPLES, 1)
@@ -139,7 +140,7 @@ def run_inference(
     """Run the model on the input audio path.
 
     Args:
-        audio_path_or_array: The audio to run inference on.
+        audio_path_or_array: The audio to run inference on. Can be either the path to an audio file or a numpy array of audio samples.
         sample_rate: Sample rate of the audio file. Only used if audio_path_or_array is a np array.
         model: A loaded keras model to run inference with.
         debug_file: An optional path to output debug data to. Useful for testing/verification.

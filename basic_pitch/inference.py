@@ -97,7 +97,7 @@ def get_audio_input(
         elif sample_rate != AUDIO_SAMPLE_RATE:
             audio_original = librosa.resample(audio_path_or_array, orig_sr=sample_rate, target_sr=AUDIO_SAMPLE_RATE)
     else:
-        audio_original, _ = librosa.load(str(audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
+        audio_original, _ = librosa.load(str(audio_path_or_array), sr=AUDIO_SAMPLE_RATE, mono=True)
 
     original_length = audio_original.shape[0]
     audio_original = np.concatenate([np.zeros((int(overlap_len / 2),), dtype=np.float32), audio_original])

@@ -13,14 +13,14 @@ function transcribe_audio(formData) {
     $("#input_select_model").prop('disabled', true);
     $("#model_results").hide();
     $("#results_error").hide();
-    $("#results_error").html('');
+    $("#error_message").html('');
     $('#results_loading').show();
 
     // call python script to transcribe audio
-    server_request('../../cgi-bin/transcribe.py', 'POST', formData).then(function(response) {
+    server_request('http://127.0.0.1:8000/transcribe', 'POST', formData).then(function(response) {
         switch (response.status) {
             case 'success':
-                display_midi(response.data);
+                get_midi_file(response.data);
                 break;
             case 'failure':
                 display_error(response.data);
@@ -35,23 +35,29 @@ function transcribe_audio(formData) {
     });
 }
 
-function display_midi(data) {
-    console.log(data)
+function get_midi_file(file_name) { 
+    // full file path
+    var midi_file_url = "http://127.0.0.1:8000/static/" + file_name;
 
+
+    display_midi(midi_file_url);
+}
+
+function display_midi(data) {
     $('#transcribe_button').prop('disabled', false);
     $("#input_select_model").prop('disabled', false);
     $("#results_error").hide();
-    $("#results_error").html('');
+    $("#error_message").html('');
     $('#results_loading').hide();
     
-    load_midi("../" + data)
+    load_midi(data)
     $("#model_results").show();
 }
 
 function display_error(message) {
     $('#transcribe_button').prop('disabled', false);
     $("#input_select_model").prop('disabled', false);
-    $("#results_error").html(message);
+    $("#error_message").html(message);
     $("#results_error").show();
     $('#results_loading').hide();
 }
@@ -65,19 +71,8 @@ function server_request(url, method, data = null) {
             processData: false, // Prevent serialization of the FormData object
             contentType: false, // Let the browser set the correct content type for FormData
             success: function (response, status) {
-                $("#response").html(response)
                 // AJAX Success, server responded
-                try {
-                    // Try to parse response as JSON
-                    response = JSON.parse(response);
-                } catch (e) {
-                    // Response is not JSON, Error in PHP was not caught
-                    response = {
-                        status: 'error', 
-                        data: "Error parsing response from server.\n\nJS ERROR\n" + e + "\n\nPYTHON ERROR\n" + response
-                    };
-                    resolve(response);
-                }
+                console.log(response)
                 // Response successfully parsed as JSON, PHP compiled and caught all errors
                 resolve(response);
             },

@@ -1,0 +1,11 @@
+# Ignore these directories in the main folder
+basic_pitch_original/
+cgi-bin/
+independent_study/
+temp_file_storage/
+__pycache__
+.git
+.vscode
+.dockerignore
+Dockerfile
+README.md

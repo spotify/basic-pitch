@@ -1,0 +1,6 @@
+Please visit http://g.co/magenta/maestro-dataset to download the maestro dataset.
+
+Place the dataset files depicting the competition year in this directory.
+./2006, ./2007, ./2008, etc..
+
+The JSON will pull data from the files here.

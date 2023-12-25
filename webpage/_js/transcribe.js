@@ -39,7 +39,6 @@ function get_midi_file(file_name) {
     // full file path
     var midi_file_url = "http://127.0.0.1:8000/static/" + file_name;
 
-
     display_midi(midi_file_url);
 }
 

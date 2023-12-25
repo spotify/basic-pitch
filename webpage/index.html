@@ -5,16 +5,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="../_css/style.css">
-    <link rel="stylesheet" href="../_css/bootstrap_styles.css">
+	<link rel="stylesheet" href="./_css/style.css">
+    <link rel="stylesheet" href="./_css/bootstrap_styles.css">
     <title>Midi Transcriber</title>
-    <script src="../_libraries/jquery-3.6.0.min.js"></script>
+    <script src="./_libraries/jquery-3.6.0.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/combine/npm/tone@14.7.58,npm/@magenta/music@1.23.1/es6/core.js,npm/focus-visible@5,npm/html-midi-player@1.4.0"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/wavesurfer.js"></script>
-    <script src="../_js/script.js"></script>
-    <script src="../_js/transcribe.js"></script>
+    <script src="./_js/script.js"></script>
+    <script src="./_js/transcribe.js"></script>
 </head>
 <body style="background: transparent;">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -22,8 +22,8 @@
             <a class="navbar-brand" href="index.html">AI Audio Music Transcriber</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <a href="https://github.com/alexfishy12/audio_to_midi_vst" class="nav-link text-decoration-none text-primary me-3">
-                    Github
+                <a href="https://github.com/alexfishy12/audio_to_midi_transcriber" class="nav-link text-decoration-none text-primary me-3">
+                    GitHub
                     <i class="bi bi-github"></i>
                 </a>
             </div>
@@ -36,7 +36,7 @@
                 <form class="row mb-4" id="transcribe_form" method="post" enctype="multipart/form-data">
                     <div class="col">
                         <label for="audio-input" class="content_area file_input" id="drop-area">
-                            <img class="content_background" src="../_assets/back.jpeg"></img>
+                            <img class="content_background" src="./_assets/back.jpeg"></img>
                             <div class="content">
                                 <div id="file_label">
                                     Drag & drop your audio file here <br> or
@@ -52,7 +52,7 @@
                     </div>
                     <div class="col text-center  align-items-center">
                         <div class="content_area audio_wave">
-                            <img class="content_background" src="../_assets/back.jpeg"></img>
+                            <img class="content_background" src="./_assets/back.jpeg"></img>
                             <div class="content" id="waveform-container">
 
                             </div>
@@ -104,7 +104,7 @@
                 <div id="model_results" style="display:none;">
                     <div class="blue_title">MIDI Output:</div>
                     <div class="content_area midi_visualizer">
-                        <img class="content_background" src="../_assets/back.jpeg"></img>
+                        <img class="content_background" src="./_assets/back.jpeg"></img>
                         <div class="content">
                             <midi-visualizer id="midi-visualizer"></midi-visualizer>
                         </div>
@@ -121,7 +121,7 @@
         </div>
     </div>
     <div class="background_parent">
-        <img class='' src='../_assets/background.jpeg'></img>
+        <img class='' src='./_assets/background.jpeg'></img>
     </div>
 </body>
 </html>

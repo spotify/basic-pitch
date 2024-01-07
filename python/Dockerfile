@@ -11,9 +11,7 @@ COPY ./requirements.txt ./requirements.txt
 # Assumes that environment.yml is part of the copied files
 RUN pip install -r requirements.txt
 
-COPY ./src ./src
-
-EXPOSE 8000
+COPY . .
 
 # The code to run when container is started:
-ENTRYPOINT ["python3", "src/app.py"]
+ENTRYPOINT ["python3", "app.py"]

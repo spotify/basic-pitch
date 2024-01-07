@@ -30,8 +30,8 @@ app.add_middleware(
 cwd = os.getcwd()
 
 # set paths
-TEMP_FILE_STORAGE_PATH = cwd + '/src/temp_file_storage/'
-MODEL_STORAGE_PATH = cwd + '/src/usable_models/'
+TEMP_FILE_STORAGE_PATH = cwd + '/temp_file_storage/'
+MODEL_STORAGE_PATH = cwd + '/usable_models/'
 
 app.mount("/static", StaticFiles(directory=TEMP_FILE_STORAGE_PATH), name="static")
 
@@ -98,4 +98,4 @@ async def transcribe(model: Annotated[str, Form(...)], file: UploadFile = File(.
         return {'status': 'error', 'data': 'Midi file was not created'}
 
 if __name__ == '__main__':
-    uvicorn.run(app, port=8000, host="0.0.0.0")
+    uvicorn.run(app, port=1111, host="0.0.0.0")

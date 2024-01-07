@@ -17,7 +17,7 @@ function transcribe_audio(formData) {
     $('#results_loading').show();
 
     // call python script to transcribe audio
-    server_request('http://127.0.0.1:8000/transcribe', 'POST', formData).then(function(response) {
+    server_request('transcribe', 'POST', formData).then(function(response) {
         switch (response.status) {
             case 'success':
                 get_midi_file(response.data);
@@ -37,7 +37,7 @@ function transcribe_audio(formData) {
 
 function get_midi_file(file_name) { 
     // full file path
-    var midi_file_url = "http://127.0.0.1:8000/static/" + file_name;
+    var midi_file_url = "static/" + file_name;
 
     display_midi(midi_file_url);
 }

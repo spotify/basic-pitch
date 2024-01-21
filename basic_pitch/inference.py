@@ -92,7 +92,7 @@ def get_audio_input(
         if audio_path_or_array.ndim != 1:
             audio_path_or_array = librosa.to_mono(audio_path_or_array)
         if sample_rate is None:
-            raise ValueError("Please provide sample rate of audio!")
+            raise ValueError("Sample rate must be provided when input is a numpy array.")
         # resample if necessary
         elif sample_rate != AUDIO_SAMPLE_RATE:
             audio_original = librosa.resample(audio_path_or_array, orig_sr=sample_rate, target_sr=AUDIO_SAMPLE_RATE)

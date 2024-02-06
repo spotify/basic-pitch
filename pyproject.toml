@@ -68,5 +68,4 @@ universal = true
 requires = [
 	"setuptools>=40.8.0",
 	"wheel",
-	"cython<3",
 ]

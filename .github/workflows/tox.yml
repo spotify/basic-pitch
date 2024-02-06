@@ -36,6 +36,8 @@ jobs:
       - name: Install soundlibs Windows
         run: choco install libsndfile
         if: matrix.os == 'Windows'
+      - name: Upgrade pip
+        run: python -m pip install -U pip
       - name: Install tox
         run: python -m pip install tox
       # We will only check this on the minimum python version

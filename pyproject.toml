@@ -24,7 +24,6 @@ dependencies = [
 	"numpy>=1.18",
 	"pretty_midi>=0.2.9",
 	"resampy>=0.2.2",
-	"scikit-learn<=1.1.2",
 	"scipy>=1.4.1",
 	"typing_extensions",
 	"tensorflow>=2.4.1; platform_system != 'Darwin'",

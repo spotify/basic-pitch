@@ -154,15 +154,15 @@ def create_cqt_kernels(
 
     if (fmax is not None) and (n_bins is None):
         n_bins = np.ceil(bins_per_octave * np.log2(fmax / fmin))  # Calculate the number of bins
-        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
+        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / float(bins_per_octave))
 
     elif (fmax is None) and (n_bins is not None):
-        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
+        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / float(bins_per_octave))
 
     else:
         warnings.warn("If fmax is given, n_bins will be ignored", SyntaxWarning)
         n_bins = np.ceil(bins_per_octave * np.log2(fmax / fmin))  # Calculate the number of bins
-        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / np.float(bins_per_octave))
+        freqs = fmin * 2.0 ** (np.r_[0:n_bins] / float(bins_per_octave))
 
     if np.max(freqs) > fs / 2 and topbin_check is True:
         raise ValueError(
@@ -563,7 +563,7 @@ class CQT2010v2(tf.keras.layers.Layer):
         # The freqs returned by create_cqt_kernels cannot be used
         # Since that returns only the top octave bins
         # We need the information for all freq bin
-        freqs = self.fmin * 2.0 ** (np.r_[0 : self.n_bins] / np.float(self.bins_per_octave))
+        freqs = self.fmin * 2.0 ** (np.r_[0 : self.n_bins] / float(self.bins_per_octave))
         self.frequencies = freqs
 
         self.lengths = np.ceil(Q * self.sample_rate / freqs)

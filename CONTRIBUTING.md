@@ -13,6 +13,7 @@ We recommend first installing the following non-python dependencies:
     - To install on Windows, run `choco install libsndfile` using [Chocolatey](https://chocolatey.org/)
     - To install on Ubuntu, run `sudo apt-get update && sudo apt-get install --no-install-recommends -y --fix-missing pkg-config libsndfile1`
 - [ffmpeg](https://ffmpeg.org/) is a complete, cross-platform solution to record, convert and stream audio in all `basic-pitch` supported formats
+- sox
 
 To compile a debug build of `basic-pitch` that allows using a debugger (like gdb or lldb), use the following command to build the package locally and install a symbolic link for debugging:
 ```shell

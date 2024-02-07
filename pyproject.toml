@@ -50,6 +50,12 @@ namespaces = false
 basic-pitch = "basic_pitch.predict:main"
 
 [project.optional-dependencies]
+train = [
+    "apache_beam",
+    "mirdata",
+    "smart_open",
+    "sox"
+]
 test = [
 	"coverage>=5.0.2",
 	"pytest>=6.1.1",

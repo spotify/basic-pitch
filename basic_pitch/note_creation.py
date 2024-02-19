@@ -127,7 +127,7 @@ def sonify_midi(
 
 def sonify_salience(
     gram: np.array,
-    semitone_resolution: float,
+    semitone_resolution: int,
     save_path: Optional[str] = None,
     thresh: float = 0.2,
 ) -> Tuple[np.array, int]:
@@ -559,7 +559,7 @@ def _frames_to_time(
     frames: np.ndarray,
     *,
     sr: float = 22050,
-    hop_length: int = 512,
+    hop_length: float = 512,
     n_fft: Optional[int] = None,
 ) -> Union[np.floating, np.ndarray]:
     """Convert frame counts to time (seconds).

@@ -19,6 +19,7 @@ classifiers = [
 dependencies = [
 	"mir_eval>=0.6",
 	"numpy>=1.18",
+	"pedalboard>=0.8.0",
 	"pretty_midi>=0.2.9",
 	"resampy>=0.2.2",
 	"scipy>=1.4.1",

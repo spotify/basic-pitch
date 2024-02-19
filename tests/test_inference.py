@@ -63,7 +63,12 @@ class TestPredict(unittest.TestCase):
             expected_npz_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.npz")
             expected_sonif_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.wav")
 
-            for output_path in [expected_midi_path, expected_csv_path, expected_npz_path, expected_sonif_path]:
+            for output_path in [
+                expected_midi_path,
+                expected_csv_path,
+                expected_npz_path,
+                expected_sonif_path,
+            ]:
                 assert os.path.exists(output_path)
 
     def test_predict_onset_threshold(self) -> None:

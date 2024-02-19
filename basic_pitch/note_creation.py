@@ -109,7 +109,11 @@ def model_output_to_notes(
     )
 
 
-def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str], sr: Optional[int] = 44100) -> None:
+def sonify_midi(
+    midi: pretty_midi.PrettyMIDI,
+    save_path: Union[pathlib.Path, str],
+    sr: Optional[int] = 44100,
+) -> None:
     """Sonify a pretty_midi midi object and save to a file.
 
     Args:
@@ -122,7 +126,10 @@ def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str
 
 
 def sonify_salience(
-    gram: np.array, semitone_resolution: float, save_path: Optional[str] = None, thresh: float = 0.2
+    gram: np.array,
+    semitone_resolution: float,
+    save_path: Optional[str] = None,
+    thresh: float = 0.2,
 ) -> Tuple[np.array, int]:
     """Sonify a salience matrix.
 
@@ -173,7 +180,9 @@ def midi_pitch_to_contour_bin(pitch_midi: int) -> np.array:
 
 
 def get_pitch_bends(
-    contours: np.ndarray, note_events: List[Tuple[int, int, int, float]], n_bins_tolerance: int = 25
+    contours: np.ndarray,
+    note_events: List[Tuple[int, int, int, float]],
+    n_bins_tolerance: int = 25,
 ) -> List[Tuple[int, int, int, float, Optional[List[int]]]]:
     """Given note events and contours, estimate pitch bends per note.
     Pitch bends are represented as a sequence of evenly spaced midi pitch bend control units.
@@ -238,7 +247,13 @@ def note_events_to_midi(
     instruments: DefaultDict[int, pretty_midi.Instrument] = defaultdict(
         lambda: pretty_midi.Instrument(program=piano_program)
     )
-    for start_time, end_time, note_number, amplitude, pitch_bend in note_events_with_pitch_bends:
+    for (
+        start_time,
+        end_time,
+        note_number,
+        amplitude,
+        pitch_bend,
+    ) in note_events_with_pitch_bends:
         instrument = instruments[note_number] if multiple_pitch_bends else instruments[0]
         note = pretty_midi.Note(
             velocity=int(np.round(127 * amplitude)),
@@ -303,7 +318,10 @@ def get_infered_onsets(onsets: np.array, frames: np.array, n_diff: int = 2) -> n
 
 
 def constrain_frequency(
-    onsets: np.array, frames: np.array, max_freq: Optional[float], min_freq: Optional[float]
+    onsets: np.array,
+    frames: np.array,
+    max_freq: Optional[float],
+    min_freq: Optional[float],
 ) -> Tuple[np.array, np.array]:
     """Zero out activations above or below the max/min frequencies
 
@@ -496,9 +514,8 @@ def output_to_notes_polyphonic(
 
     return note_events
 
-def _cqt_frequencies(
-    n_bins: int, *, fmin: float, bins_per_octave: int = 12, tuning: float = 0.0
-) -> np.ndarray:
+
+def _cqt_frequencies(n_bins: int, *, fmin: float, bins_per_octave: int = 12, tuning: float = 0.0) -> np.ndarray:
     """Compute the center frequencies of Constant-Q bins.
 
     Args:
@@ -516,11 +533,10 @@ def _cqt_frequencies(
         Center frequency for each CQT bin
     """
     correction: float = 2.0 ** (float(tuning) / bins_per_octave)
-    frequencies: np.ndarray = 2.0 ** (
-        np.arange(0, n_bins, dtype=float) / bins_per_octave
-    )
+    frequencies: np.ndarray = 2.0 ** (np.arange(0, n_bins, dtype=float) / bins_per_octave)
 
     return correction * fmin * frequencies
+
 
 def _hz_to_midi(
     frequencies: float,
@@ -537,6 +553,7 @@ def _hz_to_midi(
     """
     midi: np.ndarray = 12 * (np.log2(np.asanyarray(frequencies)) - np.log2(440.0)) + 69
     return midi
+
 
 def _frames_to_time(
     frames: np.ndarray,
@@ -572,6 +589,7 @@ def _frames_to_time(
     samples = (np.asanyarray(frames) * hop_length + offset).astype(int)
 
     return np.asanyarray(samples) / float(sr)
+
 
 def _midi_to_hz(
     notes: float,

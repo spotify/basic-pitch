@@ -30,7 +30,12 @@ def main() -> None:
     """Handle command line arguments. Entrypoint for this script."""
     parser = argparse.ArgumentParser(description="Predict midi from audio.")
     parser.add_argument("output_dir", type=str, help="directory to save outputs")
-    parser.add_argument("audio_paths", type=str, nargs="+", help="Space separated paths to the input audio files.")
+    parser.add_argument(
+        "audio_paths",
+        type=str,
+        nargs="+",
+        help="Space separated paths to the input audio files.",
+    )
     parser.add_argument(
         "--model_path",
         type=str,
@@ -106,8 +111,17 @@ def main() -> None:
         default=120,
         help="The tempo for the midi file.",
     )
-    parser.add_argument("--debug-file", default=None, help="Optional file for debug output for inference.")
-    parser.add_argument("--no-melodia", default=False, action="store_true", help="Skip the melodia trick.")
+    parser.add_argument(
+        "--debug-file",
+        default=None,
+        help="Optional file for debug output for inference.",
+    )
+    parser.add_argument(
+        "--no-melodia",
+        default=False,
+        action="store_true",
+        help="Skip the melodia trick.",
+    )
     args = parser.parse_args()
 
     print("")
@@ -119,7 +133,11 @@ def main() -> None:
     # tensorflow is very slow to import
     # this import is here so that the help messages print faster
     print("Importing Tensorflow (this may take a few seconds)...")
-    from basic_pitch.inference import predict_and_save, verify_output_dir, verify_input_path
+    from basic_pitch.inference import (
+        predict_and_save,
+        verify_output_dir,
+        verify_input_path,
+    )
 
     output_dir = pathlib.Path(args.output_dir)
     verify_output_dir(output_dir)

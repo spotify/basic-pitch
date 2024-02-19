@@ -86,9 +86,10 @@ def get_audio_input(
     """
     assert overlap_len % 2 == 0, "overlap_length must be even, got {}".format(overlap_len)
 
-    with AudioFile(str(audio_path), 'r', AUDIO_SAMPLE_RATE) as audio_original:
+    with AudioFile(str(audio_path), "r").resampled_to(AUDIO_SAMPLE_RATE) as audio_original:
         original_length = audio_original.frames
-        audio_original = np.concatenate([np.zeros((int(overlap_len / 2),), dtype=np.float32), audio_original])
+        audio = audio_original.read(original_length).squeeze()
+        audio_original = np.concatenate([np.zeros((int(overlap_len / 2),), dtype=np.float32), audio])
         audio_windowed, window_times = window_audio_file(audio_original, hop_size)
     return audio_windowed, window_times, original_length
 
@@ -270,7 +271,11 @@ def predict(
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
     midi_tempo: float = 120,
-) -> Tuple[Dict[str, np.array], pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]],]:
+) -> Tuple[
+    Dict[str, np.array],
+    pretty_midi.PrettyMIDI,
+    List[Tuple[float, float, int, float, Optional[List[int]]]],
+]:
     """Run a single prediction.
 
     Args:

@@ -53,7 +53,10 @@ def transcription_loss(y_true: tf.Tensor, y_pred: tf.Tensor, label_smoothing: fl
 
 
 def weighted_transcription_loss(
-    y_true: tf.Tensor, y_pred: tf.Tensor, label_smoothing: float, positive_weight: float = 0.5
+    y_true: tf.Tensor,
+    y_pred: tf.Tensor,
+    label_smoothing: float,
+    positive_weight: float = 0.5,
 ) -> tf.Tensor:
     """The transcription loss where the positive and negative true labels are balanced by a weighting factor.
 

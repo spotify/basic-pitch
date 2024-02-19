@@ -19,7 +19,6 @@ import pathlib
 from collections import defaultdict
 from typing import DefaultDict, Dict, List, Optional, Tuple, Union
 import mir_eval
-import librosa
 import resampy
 import numpy as np
 import pretty_midi
@@ -137,7 +136,7 @@ def sonify_salience(
     Returns:
         A tuple of the sonified salience as an audio signal and the associated sample rate.
     """
-    freqs = librosa.core.cqt_frequencies(
+    freqs = _cqt_frequencies(
         n_bins=ANNOTATIONS_N_SEMITONES * semitone_resolution,
         fmin=ANNOTATIONS_BASE_FREQUENCY,
         bins_per_octave=12 * semitone_resolution,
@@ -145,7 +144,7 @@ def sonify_salience(
     # this function is slow - for speed, only sonify frequencies below
     # sonify_fs/2 Hz (e.g. 1000 Hz)
     max_freq_idx = np.where(freqs > SONIFY_FS / 2)[0][0]
-    times = librosa.core.frames_to_time(
+    times = _frames_to_time(
         np.arange(gram.shape[1]),
         sr=AUDIO_SAMPLE_RATE,
         hop_length=AUDIO_N_SAMPLES / ANNOT_N_FRAMES,  # THIS IS THE CORRECT HOP!!
@@ -169,7 +168,7 @@ def midi_pitch_to_contour_bin(pitch_midi: int) -> np.array:
         index in contour matrix
 
     """
-    pitch_hz = librosa.midi_to_hz(pitch_midi)
+    pitch_hz = _midi_to_hz(pitch_midi)
     return 12.0 * CONTOURS_BINS_PER_SEMITONE * np.log2(pitch_hz / ANNOTATIONS_BASE_FREQUENCY)
 
 
@@ -319,11 +318,11 @@ def constrain_frequency(
        frequency set to 0.
     """
     if max_freq is not None:
-        max_freq_idx = int(np.round(librosa.hz_to_midi(max_freq) - MIDI_OFFSET))
+        max_freq_idx = int(np.round(_hz_to_midi(max_freq) - MIDI_OFFSET))
         onsets[:, max_freq_idx:] = 0
         frames[:, max_freq_idx:] = 0
     if min_freq is not None:
-        min_freq_idx = int(np.round(librosa.hz_to_midi(min_freq) - MIDI_OFFSET))
+        min_freq_idx = int(np.round(_hz_to_midi(min_freq) - MIDI_OFFSET))
         onsets[:, :min_freq_idx] = 0
         frames[:, :min_freq_idx] = 0
 
@@ -331,7 +330,7 @@ def constrain_frequency(
 
 
 def model_frames_to_time(n_frames: int) -> np.ndarray:
-    original_times = librosa.core.frames_to_time(
+    original_times = _frames_to_time(
         np.arange(n_frames),
         sr=AUDIO_SAMPLE_RATE,
         hop_length=FFT_HOP,
@@ -496,3 +495,95 @@ def output_to_notes_polyphonic(
             )
 
     return note_events
+
+def _cqt_frequencies(
+    n_bins: int, *, fmin: float, bins_per_octave: int = 12, tuning: float = 0.0
+) -> np.ndarray:
+    """Compute the center frequencies of Constant-Q bins.
+
+    Args:
+    n_bins: int > 0 [scalar]
+        Number of constant-Q bins
+    fmin: float > 0 [scalar]
+        Minimum frequency
+    bins_per_octave: int > 0 [scalar]
+        Number of bins per octave
+    tuning: float
+        Deviation from A440 tuning in fractional bins
+
+    Returns:
+    frequencies: np.ndarray [shape=(n_bins,)]
+        Center frequency for each CQT bin
+    """
+    correction: float = 2.0 ** (float(tuning) / bins_per_octave)
+    frequencies: np.ndarray = 2.0 ** (
+        np.arange(0, n_bins, dtype=float) / bins_per_octave
+    )
+
+    return correction * fmin * frequencies
+
+def _hz_to_midi(
+    frequencies: float,
+) -> Union[np.ndarray, np.floating]:
+    """Get MIDI note number(s) for given frequencies
+
+    Args:
+    frequencies: float or np.ndarray [shape=(n,), dtype=float]
+        frequencies to convert
+
+    Returns:
+    note_nums: number or np.ndarray [shape=(n,), dtype=float]
+        MIDI notes to ``frequencies``
+    """
+    midi: np.ndarray = 12 * (np.log2(np.asanyarray(frequencies)) - np.log2(440.0)) + 69
+    return midi
+
+def _frames_to_time(
+    frames: np.ndarray,
+    *,
+    sr: float = 22050,
+    hop_length: int = 512,
+    n_fft: Optional[int] = None,
+) -> Union[np.floating, np.ndarray]:
+    """Convert frame counts to time (seconds).
+
+    Args:
+    frames: np.ndarray [shape=(n,)]
+        frame index or vector of frame indices
+    sr: number > 0 [scalar]
+        audio sampling rate
+    hop_length: int > 0 [scalar]
+        number of samples between successive frames
+    n_fft: None or int > 0 [scalar]
+        Optional: length of the FFT window.
+        If given, time conversion will include an offset of ``n_fft // 2``
+        to counteract windowing effects when using a non-centered STFT.
+
+    Returns:
+    times: np.ndarray [shape=(n,)]
+        time (in seconds) of each given frame number::
+
+            times[i] = frames[i] * hop_length / sr
+    """
+    offset = 0
+
+    if n_fft is not None:
+        offset = int(n_fft // 2)
+    samples = (np.asanyarray(frames) * hop_length + offset).astype(int)
+
+    return np.asanyarray(samples) / float(sr)
+
+def _midi_to_hz(
+    notes: float,
+) -> Union[np.ndarray, np.floating]:
+    """Get the frequency (Hz) of MIDI note(s)
+
+    Args:
+    notes: int or np.ndarray [shape=(n,), dtype=int]
+        midi number(s) of the note(s)
+
+    Returns:
+    frequency: number or np.ndarray [shape=(n,), dtype=float]
+        frequency (frequencies) of ``notes`` in Hz
+    """
+    return 440.0 * (2.0 ** ((np.asanyarray(notes) - 69.0) / 12.0))

@@ -17,7 +17,6 @@ classifiers = [
 	"Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-	"librosa>=0.8.0",
 	"mir_eval>=0.6",
 	"numpy>=1.18",
 	"pretty_midi>=0.2.9",

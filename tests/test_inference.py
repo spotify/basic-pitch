@@ -20,12 +20,12 @@ import pathlib
 import tempfile
 import unittest
 
-import librosa
 import pretty_midi
 import numpy as np
 
 from basic_pitch import ICASSP_2022_MODEL_PATH, inference
 from basic_pitch.constants import ANNOTATIONS_N_SEMITONES
+from basic_pitch.note_creation import _hz_to_midi
 
 RESOURCES_PATH = pathlib.Path(__file__).parent / "resources"
 
@@ -104,7 +104,7 @@ class TestPredict(unittest.TestCase):
                 ICASSP_2022_MODEL_PATH,
                 minimum_frequency=minimum_frequency,
             )
-            min_freq_midi = np.round(librosa.hz_to_midi(minimum_frequency))
+            min_freq_midi = np.round(_hz_to_midi(minimum_frequency))
             note_pitch = [n[2] >= min_freq_midi for n in note_events]
             assert all(note_pitch)
 
@@ -116,6 +116,6 @@ class TestPredict(unittest.TestCase):
                 ICASSP_2022_MODEL_PATH,
                 maximum_frequency=maximum_frequency,
             )
-            max_freq_midi = np.round(librosa.hz_to_midi(maximum_frequency))
+            max_freq_midi = np.round(_hz_to_midi(maximum_frequency))
             note_pitch = [n[2] <= max_freq_midi for n in note_events]
             assert all(note_pitch)

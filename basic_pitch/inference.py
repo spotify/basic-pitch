@@ -23,8 +23,8 @@ import pathlib
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from tensorflow import Tensor, signal, keras, saved_model
+from pedalboard.io import AudioFile
 import numpy as np
-import librosa
 import pretty_midi
 
 from basic_pitch.constants import (
@@ -86,11 +86,10 @@ def get_audio_input(
     """
     assert overlap_len % 2 == 0, "overlap_length must be even, got {}".format(overlap_len)
 
-    audio_original, _ = librosa.load(str(audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
-
-    original_length = audio_original.shape[0]
-    audio_original = np.concatenate([np.zeros((int(overlap_len / 2),), dtype=np.float32), audio_original])
-    audio_windowed, window_times = window_audio_file(audio_original, hop_size)
+    with AudioFile(str(audio_path), 'r', AUDIO_SAMPLE_RATE) as audio_original:
+        original_length = audio_original.frames
+        audio_original = np.concatenate([np.zeros((int(overlap_len / 2),), dtype=np.float32), audio_original])
+        audio_windowed, window_times = window_audio_file(audio_original, hop_size)
     return audio_windowed, window_times, original_length
 
 

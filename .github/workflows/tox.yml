@@ -13,7 +13,7 @@ jobs:
         os:
           - ubuntu-latest
           - windows-latest
-          - macos-latest
+          - macos-latest-xlarge
         py:
           - "3.11"
           - "3.10"

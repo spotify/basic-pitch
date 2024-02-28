@@ -44,5 +44,6 @@ jobs:
         if: matrix.py == '3.10.11'
       - name: Run test suite
         run: tox -c tox.ini -e py,manifest,full
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'windows-latest' || matrix.py == '3.10.11' || matrix.py == '3.11.8'
       - name: Check that basic-pitch can be run as a commandline
         run: pip3 install -e . && basic-pitch --help

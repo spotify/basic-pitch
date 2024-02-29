@@ -33,7 +33,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install --no-install-recommends -y --fix-missing pkg-config libsndfile1
         if: matrix.os == 'Ubuntu'
       - name: Install soundlibs MacOs
-        run: brew install libsndfile
+        run: brew install libsndfile llvm libomp
         if: matrix.os == 'MacOs'
       - name: Install soundlibs Windows
         run: choco install libsndfile

@@ -20,6 +20,8 @@ import logging
 import os
 import random
 import time
+import sys
+
 from typing import List, Tuple, Optional
 
 import apache_beam as beam
@@ -47,8 +49,8 @@ class GuitarSetToTfExample(beam.DoFn):
         self.guitarset_remote = mirdata.initialize("guitarset", data_home=self.source)
         self.filesystem = beam.io.filesystems.FileSystems()
         if (
-            type(self.filesystem.get_filesystem(self.source))
-            == beam.io.localfilesystem.LocalFileSystem
+            type(self.filesystem.get_filesystem(self.source)) == beam.io.localfilesystem.LocalFileSystem
+            and "pytest" not in sys.modules
         ):
             self.guitarset_remote.download()
 

@@ -19,8 +19,10 @@ classifiers = [
 ]
 dependencies = [
 	"coremltools; platform_system == 'Darwin'",
+	"apache_beam",
 	"librosa>=0.8.0",
 	"mir_eval>=0.6",
+	"mirdata",
 	"numpy>=1.18",
 	"onnxruntime; platform_system == 'Windows' and python_version < '3.11'",
 	"pretty_midi>=0.2.9",
@@ -30,6 +32,8 @@ dependencies = [
 	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11'",
 	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.11'",
 	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
+	"smart_open",
+	"sox",
 	"typing_extensions",
 ]
 
@@ -58,9 +62,12 @@ train = [
     "sox"
 ]
 test = [
+	"apache_beam",
 	"coverage>=5.0.2",
+	"mirdata",
 	"pytest>=6.1.1",
 	"pytest-mock",
+	"sox"
 ]
 tf = [
 	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin'",
@@ -73,6 +80,7 @@ dev = [
 	"basic_pitch[test,tf,coreml,onnx,docs]",
 	"mypy",
 	"tox",
+	"mirdata"
 ]
 
 [tool.distutils.bdist_wheel]

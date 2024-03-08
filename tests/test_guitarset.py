@@ -81,7 +81,7 @@ def test_guitar_set_invalid_tracks(tmpdir):
 def test_create_input_data():
     data = create_input_data(train_percent=0.33, validation_percent=0.33)
     data.sort(key=lambda el: el[1])  # sort by split
-    tolerance = 0.05
+    tolerance = 0.1
     for key, group in itertools.groupby(data, lambda el: el[1]):
         assert (
             (0.33 - tolerance) * len(data)

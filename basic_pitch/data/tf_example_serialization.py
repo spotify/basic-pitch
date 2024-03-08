@@ -62,14 +62,30 @@ def _to_transcription_tfex(
                 "file_id": bytes_feature(bytes(file_id, "utf-8")),
                 "source": bytes_feature(bytes(source, "utf-8")),
                 "audio_wav": bytes_feature(encoded_wav),
-                "notes_indices": bytes_feature(tf.io.serialize_tensor(np.array(notes_indices, np.int64))),
-                "notes_values": bytes_feature(tf.io.serialize_tensor(np.array(notes_values, np.float32))),
-                "onsets_indices": bytes_feature(tf.io.serialize_tensor(np.array(onsets_indices, np.int64))),
-                "onsets_values": bytes_feature(tf.io.serialize_tensor(np.array(onsets_values, np.float32))),
-                "contours_indices": bytes_feature(tf.io.serialize_tensor(np.array(contours_indices, np.int64))),
-                "contours_values": bytes_feature(tf.io.serialize_tensor(np.array(contours_values, np.float32))),
-                "notes_onsets_shape": bytes_feature(tf.io.serialize_tensor(np.array(notes_onsets_shape, np.int64))),
-                "contours_shape": bytes_feature(tf.io.serialize_tensor(np.array(contours_shape, np.int64))),
+                "notes_indices": bytes_feature(
+                    tf.io.serialize_tensor(np.array(notes_indices, np.int64))
+                ),
+                "notes_values": bytes_feature(
+                    tf.io.serialize_tensor(np.array(notes_values, np.float32))
+                ),
+                "onsets_indices": bytes_feature(
+                    tf.io.serialize_tensor(np.array(onsets_indices, np.int64))
+                ),
+                "onsets_values": bytes_feature(
+                    tf.io.serialize_tensor(np.array(onsets_values, np.float32))
+                ),
+                "contours_indices": bytes_feature(
+                    tf.io.serialize_tensor(np.array(contours_indices, np.int64))
+                ),
+                "contours_values": bytes_feature(
+                    tf.io.serialize_tensor(np.array(contours_values, np.float32))
+                ),
+                "notes_onsets_shape": bytes_feature(
+                    tf.io.serialize_tensor(np.array(notes_onsets_shape, np.int64))
+                ),
+                "contours_shape": bytes_feature(
+                    tf.io.serialize_tensor(np.array(contours_shape, np.int64))
+                ),
             }
         )
     )

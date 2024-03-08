@@ -55,7 +55,9 @@ def model_output_to_notes(
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     midi_tempo: float = 120,
-) -> Tuple[pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]]]:
+) -> Tuple[
+    pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]]
+]:
     """Convert model output to MIDI
 
     Args:
@@ -97,20 +99,29 @@ def model_output_to_notes(
     if include_pitch_bends:
         estimated_notes_with_pitch_bend = get_pitch_bends(contours, estimated_notes)
     else:
-        estimated_notes_with_pitch_bend = [(note[0], note[1], note[2], note[3], None) for note in estimated_notes]
+        estimated_notes_with_pitch_bend = [
+            (note[0], note[1], note[2], note[3], None) for note in estimated_notes
+        ]
 
     times_s = model_frames_to_time(contours.shape[0])
     estimated_notes_time_seconds = [
-        (times_s[note[0]], times_s[note[1]], note[2], note[3], note[4]) for note in estimated_notes_with_pitch_bend
+        (times_s[note[0]], times_s[note[1]], note[2], note[3], note[4])
+        for note in estimated_notes_with_pitch_bend
     ]
 
     return (
-        note_events_to_midi(estimated_notes_time_seconds, multiple_pitch_bends, midi_tempo),
+        note_events_to_midi(
+            estimated_notes_time_seconds, multiple_pitch_bends, midi_tempo
+        ),
         estimated_notes_time_seconds,
     )
 
 
-def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str], sr: Optional[int] = 44100) -> None:
+def sonify_midi(
+    midi: pretty_midi.PrettyMIDI,
+    save_path: Union[pathlib.Path, str],
+    sr: Optional[int] = 44100,
+) -> None:
     """Sonify a pretty_midi midi object and save to a file.
 
     Args:
@@ -123,7 +134,10 @@ def sonify_midi(midi: pretty_midi.PrettyMIDI, save_path: Union[pathlib.Path, str
 
 
 def sonify_salience(
-    gram: np.array, semitone_resolution: float, save_path: Optional[str] = None, thresh: float = 0.2
+    gram: np.array,
+    semitone_resolution: float,
+    save_path: Optional[str] = None,
+    thresh: float = 0.2,
 ) -> Tuple[np.array, int]:
     """Sonify a salience matrix.
 
@@ -151,7 +165,9 @@ def sonify_salience(
         hop_length=AUDIO_N_SAMPLES / ANNOT_N_FRAMES,  # THIS IS THE CORRECT HOP!!
     )
     gram[gram < thresh] = 0
-    y = mir_eval.sonify.time_frequency(gram[:max_freq_idx, :], freqs[:max_freq_idx], times, fs=SONIFY_FS)
+    y = mir_eval.sonify.time_frequency(
+        gram[:max_freq_idx, :], freqs[:max_freq_idx], times, fs=SONIFY_FS
+    )
     if save_path:
         y_resamp = resampy.resample(y, SONIFY_FS, 44100)
         wavfile.write(save_path, 44100, y_resamp)
@@ -170,11 +186,17 @@ def midi_pitch_to_contour_bin(pitch_midi: int) -> np.array:
 
     """
     pitch_hz = librosa.midi_to_hz(pitch_midi)
-    return 12.0 * CONTOURS_BINS_PER_SEMITONE * np.log2(pitch_hz / ANNOTATIONS_BASE_FREQUENCY)
+    return (
+        12.0
+        * CONTOURS_BINS_PER_SEMITONE
+        * np.log2(pitch_hz / ANNOTATIONS_BASE_FREQUENCY)
+    )
 
 
 def get_pitch_bends(
-    contours: np.ndarray, note_events: List[Tuple[int, int, int, float]], n_bins_tolerance: int = 25
+    contours: np.ndarray,
+    note_events: List[Tuple[int, int, int, float]],
+    n_bins_tolerance: int = 25,
 ) -> List[Tuple[int, int, int, float, Optional[List[int]]]]:
     """Given note events and contours, estimate pitch bends per note.
     Pitch bends are represented as a sequence of evenly spaced midi pitch bend control units.
@@ -209,12 +231,16 @@ def get_pitch_bends(
         bends: Optional[List[int]] = list(
             np.argmax(pitch_bend_submatrix, axis=1) - pb_shift
         )  # this is in units of 1/3 semitones
-        note_events_with_pitch_bends.append((start_idx, end_idx, pitch_midi, amplitude, bends))
+        note_events_with_pitch_bends.append(
+            (start_idx, end_idx, pitch_midi, amplitude, bends)
+        )
     return note_events_with_pitch_bends
 
 
 def note_events_to_midi(
-    note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]],
+    note_events_with_pitch_bends: List[
+        Tuple[float, float, int, float, Optional[List[int]]]
+    ],
     multiple_pitch_bends: bool = False,
     midi_tempo: float = 120,
 ) -> pretty_midi.PrettyMIDI:
@@ -233,14 +259,24 @@ def note_events_to_midi(
     """
     mid = pretty_midi.PrettyMIDI(initial_tempo=midi_tempo)
     if not multiple_pitch_bends:
-        note_events_with_pitch_bends = drop_overlapping_pitch_bends(note_events_with_pitch_bends)
+        note_events_with_pitch_bends = drop_overlapping_pitch_bends(
+            note_events_with_pitch_bends
+        )
 
     piano_program = pretty_midi.instrument_name_to_program("Electric Piano 1")
     instruments: DefaultDict[int, pretty_midi.Instrument] = defaultdict(
         lambda: pretty_midi.Instrument(program=piano_program)
     )
-    for start_time, end_time, note_number, amplitude, pitch_bend in note_events_with_pitch_bends:
-        instrument = instruments[note_number] if multiple_pitch_bends else instruments[0]
+    for (
+        start_time,
+        end_time,
+        note_number,
+        amplitude,
+        pitch_bend,
+    ) in note_events_with_pitch_bends:
+        instrument = (
+            instruments[note_number] if multiple_pitch_bends else instruments[0]
+        )
         note = pretty_midi.Note(
             velocity=int(np.round(127 * amplitude)),
             pitch=note_number,
@@ -251,11 +287,17 @@ def note_events_to_midi(
         if not pitch_bend:
             continue
         pitch_bend_times = np.linspace(start_time, end_time, len(pitch_bend))
-        pitch_bend_midi_ticks = np.round(np.array(pitch_bend) * 4096 / CONTOURS_BINS_PER_SEMITONE).astype(int)
+        pitch_bend_midi_ticks = np.round(
+            np.array(pitch_bend) * 4096 / CONTOURS_BINS_PER_SEMITONE
+        ).astype(int)
         # This supports pitch bends up to 2 semitones
         # If we estimate pitch bends above/below 2 semitones, crop them here when adding them to the midi file
-        pitch_bend_midi_ticks[pitch_bend_midi_ticks > N_PITCH_BEND_TICKS - 1] = N_PITCH_BEND_TICKS - 1
-        pitch_bend_midi_ticks[pitch_bend_midi_ticks < -N_PITCH_BEND_TICKS] = -N_PITCH_BEND_TICKS
+        pitch_bend_midi_ticks[pitch_bend_midi_ticks > N_PITCH_BEND_TICKS - 1] = (
+            N_PITCH_BEND_TICKS - 1
+        )
+        pitch_bend_midi_ticks[pitch_bend_midi_ticks < -N_PITCH_BEND_TICKS] = (
+            -N_PITCH_BEND_TICKS
+        )
         for pb_time, pb_midi in zip(pitch_bend_times, pitch_bend_midi_ticks):
             instrument.pitch_bends.append(pretty_midi.PitchBend(pb_midi, pb_time))
     mid.instruments.extend(instruments.values())
@@ -264,7 +306,9 @@ def note_events_to_midi(
 
 
 def drop_overlapping_pitch_bends(
-    note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]]
+    note_events_with_pitch_bends: List[
+        Tuple[float, float, int, float, Optional[List[int]]]
+    ]
 ) -> List[Tuple[float, float, int, float, Optional[List[int]]]]:
     """Drop pitch bends from any notes that overlap in time with another note"""
     note_events = sorted(note_events_with_pitch_bends)
@@ -296,15 +340,22 @@ def get_infered_onsets(onsets: np.array, frames: np.array, n_diff: int = 2) -> n
     frame_diff = np.min(diffs, axis=0)
     frame_diff[frame_diff < 0] = 0
     frame_diff[:n_diff, :] = 0
-    frame_diff = np.max(onsets) * frame_diff / np.max(frame_diff)  # rescale to have the same max as onsets
+    frame_diff = (
+        np.max(onsets) * frame_diff / np.max(frame_diff)
+    )  # rescale to have the same max as onsets
 
-    max_onsets_diff = np.max([onsets, frame_diff], axis=0)  # use the max of the predicted onsets and the differences
+    max_onsets_diff = np.max(
+        [onsets, frame_diff], axis=0
+    )  # use the max of the predicted onsets and the differences
 
     return max_onsets_diff
 
 
 def constrain_frequency(
-    onsets: np.array, frames: np.array, max_freq: Optional[float], min_freq: Optional[float]
+    onsets: np.array,
+    frames: np.array,
+    max_freq: Optional[float],
+    min_freq: Optional[float],
 ) -> Tuple[np.array, np.array]:
     """Zero out activations above or below the max/min frequencies
 
@@ -437,7 +488,9 @@ def output_to_notes_polyphonic(
         energy_shape = remaining_energy.shape
 
         while np.max(remaining_energy) > frame_thresh:
-            i_mid, freq_idx = np.unravel_index(np.argmax(remaining_energy), energy_shape)
+            i_mid, freq_idx = np.unravel_index(
+                np.argmax(remaining_energy), energy_shape
+            )
             remaining_energy[i_mid, freq_idx] = 0
 
             # forward pass

@@ -51,11 +51,17 @@ DATASET_SAMPLING_FREQUENCY = {
 }
 
 
-def _freq_bins(bins_per_semitone: int, base_frequency: float, n_semitones: int) -> np.array:
+def _freq_bins(
+    bins_per_semitone: int, base_frequency: float, n_semitones: int
+) -> np.array:
     d = 2.0 ** (1.0 / (12 * bins_per_semitone))
     bin_freqs = base_frequency * d ** np.arange(bins_per_semitone * n_semitones)
     return bin_freqs
 
 
-FREQ_BINS_NOTES = _freq_bins(NOTES_BINS_PER_SEMITONE, ANNOTATIONS_BASE_FREQUENCY, ANNOTATIONS_N_SEMITONES)
-FREQ_BINS_CONTOURS = _freq_bins(CONTOURS_BINS_PER_SEMITONE, ANNOTATIONS_BASE_FREQUENCY, ANNOTATIONS_N_SEMITONES)
+FREQ_BINS_NOTES = _freq_bins(
+    NOTES_BINS_PER_SEMITONE, ANNOTATIONS_BASE_FREQUENCY, ANNOTATIONS_N_SEMITONES
+)
+FREQ_BINS_CONTOURS = _freq_bins(
+    CONTOURS_BINS_PER_SEMITONE, ANNOTATIONS_BASE_FREQUENCY, ANNOTATIONS_N_SEMITONES
+)

@@ -17,12 +17,16 @@ classifiers = [
 	"Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
+	"apache_beam",
 	"librosa>=0.8.0",
 	"mir_eval>=0.6",
+	"mirdata",
 	"numpy>=1.18",
 	"pretty_midi>=0.2.9",
 	"resampy>=0.2.2",
 	"scipy>=1.4.1",
+	"smart_open",
+	"sox",
 	"typing_extensions",
 	"tensorflow>=2.4.1; platform_system != 'Darwin'",
 	"tensorflow-macos>=2.4.1; platform_system == 'Darwin'",
@@ -53,15 +57,19 @@ train = [
     "sox"
 ]
 test = [
+	"apache_beam",
 	"coverage>=5.0.2",
+	"mirdata",
 	"pytest>=6.1.1",
 	"pytest-mock",
+	"sox"
 ]
 docs = ["mkdocs>=1.0.4"]
 dev = [
 	"basic_pitch[test,docs]",
 	"mypy",
 	"tox",
+	"mirdata"
 ]
 
 [tool.distutils.bdist_wheel]

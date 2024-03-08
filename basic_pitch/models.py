@@ -33,10 +33,14 @@ from basic_pitch.layers import signal, nnaudio
 
 tfkl = tf.keras.layers
 
-MAX_N_SEMITONES = int(np.floor(12.0 * np.log2(0.5 * AUDIO_SAMPLE_RATE / ANNOTATIONS_BASE_FREQUENCY)))
+MAX_N_SEMITONES = int(
+    np.floor(12.0 * np.log2(0.5 * AUDIO_SAMPLE_RATE / ANNOTATIONS_BASE_FREQUENCY))
+)
 
 
-def transcription_loss(y_true: tf.Tensor, y_pred: tf.Tensor, label_smoothing: float) -> tf.Tensor:
+def transcription_loss(
+    y_true: tf.Tensor, y_pred: tf.Tensor, label_smoothing: float
+) -> tf.Tensor:
     """Really a binary cross entropy loss. Used to calculate the loss between the predicted
     posteriorgrams and the ground truth matrices.
 
@@ -48,12 +52,17 @@ def transcription_loss(y_true: tf.Tensor, y_pred: tf.Tensor, label_smoothing: fl
     Returns:
         The transcription loss.
     """
-    bce = tf.keras.losses.binary_crossentropy(y_true, y_pred, label_smoothing=label_smoothing)
+    bce = tf.keras.losses.binary_crossentropy(
+        y_true, y_pred, label_smoothing=label_smoothing
+    )
     return bce
 
 
 def weighted_transcription_loss(
-    y_true: tf.Tensor, y_pred: tf.Tensor, label_smoothing: float, positive_weight: float = 0.5
+    y_true: tf.Tensor,
+    y_pred: tf.Tensor,
+    label_smoothing: float,
+    positive_weight: float = 0.5,
 ) -> tf.Tensor:
     """The transcription loss where the positive and negative true labels are balanced by a weighting factor.
 
@@ -103,7 +112,9 @@ def onset_loss(
     return lambda x, y: transcription_loss(x, y, label_smoothing=label_smoothing)
 
 
-def loss(label_smoothing: float = 0.2, weighted: bool = False, positive_weight: float = 0.5) -> Dict[str, Any]:
+def loss(
+    label_smoothing: float = 0.2, weighted: bool = False, positive_weight: float = 0.5
+) -> Dict[str, Any]:
     """Creates a keras-compatible dictionary of loss functions to calculate
     the loss for the contour, note and onset posteriorgrams.
 
@@ -127,7 +138,9 @@ def loss(label_smoothing: float = 0.2, weighted: bool = False, positive_weight: 
 
 
 def _initializer() -> tf.keras.initializers.VarianceScaling:
-    return tf.keras.initializers.VarianceScaling(scale=2.0, mode="fan_avg", distribution="uniform", seed=None)
+    return tf.keras.initializers.VarianceScaling(
+        scale=2.0, mode="fan_avg", distribution="uniform", seed=None
+    )
 
 
 def _kernel_constraint() -> tf.keras.constraints.UnitNorm:

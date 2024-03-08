@@ -42,7 +42,9 @@ class TestPredict(unittest.TestCase):
         assert isinstance(midi_data, pretty_midi.PrettyMIDI)
         lowest_supported_midi = 21
         note_pitch_min = [n[2] >= lowest_supported_midi for n in note_events]
-        note_pitch_max = [n[2] <= lowest_supported_midi + ANNOTATIONS_N_SEMITONES for n in note_events]
+        note_pitch_max = [
+            n[2] <= lowest_supported_midi + ANNOTATIONS_N_SEMITONES for n in note_events
+        ]
         assert all(note_pitch_min)
         assert all(note_pitch_max)
         assert isinstance(note_events, list)
@@ -63,7 +65,12 @@ class TestPredict(unittest.TestCase):
             expected_npz_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.npz")
             expected_sonif_path = tmpdir / pathlib.Path("vocadito_10_basic_pitch.wav")
 
-            for output_path in [expected_midi_path, expected_csv_path, expected_npz_path, expected_sonif_path]:
+            for output_path in [
+                expected_midi_path,
+                expected_csv_path,
+                expected_npz_path,
+                expected_sonif_path,
+            ]:
                 assert os.path.exists(output_path)
 
     def test_predict_onset_threshold(self) -> None:

@@ -67,7 +67,7 @@ By default, Basic Pitch will attempt to load a model in the following order:
 
 Additionally, the module variable ICASSP_2022_MODEL_PATH will default to the first available version in the list.
 
-We will explain how to override this priority list below. Because all other model serializations were converted from TensorFlow, we recommend using TensorFlow when possible.
+We will explain how to override this priority list below. Because all other model serializations were converted from TensorFlow, we recommend using TensorFlow when possible. N.B. Basic Pitch does not install TensorFlow by default to save the user time when installing and running Basic Pitch.
 
 #### Command Line Tool
 

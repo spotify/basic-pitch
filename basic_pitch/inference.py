@@ -103,7 +103,7 @@ class Model:
                     logging.warning(
                         "Could not load CoreML file %s even "
                         "though it looks like a CoreML file with error %s. "
-                        "Are you sure it's a TFLite file?",
+                        "Are you sure it's a CoreML file?",
                         model_path,
                         e.__repr__(),
                     )

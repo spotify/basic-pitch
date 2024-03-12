@@ -23,10 +23,10 @@ dependencies = [
 	"numpy>=1.18",
 	"onnxruntime; platform_system == 'Windows' and python_version < '3.11'",
 	"pretty_midi>=0.2.9",
-	"resampy>=0.2.2",
+	"resampy>=0.2.2,<0.4.3",
 	"scikit-learn",
 	"scipy>=1.4.1",
-	"tensorflow>=2.4.1; platform_system != 'Darwin' and python_version >= '3.11'",
+	"tensorflow>=2.4.1,<2.16; platform_system != 'Darwin' and python_version >= '3.11'",
 	"tensorflow-macos>=2.4.1; platform_system == 'Darwin' and python_version >= '3.11'",
 	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
 	"typing_extensions",
@@ -56,8 +56,8 @@ test = [
 	"pytest-mock",
 ]
 tf = [
-	"tensorflow>=2.4.1; platform_system != 'Darwin'",
-	"tensorflow-macos>=2.4.1; platform_system == 'Darwin' and python_version > '3.7'",
+	"tensorflow>=2.4.1,<2.16; platform_system != 'Darwin'",
+	"tensorflow-macos>=2.4.1,<2.16; platform_system == 'Darwin' and python_version > '3.7'",
 ]
 coreml = ["coremltools"] 
 onnx = ["onnxruntime"]

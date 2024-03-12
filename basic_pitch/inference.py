@@ -423,7 +423,11 @@ def predict(
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
     midi_tempo: float = 120,
-) -> Tuple[Dict[str, np.array], pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]],]:
+) -> Tuple[
+    Dict[str, np.array],
+    pretty_midi.PrettyMIDI,
+    List[Tuple[float, float, int, float, Optional[List[int]]]],
+]:
     """Run a single prediction.
 
     Args:

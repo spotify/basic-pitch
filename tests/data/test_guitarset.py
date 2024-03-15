@@ -29,7 +29,7 @@ from basic_pitch.data.datasets.guitarset import (
 )
 from basic_pitch.data.pipeline import WriteBatchToTfRecord
 
-RESOURCES_PATH = pathlib.Path(__file__).parent / "resources"
+RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
 TRACK_ID = "00_BN1-129-Eb_comp"
 
 

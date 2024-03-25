@@ -145,7 +145,7 @@ def main() -> None:
 
     # tensorflow is very slow to import
     # this import is here so that the help messages print faster
-    print("Importing Tensorflow (this may take a few seconds)...")
+    print("Importing the ML infrence library (this may take a few seconds)...")
     from basic_pitch.inference import (
         predict_and_save,
         verify_output_dir,

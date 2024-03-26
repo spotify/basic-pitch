@@ -40,14 +40,19 @@ class HarmonicStacking(tf.keras.layers.Layer):
     """
 
     def __init__(
-        self, bins_per_semitone: int, harmonics: List[float], n_output_freqs: int, name: str = "harmonic_stacking"
+        self,
+        bins_per_semitone: int,
+        harmonics: List[float],
+        n_output_freqs: int,
+        name: str = "harmonic_stacking",
     ):
         """Downsample frequency by stride, upsample channels by 4."""
         super().__init__(trainable=False, name=name)
         self.bins_per_semitone = bins_per_semitone
         self.harmonics = harmonics
         self.shifts = [
-            int(tf.math.round(12.0 * self.bins_per_semitone * log_base_b(float(h), 2))) for h in self.harmonics
+            int(tf.math.round(12.0 * self.bins_per_semitone * log_base_b(float(h), 2)))
+            for h in self.harmonics
         ]
         self.n_output_freqs = n_output_freqs
 
@@ -81,7 +86,9 @@ class HarmonicStacking(tf.keras.layers.Layer):
 
             channels.append(padded)
         x = tf.concat(channels, axis=-1)
-        x = x[:, :, : self.n_output_freqs, :]  # return only the first n_output_freqs frequency channels
+        x = x[
+            :, :, : self.n_output_freqs, :
+        ]  # return only the first n_output_freqs frequency channels
         return x
 
 
@@ -109,4 +116,6 @@ class FlattenFreqCh(tf.keras.layers.Layer):
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
         shapes = K.int_shape(x)
-        return tf.keras.layers.Reshape([shapes[1], shapes[2] * shapes[3]])(x)  # ignore batch size
+        return tf.keras.layers.Reshape([shapes[1], shapes[2] * shapes[3]])(
+            x
+        )  # ignore batch size

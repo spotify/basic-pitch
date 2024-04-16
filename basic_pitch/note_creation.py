@@ -190,7 +190,7 @@ def get_pitch_bends(
         note events with pitch bends
     """
     window_length = n_bins_tolerance * 2 + 1
-    freq_gaussian = scipy.signal.gaussian(window_length, std=5)
+    freq_gaussian = scipy.signal.windows.gaussian(window_length, std=5)
     note_events_with_pitch_bends = []
     for start_idx, end_idx, pitch_midi, amplitude in note_events:
         freq_idx = int(np.round(midi_pitch_to_contour_bin(pitch_midi)))

@@ -17,7 +17,7 @@ classifiers = [
 	"Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-	"coremltools; platform_system == 'Darwin' and python_version < '3.11'",
+	"coremltools; platform_system == 'Darwin'",
 	"librosa>=0.8.0",
 	"mir_eval>=0.6",
 	"numpy>=1.18",
@@ -27,7 +27,7 @@ dependencies = [
 	"scikit-learn",
 	"scipy>=1.4.1",
 	"tensorflow>=2.4.1,<2.16; platform_system != 'Darwin' and python_version >= '3.11'",
-	"tensorflow-macos>=2.4.1; platform_system == 'Darwin' and python_version >= '3.11'",
+	"tensorflow-macos>=2.4.1,<2.16; platform_system == 'Darwin'",
 	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
 	"typing_extensions",
 ]

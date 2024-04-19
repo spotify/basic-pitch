@@ -1,6 +1,6 @@
 [project]
 name = "basic-pitch"
-version = "0.3.0"
+version = "0.3.1"
 description = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection."
 keywords = []
 classifiers = [
@@ -17,7 +17,7 @@ classifiers = [
 	"Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-	"coremltools; platform_system == 'Darwin' and python_version < '3.11'",
+	"coremltools; platform_system == 'Darwin'",
 	"librosa>=0.8.0",
 	"mir_eval>=0.6",
 	"numpy>=1.18",
@@ -26,8 +26,8 @@ dependencies = [
 	"resampy>=0.2.2,<0.4.3",
 	"scikit-learn",
 	"scipy>=1.4.1",
-	"tensorflow>=2.4.1,<2.16; platform_system != 'Darwin' and python_version >= '3.11'",
-	"tensorflow-macos>=2.4.1; platform_system == 'Darwin' and python_version >= '3.11'",
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin'",
 	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
 	"typing_extensions",
 ]
@@ -56,8 +56,8 @@ test = [
 	"pytest-mock",
 ]
 tf = [
-	"tensorflow>=2.4.1,<2.16; platform_system != 'Darwin'",
-	"tensorflow-macos>=2.4.1,<2.16; platform_system == 'Darwin' and python_version > '3.7'",
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.7'",
 ]
 coreml = ["coremltools"] 
 onnx = ["onnxruntime"]

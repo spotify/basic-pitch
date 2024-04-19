@@ -2,6 +2,7 @@
 name = "basic-pitch"
 version = "0.3.1"
 description = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection."
+readme = "README.md"
 keywords = []
 classifiers = [
 	"Development Status :: 5 - Production/Stable",
@@ -39,7 +40,7 @@ maintainer = "Spotify"
 maintainer_email = "basic-pitch@spotify.com"
 url = "https://github.com/spotify/basic-pitch"
 long_description = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection. See https://github.com/spotify/basic-pitch for more details."
-license = "Apache 2.0"
+license = { file = "LICENSE" }
 
 [tool.setuptools.packages.find]
 where = ["."]

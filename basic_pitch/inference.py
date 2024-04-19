@@ -24,7 +24,7 @@ import pathlib
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, Union, cast
 
 
-from basic_pitch import CT_PRESENT, ONNX_PRESENT, TF_PRESENT, TFLITE_PRESENT
+from basic_pitch import CT_PRESENT, ICASSP_2022_MODEL_PATH, ONNX_PRESENT, TF_PRESENT, TFLITE_PRESENT
 
 try:
     import tensorflow as tf
@@ -413,7 +413,7 @@ def save_note_events(
 
 def predict(
     audio_path: Union[pathlib.Path, str],
-    model_or_model_path: Union[Model, pathlib.Path, str],
+    model_or_model_path: Union[Model, pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
     minimum_note_length: float = 127.70,

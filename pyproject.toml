@@ -1,6 +1,6 @@
 [project]
 name = "basic-pitch"
-version = "0.3.2"
+version = "0.3.3"
 description = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection."
 readme = "README.md"
 keywords = []
@@ -28,7 +28,7 @@ dependencies = [
 	"scikit-learn",
 	"scipy>=1.4.1",
 	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11'",
-	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.11'",
 	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
 	"typing_extensions",
 ]

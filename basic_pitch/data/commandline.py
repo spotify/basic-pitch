@@ -18,21 +18,24 @@
 import argparse
 import os
 
+from pathlib import Path
 from typing import Optional
 
 
 def add_default(parser: argparse.ArgumentParser, dataset_name: str = "") -> None:
+    default_source = Path.home() / "mir_datasets" / dataset_name
+    default_destination = Path.home() / "data" / "basic_pitch" / dataset_name
     parser.add_argument(
         "--source",
-        default=os.path.join(os.path.expanduser("~"), "mir_datasets", dataset_name),
-        help="Source directory for mir data. Defaults to local mir_datasets folder.",
+        default=default_source,
+        type=Path,
+        help=f"Source directory for mir data. Defaults to {default_source}",
     )
     parser.add_argument(
         "--destination",
-        default=os.path.join(
-            os.path.expanduser("~"), "data", "basic_pitch", dataset_name
-        ),
-        help="Output directory to write results to. Defaults to local ~/data/basic_pitch/{dataset}/",
+        default=default_destination,
+        type=Path,
+        help=f"Output directory to write results to. Defaults to {default_destination}",
     )
     parser.add_argument(
         "--runner",
@@ -46,9 +49,7 @@ def add_default(parser: argparse.ArgumentParser, dataset_name: str = "") -> None
         action="store_true",
         help="If passed, the dataset will be put into a timestamp directory instead of 'splits'",
     )
-    parser.add_argument(
-        "--batch-size", default=5, type=int, help="Number of examples per tfrecord"
-    )
+    parser.add_argument("--batch-size", default=5, type=int, help="Number of examples per tfrecord")
     parser.add_argument(
         "--worker-harness-container-image",
         default="",
@@ -58,9 +59,7 @@ def add_default(parser: argparse.ArgumentParser, dataset_name: str = "") -> None
 
 
 def resolve_destination(namespace: argparse.Namespace, time_created: int) -> str:
-    return os.path.join(
-        namespace.destination, str(time_created) if namespace.timestamped else "splits"
-    )
+    return os.path.join(namespace.destination, str(time_created) if namespace.timestamped else "splits")
 
 
 def add_split(
@@ -68,7 +67,7 @@ def add_split(
     train_percent: float = 0.8,
     validation_percent: float = 0.1,
     split_seed: Optional[int] = None,
-):
+) -> None:
     parser.add_argument(
         "--train-percent",
         type=float,

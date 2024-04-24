@@ -42,9 +42,7 @@ def generating_file_message(output_type: str) -> None:
     print(f"\n\n  Creating {output_type.replace('_', ' ').lower()}...")
 
 
-def file_saved_confirmation(
-    output_type: str, save_path: Union[pathlib.Path, str]
-) -> None:
+def file_saved_confirmation(output_type: str, save_path: Union[pathlib.Path, str]) -> None:
     """Print a confirmation that the file was saved succesfully
 
     Args:
@@ -63,9 +61,7 @@ def failed_to_save(output_type: str, save_path: Union[pathlib.Path, str]) -> Non
         save_path: The path to output file.
 
     """
-    print(
-        f"\n🚨 Failed to save {output_type.replace('_', ' ').lower()} to {save_path} \n"
-    )
+    print(f"\n🚨 Failed to save {output_type.replace('_', ' ').lower()} to {save_path} \n")
 
 
 @contextmanager

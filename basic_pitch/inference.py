@@ -96,7 +96,7 @@ class Model:
             present.append("CoreML")
             try:
                 self.model_type = Model.MODEL_TYPES.COREML
-                self.model = ct.models.MLModel(str(model_path))
+                self.model = ct.models.MLModel(str(model_path), compute_units=ct.ComputeUnit.CPU_ONLY)
                 return
             except Exception as e:
                 if str(model_path).endswith(".mlpackage"):
@@ -224,9 +224,7 @@ def get_audio_input(
             length of original audio file, in frames, BEFORE padding.
 
     """
-    assert overlap_len % 2 == 0, "overlap_length must be even, got {}".format(
-        overlap_len
-    )
+    assert overlap_len % 2 == 0, f"overlap_length must be even, got {overlap_len}"
 
     audio_original, _ = librosa.load(str(audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
 
@@ -307,9 +305,7 @@ def run_inference(
                     "audio_original_length": audio_original_length,
                     "hop_size_samples": hop_size,
                     "overlap_length_samples": overlap_len,
-                    "unwrapped_output": {
-                        k: v.tolist() for k, v in unwrapped_output.items()
-                    },
+                    "unwrapped_output": {k: v.tolist() for k, v in unwrapped_output.items()},
                 },
                 f,
             )
@@ -407,9 +403,7 @@ def save_note_events(
 
     with open(save_path, "w") as fhandle:
         writer = csv.writer(fhandle, delimiter=",")
-        writer.writerow(
-            ["start_time_s", "end_time_s", "pitch_midi", "velocity", "pitch_bend"]
-        )
+        writer.writerow(["start_time_s", "end_time_s", "pitch_midi", "velocity", "pitch_bend"])
         for start_time, end_time, note_number, amplitude, pitch_bend in note_events:
             row = [start_time, end_time, note_number, int(np.round(127 * amplitude))]
             if pitch_bend:
@@ -552,25 +546,17 @@ def predict_and_save(
             )
 
             if save_model_outputs:
-                model_output_path = build_output_path(
-                    audio_path, output_directory, OutputExtensions.MODEL_OUTPUT_NPZ
-                )
+                model_output_path = build_output_path(audio_path, output_directory, OutputExtensions.MODEL_OUTPUT_NPZ)
                 try:
                     np.savez(model_output_path, basic_pitch_model_output=model_output)
-                    file_saved_confirmation(
-                        OutputExtensions.MODEL_OUTPUT_NPZ.name, model_output_path
-                    )
+                    file_saved_confirmation(OutputExtensions.MODEL_OUTPUT_NPZ.name, model_output_path)
                 except Exception as e:
-                    failed_to_save(
-                        OutputExtensions.MODEL_OUTPUT_NPZ.name, model_output_path
-                    )
+                    failed_to_save(OutputExtensions.MODEL_OUTPUT_NPZ.name, model_output_path)
                     raise e
 
             if save_midi:
                 try:
-                    midi_path = build_output_path(
-                        audio_path, output_directory, OutputExtensions.MIDI
-                    )
+                    midi_path = build_output_path(audio_path, output_directory, OutputExtensions.MIDI)
                 except IOError as e:
                     raise e
                 try:
@@ -581,31 +567,19 @@ def predict_and_save(
                     raise e
 
             if sonify_midi:
-                midi_sonify_path = build_output_path(
-                    audio_path, output_directory, OutputExtensions.MIDI_SONIFICATION
-                )
+                midi_sonify_path = build_output_path(audio_path, output_directory, OutputExtensions.MIDI_SONIFICATION)
                 try:
-                    infer.sonify_midi(
-                        midi_data, midi_sonify_path, sr=sonification_samplerate
-                    )
-                    file_saved_confirmation(
-                        OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path
-                    )
+                    infer.sonify_midi(midi_data, midi_sonify_path, sr=sonification_samplerate)
+                    file_saved_confirmation(OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path)
                 except Exception as e:
-                    failed_to_save(
-                        OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path
-                    )
+                    failed_to_save(OutputExtensions.MIDI_SONIFICATION.name, midi_sonify_path)
                     raise e
 
             if save_notes:
-                note_events_path = build_output_path(
-                    audio_path, output_directory, OutputExtensions.NOTE_EVENTS
-                )
+                note_events_path = build_output_path(audio_path, output_directory, OutputExtensions.NOTE_EVENTS)
                 try:
                     save_note_events(note_events, note_events_path)
-                    file_saved_confirmation(
-                        OutputExtensions.NOTE_EVENTS.name, note_events_path
-                    )
+                    file_saved_confirmation(OutputExtensions.NOTE_EVENTS.name, note_events_path)
                 except Exception as e:
                     failed_to_save(OutputExtensions.NOTE_EVENTS.name, note_events_path)
                     raise e

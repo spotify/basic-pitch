@@ -17,7 +17,7 @@ DATASET_DICT = {
 }
 
 
-def main():
+def main() -> None:
     dataset_parser = argparse.ArgumentParser()
     dataset_parser.add_argument(
         "dataset",

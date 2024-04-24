@@ -53,19 +53,17 @@ basic-pitch = "basic_pitch.predict:main"
 
 [project.optional-dependencies]
 train = [
-	"basic_pitch[tf,test]",
+	"basic_pitch[tf]",
     "apache_beam",
     "mirdata",
     "smart_open",
     "sox"
 ]
 test = [
-	"apache_beam",
+	"basic_pitch[train]",
 	"coverage>=5.0.2",
-	"mirdata",
 	"pytest>=6.1.1",
 	"pytest-mock",
-	"sox"
 ]
 tf = [
 	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin'",
@@ -78,7 +76,6 @@ dev = [
 	"basic_pitch[train,test,tf,coreml,onnx,docs]",
 	"mypy",
 	"tox",
-	"mirdata"
 ]
 
 [tool.distutils.bdist_wheel]

@@ -18,7 +18,7 @@
 import logging
 import os
 import uuid
-from typing import Dict, List, Tuple, Callable, Union
+from typing import Any, Dict, List, Tuple, Callable, Union
 
 import apache_beam as beam
 import tensorflow as tf
@@ -27,27 +27,25 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 # Beacase beam.GroupIntoBatches isn't supported as of 2.29
 class Batch(beam.DoFn):
-    def __init__(self, batch_size):
+    def __init__(self, batch_size: int) -> None:
         self.batch_size = batch_size
 
-    def process(self, element):
+    def process(self, element: List[Any], *args: Tuple[Any, Any], **kwargs: Dict[str, Any]) -> Any:
         for i in range(0, len(element), self.batch_size):
             yield element[i : i + self.batch_size]
 
 
 class WriteBatchToTfRecord(beam.DoFn):
-    def __init__(self, destination):
+    def __init__(self, destination: str) -> None:
         self.destination = destination
 
-    def process(self, element):
+    def process(self, element: Any, *args: Tuple[Any, Any], **kwargs: Dict[str, Any]) -> None:
         if not isinstance(element, list):
             element = [element]
 
         logging.info(f"Writing to file batch of length {len(element)}")
         # hopefully uuids are unique enough
-        with tf.io.TFRecordWriter(
-            os.path.join(self.destination, f"{uuid.uuid4()}.tfrecord")
-        ) as writer:
+        with tf.io.TFRecordWriter(os.path.join(self.destination, f"{uuid.uuid4()}.tfrecord")) as writer:
             for example in element:
                 writer.write(example.SerializeToString())
 
@@ -55,11 +53,11 @@ class WriteBatchToTfRecord(beam.DoFn):
 def transcription_dataset_writer(
     p: beam.Pipeline,
     input_data: List[Tuple[str, str]],
-    to_tf_example: Union[beam.DoFn, Callable],
+    to_tf_example: Union[beam.DoFn, Callable[[List[Any]], Any]],
     filter_invalid_tracks: beam.PTransform,
     destination: str,
     batch_size: int,
-):
+) -> None:
     valid_track_ids = (
         p
         | "Create PCollection of track IDS" >> beam.Create(input_data)
@@ -75,15 +73,13 @@ def transcription_dataset_writer(
         (
             getattr(valid_track_ids, split)
             | f"Combine {split} into giant list" >> beam.transforms.combiners.ToList()
-            | f"Batch {split}" >> beam.ParDo(Batch(batch_size))
+            # | f"Batch {split}" >> beam.ParDo(Batch(batch_size))
+            | f"Batch {split}" >> beam.BatchElements(max_batch_size=batch_size)
             | f"Reshuffle {split}" >> beam.Reshuffle()  # To prevent fuses
             | f"Create tf.Example {split} batch" >> beam.ParDo(to_tf_example)
-            | f"Write {split} batch to tfrecord"
-            >> beam.ParDo(WriteBatchToTfRecord(os.path.join(destination, split)))
+            | f"Write {split} batch to tfrecord" >> beam.ParDo(WriteBatchToTfRecord(os.path.join(destination, split)))
         )
-        getattr(
-            valid_track_ids, split
-        ) | f"Write {split} index file" >> beam.io.textio.WriteToText(
+        getattr(valid_track_ids, split) | f"Write {split} index file" >> beam.io.textio.WriteToText(
             os.path.join(destination, split, "index.csv"),
             num_shards=1,
             header="track_id",
@@ -98,8 +94,6 @@ def run(
     filter_invalid_tracks: beam.DoFn,
     destination: str,
     batch_size: int,
-):
+) -> None:
     with beam.Pipeline(options=PipelineOptions(**pipeline_options)) as p:
-        transcription_dataset_writer(
-            p, input_data, to_tf_example, filter_invalid_tracks, destination, batch_size
-        )
+        transcription_dataset_writer(p, input_data, to_tf_example, filter_invalid_tracks, destination, batch_size)

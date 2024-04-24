@@ -20,18 +20,18 @@ import logging
 import os
 import random
 import time
-import sys
 
-from typing import List, Tuple, Optional
+from typing import Any, List, Dict, Tuple, Optional
 
 import apache_beam as beam
 import mirdata
 
 from basic_pitch.data import commandline, pipeline
+from basic_pitch.data.datasets import DOWNLOAD
 
 
 class GuitarSetInvalidTracks(beam.DoFn):
-    def process(self, element: Tuple[str, str], *args, **kwargs):
+    def process(self, element: Tuple[str, str], *args: Tuple[Any, Any], **kwargs: Dict[str, Any]) -> Any:
         track_id, split = element
         yield beam.pvalue.TaggedOutput(split, track_id)
 
@@ -39,22 +39,20 @@ class GuitarSetInvalidTracks(beam.DoFn):
 class GuitarSetToTfExample(beam.DoFn):
     DOWNLOAD_ATTRIBUTES = ["audio_mic_path", "jams_path"]
 
-    def __init__(self, source: str):
+    def __init__(self, source: str, download: bool) -> None:
         self.source = source
+        self.download = download
 
-    def setup(self):
+    def setup(self) -> None:
         import apache_beam as beam
         import mirdata
 
         self.guitarset_remote = mirdata.initialize("guitarset", data_home=self.source)
-        self.filesystem = beam.io.filesystems.FileSystems()
-        if (
-            type(self.filesystem.get_filesystem(self.source)) == beam.io.localfilesystem.LocalFileSystem
-            and "pytest" not in sys.modules
-        ):
+        self.filesystem = beam.io.filesystems.FileSystems()  # TODO: replace with fsspec
+        if self.download:
             self.guitarset_remote.download()
 
-    def process(self, element: List[str], *args, **kwargs):
+    def process(self, element: List[str], *args: Tuple[Any, Any], **kwargs: Dict[str, Any]) -> List[Any]:
         import tempfile
 
         import mirdata
@@ -85,9 +83,7 @@ class GuitarSetToTfExample(beam.DoFn):
                     source = getattr(track_remote, attribute)
                     destination = getattr(track_local, attribute)
                     os.makedirs(os.path.dirname(destination), exist_ok=True)
-                    with self.filesystem.open(source) as s, open(
-                        destination, "wb"
-                    ) as d:
+                    with self.filesystem.open(source) as s, open(destination, "wb") as d:
                         d.write(s.read())
 
                 local_wav_path = f"{track_local.audio_mic_path}_tmp.wav"
@@ -150,17 +146,14 @@ def create_input_data(
         return "test"
 
     guitarset = mirdata.initialize("guitarset")
-    # guitarset.download()
 
     return [(track_id, determine_split()) for track_id in guitarset.track_ids]
 
 
-def main(known_args, pipeline_args):
+def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:
     time_created = int(time.time())
     destination = commandline.resolve_destination(known_args, time_created)
-    input_data = create_input_data(
-        known_args.train_percent, known_args.validation_percent, known_args.split_seed
-    )
+    input_data = create_input_data(known_args.train_percent, known_args.validation_percent, known_args.split_seed)
 
     pipeline_options = {
         "runner": known_args.runner,
@@ -175,7 +168,7 @@ def main(known_args, pipeline_args):
     pipeline.run(
         pipeline_options,
         input_data,
-        GuitarSetToTfExample(known_args.source),
+        GuitarSetToTfExample(known_args.source, DOWNLOAD),
         GuitarSetInvalidTracks(),
         destination,
         known_args.batch_size,

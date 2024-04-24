@@ -67,9 +67,7 @@ class Stft(tf.keras.layers.Layer):
             lpad = (self.fft_length - self.window_length) // 2
             rpad = self.fft_length - self.window_length - lpad
 
-            def padded_window(
-                window_length: int, dtype: tf.dtypes.DType = tf.float32
-            ) -> tf.Tensor:
+            def padded_window(window_length: int, dtype: tf.dtypes.DType = tf.float32) -> tf.Tensor:
                 # This is a trick to match librosa's way of handling window lengths < their fft_lengths
                 # In that case the window is 0 padded such that the window is centered around 0s
                 # In the Tensorflow case, the window is computed, multiplied against the frame and then
@@ -82,8 +80,7 @@ class Stft(tf.keras.layers.Layer):
             self.spec = tf.keras.layers.Lambda(
                 lambda x: tf.pad(
                     x,
-                    [[0, 0] for _ in range(input_shape.rank - 1)]
-                    + [[self.fft_length // 2, self.fft_length // 2]],
+                    [[0, 0] for _ in range(input_shape.rank - 1)] + [[self.fft_length // 2, self.fft_length // 2]],
                     mode=self.pad_mode,
                 )
             )
@@ -166,14 +163,10 @@ class NormalizedLog(tf.keras.layers.Layer):
         self.squeeze_batch = lambda batch: batch
         rank = input_shape.rank
         if rank == 4:
-            assert (
-                input_shape[1] == 1
-            ), "If the rank is 4, the second dimension must be length 1"
+            assert input_shape[1] == 1, "If the rank is 4, the second dimension must be length 1"
             self.squeeze_batch = lambda batch: tf.squeeze(batch, axis=1)
         else:
-            assert (
-                rank == 3
-            ), f"Only ranks 3 and 4 are supported!. Received rank {rank} for {input_shape}."
+            assert rank == 3, f"Only ranks 3 and 4 are supported!. Received rank {rank} for {input_shape}."
 
     def call(self, inputs: tf.Tensor) -> tf.Tensor:
         inputs = self.squeeze_batch(inputs)  # type: ignore
@@ -181,16 +174,12 @@ class NormalizedLog(tf.keras.layers.Layer):
         power = tf.math.square(inputs)
         log_power = 10 * log_base_b(power + 1e-10, 10)
 
-        log_power_min = tf.reshape(
-            tf.math.reduce_min(log_power, axis=[1, 2]), [tf.shape(inputs)[0], 1, 1]
-        )
+        log_power_min = tf.reshape(tf.math.reduce_min(log_power, axis=[1, 2]), [tf.shape(inputs)[0], 1, 1])
         log_power_offset = log_power - log_power_min
         log_power_offset_max = tf.reshape(
             tf.math.reduce_max(log_power_offset, axis=[1, 2]),
             [tf.shape(inputs)[0], 1, 1],
         )
-        log_power_normalized = tf.math.divide_no_nan(
-            log_power_offset, log_power_offset_max
-        )
+        log_power_normalized = tf.math.divide_no_nan(log_power_offset, log_power_offset_max)
 
         return tf.reshape(log_power_normalized, tf.shape(inputs))

@@ -17,7 +17,6 @@
 
 import csv
 import os
-import unittest
 
 from itertools import islice
 
@@ -25,7 +24,6 @@ import apache_beam as beam
 import numpy as np
 import tensorflow as tf
 
-from apache_beam import Create
 from apache_beam.testing.test_pipeline import TestPipeline
 
 from basic_pitch.data.tf_example_serialization import bytes_feature, int64_feature
@@ -51,20 +49,14 @@ def test_batch() -> None:
 
 def test_write_batch_to_tf_record(tmpdir: str) -> None:
     data = np.random.random([10, 10])
-    features = {
-        f"feat{i}": bytes_feature(tf.io.serialize_tensor(vec))
-        for i, vec in enumerate(list(data))
-    }
+    features = {f"feat{i}": bytes_feature(tf.io.serialize_tensor(vec)) for i, vec in enumerate(list(data))}
     example = tf.train.Example(features=tf.train.Features(feature=features))
 
     writer = WriteBatchToTfRecord(tmpdir)
     writer.process([example])
     assert len(os.listdir(tmpdir)) == 1
-    dataset = tf.data.TFRecordDataset(
-        [os.path.join(tmpdir, f) for f in os.listdir(tmpdir)]
-    )
+    dataset = tf.data.TFRecordDataset([os.path.join(tmpdir, f) for f in os.listdir(tmpdir)])
 
-    # assert dataset.cardinality() == 1
     for d in dataset:
         ex = tf.train.Example()
         ex.ParseFromString(d.numpy())
@@ -73,20 +65,14 @@ def test_write_batch_to_tf_record(tmpdir: str) -> None:
 
 
 def test_transcription_dataset_writer(tmpdir: str) -> None:
-    input_data = [
-        (f"track{i}", ("train", "test", "validation")[i % 3]) for i in range(9)
-    ] + [("foo", "bar")]
+    input_data = [(f"track{i}", ("train", "test", "validation")[i % 3]) for i in range(9)] + [("foo", "bar")]
     batch_size = 2
 
     with TestPipeline() as p:
         transcription_dataset_writer(
             p=p,
             input_data=input_data,
-            to_tf_example=lambda el: [
-                tf.train.Example(
-                    features=tf.train.Features(feature={"foo": int64_feature(1)})
-                )
-            ],
+            to_tf_example=lambda el: [tf.train.Example(features=tf.train.Features(feature={"foo": int64_feature(1)}))],
             filter_invalid_tracks=lambda el: [beam.pvalue.TaggedOutput(el[1], el[0])],
             destination=tmpdir,
             batch_size=batch_size,
@@ -97,5 +83,4 @@ def test_transcription_dataset_writer(tmpdir: str) -> None:
         with open(os.path.join(tmpdir, split, "index.csv")) as fp:
             reader = csv.reader(fp, delimiter=",")
             for row in islice(reader, 1, None):
-                # print(row)
                 assert int(row[0][-1]) % 3 == i

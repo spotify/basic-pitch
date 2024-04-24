@@ -33,16 +33,15 @@ RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
 TRACK_ID = "00_BN1-129-Eb_comp"
 
 
-def test_guitar_set_to_tf_example(tmpdir: str):
+def test_guitar_set_to_tf_example(tmpdir: str) -> None:
+    DOWNLOAD = False
     input_data: List[str] = [TRACK_ID]
     with TestPipeline() as p:
         (
             p
             | "Create PCollection of track IDs" >> beam.Create([input_data])
             | "Create tf.Example"
-            >> beam.ParDo(
-                GuitarSetToTfExample(str(RESOURCES_PATH / "data" / "guitarset"))
-            )
+            >> beam.ParDo(GuitarSetToTfExample(str(RESOURCES_PATH / "data" / "guitarset"), DOWNLOAD))
             | "Write to tfrecord" >> beam.ParDo(WriteBatchToTfRecord(tmpdir))
         )
 
@@ -53,24 +52,21 @@ def test_guitar_set_to_tf_example(tmpdir: str):
         assert len(data) != 0
 
 
-def test_guitar_set_invalid_tracks(tmpdir):
+def test_guitar_set_invalid_tracks(tmpdir: str) -> None:
     split_labels = ["train", "test", "validation"]
     input_data = [(str(i), split) for i, split in enumerate(split_labels)]
     with TestPipeline() as p:
         splits = (
             p
             | "Create PCollection" >> beam.Create(input_data)
-            | "Tag it"
-            >> beam.ParDo(GuitarSetInvalidTracks()).with_outputs(*split_labels)
+            | "Tag it" >> beam.ParDo(GuitarSetInvalidTracks()).with_outputs(*split_labels)
         )
 
         for split in split_labels:
             (
                 getattr(splits, split)
                 | f"Write {split} to text"
-                >> beam.io.WriteToText(
-                    os.path.join(tmpdir, f"output_{split}.txt"), shard_name_template=""
-                )
+                >> beam.io.WriteToText(os.path.join(tmpdir, f"output_{split}.txt"), shard_name_template="")
             )
 
     for i, split in enumerate(split_labels):
@@ -78,21 +74,18 @@ def test_guitar_set_invalid_tracks(tmpdir):
             assert fp.read().strip() == str(i)
 
 
-def test_create_input_data():
+def test_create_input_data() -> None:
     data = create_input_data(train_percent=0.33, validation_percent=0.33)
     data.sort(key=lambda el: el[1])  # sort by split
     tolerance = 0.1
     for key, group in itertools.groupby(data, lambda el: el[1]):
-        assert (
-            (0.33 - tolerance) * len(data)
-            <= len(list(group))
-            <= (0.33 + tolerance) * len(data)
-        )
-        # print(f"total length: {len(data)}, label: {key}, len: {len(list(group))}")
+        assert (0.33 - tolerance) * len(data) <= len(list(group)) <= (0.33 + tolerance) * len(data)
 
 
-def test_create_input_data_overallocate():
+def test_create_input_data_overallocate() -> None:
     try:
         create_input_data(train_percent=0.6, validation_percent=0.6)
     except AssertionError:
-        return True
+        assert True
+    else:
+        assert False

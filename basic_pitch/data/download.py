@@ -4,6 +4,7 @@ import sys
 
 from basic_pitch.data import commandline
 from basic_pitch.data.datasets.guitarset import main as guitarset_main
+from basic_pitch.data.datasets.ikala import main as ikala_main
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -14,6 +15,7 @@ logger.addHandler(handler)
 
 DATASET_DICT = {
     "guitarset": guitarset_main,
+    "ikala": ikala_main
 }
 
 

@@ -60,34 +60,58 @@ def test_to_transcription_tfexample(tmpdir: str) -> None:
     assert example.features.feature["source"].bytes_list.value[0].decode("utf-8") == source
     assert example.features.feature["audio_wav"].bytes_list.value[0] == open(tmpfile, "rb").read()
     assert tf.reduce_all(
-        tf.io.parse_tensor(example.features.feature["notes_indices"].bytes_list.value[0], out_type=tf.int64)
+        tf.io.parse_tensor(
+            example.features.feature["notes_indices"].bytes_list.value[0],
+            out_type=tf.int64,
+        )
         == notes_indices
     )
     assert tf.reduce_all(
-        tf.io.parse_tensor(example.features.feature["notes_values"].bytes_list.value[0], out_type=tf.float32)
+        tf.io.parse_tensor(
+            example.features.feature["notes_values"].bytes_list.value[0],
+            out_type=tf.float32,
+        )
         == notes_values
     )
     assert tf.reduce_all(
-        tf.io.parse_tensor(example.features.feature["onsets_indices"].bytes_list.value[0], out_type=tf.int64)
+        tf.io.parse_tensor(
+            example.features.feature["onsets_indices"].bytes_list.value[0],
+            out_type=tf.int64,
+        )
         == onsets_indices
     )
     assert tf.reduce_all(
-        tf.io.parse_tensor(example.features.feature["onsets_values"].bytes_list.value[0], out_type=tf.float32)
+        tf.io.parse_tensor(
+            example.features.feature["onsets_values"].bytes_list.value[0],
+            out_type=tf.float32,
+        )
         == onsets_values
     )
     assert tf.reduce_all(
-        tf.io.parse_tensor(example.features.feature["contours_indices"].bytes_list.value[0], out_type=tf.int64)
+        tf.io.parse_tensor(
+            example.features.feature["contours_indices"].bytes_list.value[0],
+            out_type=tf.int64,
+        )
         == contours_indices
     )
     assert tf.reduce_all(
-        tf.io.parse_tensor(example.features.feature["contours_values"].bytes_list.value[0], out_type=tf.float32)
+        tf.io.parse_tensor(
+            example.features.feature["contours_values"].bytes_list.value[0],
+            out_type=tf.float32,
+        )
         == contours_values
     )
     assert tf.reduce_all(
-        tf.io.parse_tensor(example.features.feature["notes_onsets_shape"].bytes_list.value[0], out_type=tf.int64)
+        tf.io.parse_tensor(
+            example.features.feature["notes_onsets_shape"].bytes_list.value[0],
+            out_type=tf.int64,
+        )
         == notes_onsets_shape
     )
     assert tf.reduce_all(
-        tf.io.parse_tensor(example.features.feature["contours_shape"].bytes_list.value[0], out_type=tf.int64)
+        tf.io.parse_tensor(
+            example.features.feature["contours_shape"].bytes_list.value[0],
+            out_type=tf.int64,
+        )
         == contours_shape
     )

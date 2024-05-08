@@ -280,11 +280,7 @@ class ReflectionPad1D(tf.keras.layers.Layer):
         super(ReflectionPad1D, self).__init__(**kwargs)
 
     def compute_output_shape(self, s: List[int]) -> Tuple[int, int, int]:
-        return (
-            s[0],
-            s[1],
-            (s[2] + 2 * self.padding if isinstance(self.padding, int) else self.padding[0]),
-        )
+        return (s[0], s[1], s[2] + 2 * self.padding if isinstance(self.padding, int) else self.padding[0])
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
         return tf.pad(x, [[0, 0], [0, 0], [self.padding, self.padding]], "REFLECT")
@@ -302,11 +298,7 @@ class ConstantPad1D(tf.keras.layers.Layer):
         super(ConstantPad1D, self).__init__(**kwargs)
 
     def compute_output_shape(self, s: List[int]) -> Tuple[int, int, int]:
-        return (
-            s[0],
-            s[1],
-            (s[2] + 2 * self.padding if isinstance(self.padding, int) else self.padding[0]),
-        )
+        return (s[0], s[1], s[2] + 2 * self.padding if isinstance(self.padding, int) else self.padding[0])
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
         return tf.pad(x, [[0, 0], [0, 0], [self.padding, self.padding]], "CONSTANT", self.value)
@@ -613,12 +605,7 @@ class CQT2010v2(tf.keras.layers.Layer):
         x = self.reshape_input(x)  # type: ignore
 
         if self.earlydownsample is True:
-            x = downsampling_by_n(
-                x,
-                self.early_downsample_filter,
-                self.downsample_factor,
-                self.match_torch_exactly,
-            )
+            x = downsampling_by_n(x, self.early_downsample_filter, self.downsample_factor, self.match_torch_exactly)
 
         hop = self.hop_length
 
@@ -652,10 +639,7 @@ class CQT2010v2(tf.keras.layers.Layer):
         # Transpose the output to match the output of the other spectrogram layers.
         if self.output_format.lower() == "magnitude":
             # Getting CQT Amplitude
-            return tf.transpose(
-                tf.math.sqrt(tf.math.reduce_sum(tf.math.pow(CQT, 2), axis=-1)),
-                [0, 2, 1],
-            )
+            return tf.transpose(tf.math.sqrt(tf.math.reduce_sum(tf.math.pow(CQT, 2), axis=-1)), [0, 2, 1])
 
         elif self.output_format.lower() == "complex":
             return CQT

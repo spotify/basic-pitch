@@ -40,11 +40,7 @@ class HarmonicStacking(tf.keras.layers.Layer):
     """
 
     def __init__(
-        self,
-        bins_per_semitone: int,
-        harmonics: List[float],
-        n_output_freqs: int,
-        name: str = "harmonic_stacking",
+        self, bins_per_semitone: int, harmonics: List[float], n_output_freqs: int, name: str = "harmonic_stacking"
     ):
         """Downsample frequency by stride, upsample channels by 4."""
         super().__init__(trainable=False, name=name)

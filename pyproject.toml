@@ -19,7 +19,6 @@ classifiers = [
 ]
 dependencies = [
 	"coremltools; platform_system == 'Darwin'",
-	"apache_beam",
 	"librosa>=0.8.0",
 	"mir_eval>=0.6",
 	"numpy>=1.18",

@@ -18,12 +18,37 @@
 import csv
 import enum
 import json
+import logging
 import os
 import pathlib
-from typing import Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple, Union, cast
 
-from tensorflow import Tensor, signal, keras, saved_model
+
+from basic_pitch import CT_PRESENT, ICASSP_2022_MODEL_PATH, ONNX_PRESENT, TF_PRESENT, TFLITE_PRESENT
+
+try:
+    import tensorflow as tf
+except ImportError:
+    pass
+
+try:
+    import coremltools as ct
+except ImportError:
+    pass
+
+try:
+    import tflite_runtime.interpreter as tflite
+except ImportError:
+    if TF_PRESENT:
+        import tensorflow.lite as tflite
+
+try:
+    import onnxruntime as ort
+except ImportError:
+    pass
+
 import numpy as np
+import numpy.typing as npt
 import librosa
 import pretty_midi
 
@@ -33,16 +58,132 @@ from basic_pitch.constants import (
     ANNOTATIONS_FPS,
     FFT_HOP,
 )
-from basic_pitch import ICASSP_2022_MODEL_PATH, note_creation as infer
 from basic_pitch.commandline_printing import (
     generating_file_message,
     no_tf_warnings,
     file_saved_confirmation,
     failed_to_save,
 )
+import basic_pitch.note_creation as infer
 
 
-def window_audio_file(audio_original: Tensor, hop_size: int) -> Tuple[Tensor, List[Dict[str, int]]]:
+class Model:
+    class MODEL_TYPES(enum.Enum):
+        TENSORFLOW = enum.auto()
+        COREML = enum.auto()
+        TFLITE = enum.auto()
+        ONNX = enum.auto()
+
+    def __init__(self, model_path: Union[pathlib.Path, str]):
+        present = []
+        if TF_PRESENT:
+            present.append("TensorFlow")
+            try:
+                self.model_type = Model.MODEL_TYPES.TENSORFLOW
+                self.model = tf.saved_model.load(str(model_path))
+                return
+            except Exception as e:
+                if os.path.isdir(model_path) and {"saved_model.pb", "variables"} & set(os.listdir(model_path)):
+                    logging.warning(
+                        "Could not load TensorFlow saved model %s even "
+                        "though it looks like a saved model file with error %s. "
+                        "Are you sure it's a TensorFlow saved model?",
+                        model_path,
+                        e.__repr__(),
+                    )
+
+        if CT_PRESENT:
+            present.append("CoreML")
+            try:
+                self.model_type = Model.MODEL_TYPES.COREML
+                self.model = ct.models.MLModel(str(model_path))
+                return
+            except Exception as e:
+                if str(model_path).endswith(".mlpackage"):
+                    logging.warning(
+                        "Could not load CoreML file %s even "
+                        "though it looks like a CoreML file with error %s. "
+                        "Are you sure it's a CoreML file?",
+                        model_path,
+                        e.__repr__(),
+                    )
+
+        if TFLITE_PRESENT or TF_PRESENT:
+            present.append("TensorFlowLite")
+            try:
+                self.model_type = Model.MODEL_TYPES.TFLITE
+                self.interpreter = tflite.Interpreter(str(model_path))
+                self.model = self.interpreter.get_signature_runner()
+                return
+            except Exception as e:
+                if str(model_path).endswith(".tflite"):
+                    logging.warning(
+                        "Could not load TensorFlowLite file %s even "
+                        "though it looks like a TFLite file with error %s. "
+                        "Are you sure it's a TFLite file?",
+                        model_path,
+                        e.__repr__(),
+                    )
+
+        if ONNX_PRESENT:
+            present.append("ONNX")
+            try:
+                self.model_type = Model.MODEL_TYPES.ONNX
+                self.model = ort.InferenceSession(str(model_path), providers=["CPUExecutionProvider"])
+                return
+            except Exception as e:
+                if str(model_path).endswith(".onnx"):
+                    logging.warning(
+                        "Could not load ONNX file %s even "
+                        "though it looks like a ONNX file with error %s. "
+                        "Are you sure it's a ONNX file?",
+                        model_path,
+                        e.__repr__(),
+                    )
+
+        raise ValueError(
+            f"File {model_path} cannot be loaded into either "
+            "TensorFlow, CoreML, TFLite or ONNX. "
+            "Please check if it is a supported and valid serialized model "
+            "and that one of these packages are installed. On this system, "
+            f"{present} is installed."
+        )
+
+    def predict(self, x: npt.NDArray[np.float32]) -> Dict[str, npt.NDArray[np.float32]]:
+        if self.model_type == Model.MODEL_TYPES.TENSORFLOW:
+            return {k: v.numpy() for k, v in cast(tf.keras.Model, self.model(x)).items()}
+        elif self.model_type == Model.MODEL_TYPES.COREML:
+            print(f"isfinite: {np.all(np.isfinite(x))}", flush=True)
+            print(f"shape: {x.shape}", flush=True)
+            print(f"dtype: {x.dtype}", flush=True)
+            result = cast(ct.models.MLModel, self.model).predict({"input_2": x})
+            return {
+                "note": result["Identity_1"],
+                "onset": result["Identity_2"],
+                "contour": result["Identity"],
+            }
+        elif self.model_type == Model.MODEL_TYPES.TFLITE:
+            return self.model(input_2=x)  # type: ignore
+        elif self.model_type == Model.MODEL_TYPES.ONNX:
+            return {
+                k: v
+                for k, v in zip(
+                    ["note", "onset", "contour"],
+                    cast(ort.InferenceSession, self.model).run(
+                        [
+                            "StatefulPartitionedCall:1",
+                            "StatefulPartitionedCall:2",
+                            "StatefulPartitionedCall:0",
+                        ],
+                        {"serving_default_input_2:0": x},
+                    ),
+                )
+            }
+
+
+def window_audio_file(
+    audio_original: npt.NDArray[np.float32], hop_size: int
+) -> Iterable[Tuple[npt.NDArray[np.float32], Dict[str, float]]]:
     """
     Pad appropriately an audio file, and return as
     windowed signal, with window length = AUDIO_N_SAMPLES
@@ -53,25 +194,24 @@ def window_audio_file(audio_original: Tensor, hop_size: int) -> Tuple[Tensor, Li
         window_times: list of {'start':.., 'end':...} objects (times in seconds)
 
     """
-    from tensorflow import expand_dims  # imporing this here so the module loads faster
-
-    audio_windowed = expand_dims(
-        signal.frame(audio_original, AUDIO_N_SAMPLES, hop_size, pad_end=True, pad_value=0),
-        axis=-1,
-    )
-    window_times = [
-        {
+    for i in range(0, audio_original.shape[0], hop_size):
+        window = audio_original[i : i + AUDIO_N_SAMPLES]
+        if len(window) < AUDIO_N_SAMPLES:
+            window = np.pad(
+                window,
+                pad_width=[[0, AUDIO_N_SAMPLES - len(window)]],
+            )
+        t_start = float(i) / AUDIO_SAMPLE_RATE
+        window_time = {
             "start": t_start,
             "end": t_start + (AUDIO_N_SAMPLES / AUDIO_SAMPLE_RATE),
         }
-        for t_start in np.arange(audio_windowed.shape[0]) * hop_size / AUDIO_SAMPLE_RATE
-    ]
-    return audio_windowed, window_times
+        yield np.expand_dims(window, axis=-1), window_time
 
 
 def get_audio_input(
     audio_path_or_array: Union[pathlib.Path, str, np.ndarray], sample_rate: int, overlap_len: int, hop_size: int
-) -> Tuple[Tensor, List[Dict[str, int]], int]:
+) -> Iterable[Tuple[npt.NDArray[np.float32], Dict[str, float], int]]:
     """
     Read wave file (as mono), pad appropriately, and return as
     windowed signal, with window length = AUDIO_N_SAMPLES
@@ -101,11 +241,15 @@ def get_audio_input(
 
     original_length = audio_original.shape[0]
     audio_original = np.concatenate([np.zeros((int(overlap_len / 2),), dtype=np.float32), audio_original])
-    audio_windowed, window_times = window_audio_file(audio_original, hop_size)
-    return audio_windowed, window_times, original_length
+    for window, window_time in window_audio_file(audio_original, hop_size):
+        yield np.expand_dims(window, axis=0), window_time, original_length
 
 
-def unwrap_output(output: Tensor, audio_original_length: int, n_overlapping_frames: int) -> np.array:
+def unwrap_output(
+    output: npt.NDArray[np.float32],
+    audio_original_length: int,
+    n_overlapping_frames: int,
+) -> np.array:
     """Unwrap batched model predictions to a single matrix.
 
     Args:
@@ -116,25 +260,24 @@ def unwrap_output(output: Tensor, audio_original_length: int, n_overlapping_fram
     Returns:
         array (n_times, n_freqs)
     """
-    raw_output = output.numpy()
-    if len(raw_output.shape) != 3:
+    if len(output.shape) != 3:
         return None
 
     n_olap = int(0.5 * n_overlapping_frames)
     if n_olap > 0:
         # remove half of the overlapping frames from beginning and end
-        raw_output = raw_output[:, n_olap:-n_olap, :]
+        output = output[:, n_olap:-n_olap, :]
 
-    output_shape = raw_output.shape
+    output_shape = output.shape
     n_output_frames_original = int(np.floor(audio_original_length * (ANNOTATIONS_FPS / AUDIO_SAMPLE_RATE)))
-    unwrapped_output = raw_output.reshape(output_shape[0] * output_shape[1], output_shape[2])
+    unwrapped_output = output.reshape(output_shape[0] * output_shape[1], output_shape[2])
     return unwrapped_output[:n_output_frames_original, :]  # trim to original audio length
 
 
 def run_inference(
     audio_path_or_array: Union[pathlib.Path, str, np.ndarray],
     sample_rate: None,
-    model: keras.Model,
+    model_or_model_path: Union[Model, pathlib.Path, str],
     debug_file: Optional[pathlib.Path] = None,
 ) -> Dict[str, np.array]:
     """Run the model on the input audio path.
@@ -142,21 +285,30 @@ def run_inference(
     Args:
         audio_path_or_array: The audio to run inference on. Can be either the path to an audio file or a numpy array of audio samples.
         sample_rate: Sample rate of the audio file. Only used if audio_path_or_array is a np array.
-        model: A loaded keras model to run inference with.
+        model_or_model_path: A loaded Model or path to a serialized model to load.
         debug_file: An optional path to output debug data to. Useful for testing/verification.
 
     Returns:
        A dictionary with the notes, onsets and contours from model inference.
     """
+    if isinstance(model_or_model_path, Model):
+        model = model_or_model_path
+    else:
+        model = Model(model_or_model_path)
+
     # overlap 30 frames
     n_overlapping_frames = 30
     overlap_len = n_overlapping_frames * FFT_HOP
     hop_size = AUDIO_N_SAMPLES - overlap_len
 
-    audio_windowed, _, audio_original_length = get_audio_input(audio_path_or_array, sample_rate, overlap_len, hop_size)
+    output: Dict[str, Any] = {"note": [], "onset": [], "contour": []}
+    for audio_windowed, _, audio_original_length in get_audio_input(audio_path_or_array, sample_rate, overlap_len, hop_size):
+        for k, v in model.predict(audio_windowed).items():
+            output[k].append(v)
 
-    output = model(audio_windowed)
-    unwrapped_output = {k: unwrap_output(output[k], audio_original_length, n_overlapping_frames) for k in output}
+    unwrapped_output = {
+        k: unwrap_output(np.concatenate(output[k]), audio_original_length, n_overlapping_frames) for k in output
+    }
 
     if debug_file:
         with open(debug_file, "w") as f:
@@ -275,7 +427,7 @@ def save_note_events(
 def predict(
     audio_path_or_array: Union[pathlib.Path, str, np.ndarray],
     sample_rate: int = None,
-    model_or_model_path: Union[keras.Model, pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
+    model_or_model_path: Union[Model, pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
     minimum_note_length: float = 127.70,
@@ -285,13 +437,17 @@ def predict(
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
     midi_tempo: float = 120,
-) -> Tuple[Dict[str, np.array], pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]],]:
+) -> Tuple[
+    Dict[str, np.array],
+    pretty_midi.PrettyMIDI,
+    List[Tuple[float, float, int, float, Optional[List[int]]]],
+]:
     """Run a single prediction.
 
     Args:
         audio_path_or_array: File path for the audio to run inference on or array of audio samples.
         sample_rate: Sample rate of the audio file. Only used if audio_path_or_array is a np array.
-        model_or_model_path: Path to load the Keras saved model from. Can be local or on GCS.
+        model_or_model_path: A loaded Model or path to a serialized model to load.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
         minimum_note_length: The minimum allowed note length in milliseconds.
@@ -305,18 +461,12 @@ def predict(
     """
 
     with no_tf_warnings():
-        # It's convenient to be able to pass in a keras saved model so if
-        # someone wants to place this function in a loop,
-        # the model doesn't have to be reloaded every function call
-        if isinstance(model_or_model_path, (pathlib.Path, str)):
-            model = saved_model.load(str(model_or_model_path))
-        else:
-            model = model_or_model_path
 
         if not isinstance(audio_path_or_array, np.ndarray):
             print(f"Predicting MIDI for {audio_path_or_array}...")
 
-        model_output = run_inference(audio_path_or_array, sample_rate, model, debug_file)
+        model_output = run_inference(audio_path_or_array, sample_rate, model_or_model_path, debug_file)
+
         min_note_len = int(np.round(minimum_note_length / 1000 * (AUDIO_SAMPLE_RATE / FFT_HOP)))
         midi_data, note_events = infer.model_output_to_notes(
             model_output,
@@ -364,7 +514,7 @@ def predict_and_save(
     sonify_midi: bool,
     save_model_outputs: bool,
     save_notes: bool,
-    model_path: Union[pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
+    model_or_model_path: Union[Model, str, pathlib.Path],
     onset_threshold: float = 0.5,
     frame_threshold: float = 0.3,
     minimum_note_length: float = 127.70,
@@ -385,7 +535,7 @@ def predict_and_save(
         sonify_midi: Whether or not to render audio from the MIDI and output it to a file.
         save_model_outputs: True to save contours, onsets and notes from the model prediction.
         save_notes: True to save note events.
-        model_path: Path to load the Keras saved model from. Can be local or on GCS.
+        model_or_model_path: A loaded Model or path to a serialized model to load.
         onset_threshold: Minimum energy required for an onset to be considered present.
         frame_threshold: Minimum energy requirement for a frame to be considered present.
         minimum_note_length: The minimum allowed note length in milliseconds.
@@ -396,14 +546,12 @@ def predict_and_save(
         debug_file: An optional path to output debug data to. Useful for testing/verification.
         sonification_samplerate: Sample rate for rendering audio from MIDI.
     """
-    model = saved_model.load(str(model_path))
-
     for audio_path in audio_path_list:
         print("")
         try:
             model_output, midi_data, note_events = predict(
                 pathlib.Path(audio_path),
-                model,
+                model_or_model_path,
                 onset_threshold,
                 frame_threshold,
                 minimum_note_length,

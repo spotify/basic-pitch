@@ -1,0 +1,80 @@
+[project]
+name = "basic-pitch"
+version = "0.3.3"
+description = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection."
+readme = "README.md"
+keywords = []
+classifiers = [
+	"Development Status :: 5 - Production/Stable",
+	"Natural Language :: English",
+	"Operating System :: POSIX :: Linux",
+	"Operating System :: MacOS :: MacOS X",
+	"Operating System :: Microsoft :: Windows",
+	"Programming Language :: Python",
+	"Programming Language :: Python :: 3.8",
+	"Programming Language :: Python :: 3.9",
+	"Programming Language :: Python :: 3.10",
+	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = [
+	"coremltools; platform_system == 'Darwin'",
+	"librosa>=0.8.0",
+	"mir_eval>=0.6",
+	"numpy>=1.18",
+	"onnxruntime; platform_system == 'Windows' and python_version < '3.11'",
+	"pretty_midi>=0.2.9",
+	"resampy>=0.2.2,<0.4.3",
+	"scikit-learn",
+	"scipy>=1.4.1",
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.11'",
+	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
+	"typing_extensions",
+]
+
+[metadata]
+author = "Spotify"
+author_email = "basic-pitch@spotify.com"
+maintainer = "Spotify"
+maintainer_email = "basic-pitch@spotify.com"
+url = "https://github.com/spotify/basic-pitch"
+long_description = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection. See https://github.com/spotify/basic-pitch for more details."
+license = { file = "LICENSE" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests"]
+namespaces = false
+
+[project.scripts]
+basic-pitch = "basic_pitch.predict:main"
+
+[project.optional-dependencies]
+test = [
+	"coverage>=5.0.2",
+	"pytest>=6.1.1",
+	"pytest-mock",
+]
+tf = [
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.7'",
+]
+coreml = ["coremltools"] 
+onnx = ["onnxruntime"]
+docs = ["mkdocs>=1.0.4"]
+dev = [
+	"basic_pitch[test,tf,coreml,onnx,docs]",
+	"mypy",
+	"tox",
+]
+
+[tool.distutils.bdist_wheel]
+universal = true
+
+[build-system]
+requires = [
+	"setuptools>=40.8.0",
+	"wheel",
+	"cython",
+]

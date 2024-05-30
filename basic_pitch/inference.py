@@ -228,14 +228,14 @@ def get_audio_input(
     assert overlap_len % 2 == 0, "overlap_length must be even, got {}".format(overlap_len)
 
     if isinstance(audio_path_or_array, np.ndarray):
-        # convert to mono if necessary
-        if audio_path_or_array.ndim != 1:
-            audio_path_or_array = librosa.to_mono(audio_path_or_array)
+        audio_original = audio_path_or_array
         if sample_rate is None:
             raise ValueError("Sample rate must be provided when input is a numpy array.")
-        # resample if necessary
         elif sample_rate != AUDIO_SAMPLE_RATE:
-            audio_original = librosa.resample(audio_path_or_array, orig_sr=sample_rate, target_sr=AUDIO_SAMPLE_RATE)
+            audio_original = librosa.resample(audio_original, orig_sr=sample_rate, target_sr=AUDIO_SAMPLE_RATE)
+        # convert to mono if necessary
+        if audio_original.ndim != 1:
+            audio_original = librosa.to_mono(audio_path_or_array)
     else:
         audio_original, _ = librosa.load(str(audio_path_or_array), sr=AUDIO_SAMPLE_RATE, mono=True)
 

@@ -16,17 +16,12 @@
 
 import argparse
 import logging
-import sys
 
 from basic_pitch.data import commandline
 from basic_pitch.data.datasets.guitarset import main as guitarset_main
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-formatter = logging.Formatter("%(levelname)s:: %(message)s")
-handler.setFormatter(formatter)
-logger.addHandler(handler)
 
 DATASET_DICT = {
     "guitarset": guitarset_main,
@@ -49,7 +44,8 @@ def main() -> None:
     commandline.add_split(cl_parser)
     known_args, pipeline_args = cl_parser.parse_known_args(remaining_args)
     for arg in vars(known_args):
-        logger.info(f"{arg} = {getattr(known_args, arg)}")
+        logger.info(f"known_args:: {arg} = {getattr(known_args, arg)}")
+    logger.info(f"pipeline_args = {pipeline_args}")
     DATASET_DICT[dataset](known_args, pipeline_args)
 
 

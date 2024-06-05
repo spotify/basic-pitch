@@ -68,13 +68,10 @@ def transcription_dataset_writer(
             "validation",
         )
     )
-
     for split in ["train", "test", "validation"]:
         (
             getattr(valid_track_ids, split)
-            | f"Combine {split} into giant list" >> beam.transforms.combiners.ToList()
-            # | f"Batch {split}" >> beam.ParDo(Batch(batch_size))
-            | f"Batch {split}" >> beam.BatchElements(max_batch_size=batch_size)
+            | f"Batch {split}" >> beam.BatchElements(min_batch_size=batch_size, max_batch_size=batch_size)
             | f"Reshuffle {split}" >> beam.Reshuffle()  # To prevent fuses
             | f"Create tf.Example {split} batch" >> beam.ParDo(to_tf_example)
             | f"Write {split} batch to tfrecord" >> beam.ParDo(WriteBatchToTfRecord(os.path.join(destination, split)))
@@ -95,5 +92,6 @@ def run(
     destination: str,
     batch_size: int,
 ) -> None:
-    with beam.Pipeline(options=PipelineOptions(**pipeline_options)) as p:
+    logging.info(f"pipeline_options = {pipeline_options}")
+    with beam.Pipeline(options=PipelineOptions.from_dictionary(pipeline_options)) as p:
         transcription_dataset_writer(p, input_data, to_tf_example, filter_invalid_tracks, destination, batch_size)

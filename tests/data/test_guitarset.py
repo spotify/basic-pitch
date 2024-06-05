@@ -34,14 +34,13 @@ TRACK_ID = "00_BN1-129-Eb_comp"
 
 
 def test_guitar_set_to_tf_example(tmpdir: str) -> None:
-    DOWNLOAD = False
     input_data: List[str] = [TRACK_ID]
     with TestPipeline() as p:
         (
             p
             | "Create PCollection of track IDs" >> beam.Create([input_data])
             | "Create tf.Example"
-            >> beam.ParDo(GuitarSetToTfExample(str(RESOURCES_PATH / "data" / "guitarset"), DOWNLOAD))
+            >> beam.ParDo(GuitarSetToTfExample(str(RESOURCES_PATH / "data" / "guitarset"), download=False))
             | "Write to tfrecord" >> beam.ParDo(WriteBatchToTfRecord(tmpdir))
         )
 

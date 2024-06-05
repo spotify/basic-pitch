@@ -27,7 +27,6 @@ import apache_beam as beam
 import mirdata
 
 from basic_pitch.data import commandline, pipeline
-from basic_pitch.data.datasets import DOWNLOAD
 
 
 class GuitarSetInvalidTracks(beam.DoFn):
@@ -163,12 +162,15 @@ def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:
         "disk_size_gb": 128,
         "experiments": ["use_runner_v2"],
         "save_main_session": True,
-        "worker_harness_container_image": known_args.worker_harness_container_image,
+        "sdk_container_image": known_args.sdk_container_image,
+        "job_endpoint": known_args.job_endpoint,
+        "environment_type": "DOCKER",
+        "environment_config": known_args.sdk_container_image,
     }
     pipeline.run(
         pipeline_options,
         input_data,
-        GuitarSetToTfExample(known_args.source, DOWNLOAD),
+        GuitarSetToTfExample(known_args.source, download=True),
         GuitarSetInvalidTracks(),
         destination,
         known_args.batch_size,
@@ -180,5 +182,6 @@ if __name__ == "__main__":
     commandline.add_default(parser, os.path.basename(os.path.splitext(__file__)[0]))
     commandline.add_split(parser)
     known_args, pipeline_args = parser.parse_known_args()
+    print(pipeline_args)
 
     main(known_args, pipeline_args)

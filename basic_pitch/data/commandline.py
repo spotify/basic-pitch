@@ -23,23 +23,23 @@ from typing import Optional
 
 
 def add_default(parser: argparse.ArgumentParser, dataset_name: str = "") -> None:
-    default_source = Path.home() / "mir_datasets" / dataset_name
-    default_destination = Path.home() / "data" / "basic_pitch" / dataset_name
+    default_source = str(Path.home() / "mir_datasets" / dataset_name)
+    default_destination = str(Path.home() / "data" / "basic_pitch" / dataset_name)
     parser.add_argument(
         "--source",
         default=default_source,
-        type=Path,
+        type=str,
         help=f"Source directory for mir data. Defaults to {default_source}",
     )
     parser.add_argument(
         "--destination",
         default=default_destination,
-        type=Path,
+        type=str,
         help=f"Output directory to write results to. Defaults to {default_destination}",
     )
     parser.add_argument(
         "--runner",
-        choices=["DataflowRunner", "DirectRunner"],
+        choices=["DataflowRunner", "DirectRunner", "PortableRunner"],
         default="DirectRunner",
         help="Whether to run the download and process locally or on GCP Dataflow",
     )
@@ -51,11 +51,12 @@ def add_default(parser: argparse.ArgumentParser, dataset_name: str = "") -> None
     )
     parser.add_argument("--batch-size", default=5, type=int, help="Number of examples per tfrecord")
     parser.add_argument(
-        "--worker-harness-container-image",
+        "--sdk_container_image",
         default="",
         help="Container image to run dataset generation job with. \
                         Required due to non-python dependencies.",
     )
+    parser.add_argument("--job_endpoint", default="embed", help="")
 
 
 def resolve_destination(namespace: argparse.Namespace, time_created: int) -> str:

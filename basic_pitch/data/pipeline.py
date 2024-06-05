@@ -86,6 +86,7 @@ def transcription_dataset_writer(
 
 def run(
     pipeline_options: Dict[str, str],
+    pipeline_args: List[str],
     input_data: List[Tuple[str, str]],
     to_tf_example: beam.DoFn,
     filter_invalid_tracks: beam.DoFn,
@@ -93,5 +94,6 @@ def run(
     batch_size: int,
 ) -> None:
     logging.info(f"pipeline_options = {pipeline_options}")
-    with beam.Pipeline(options=PipelineOptions.from_dictionary(pipeline_options)) as p:
+    logging.info(f"pipeline_args = {pipeline_args}")
+    with beam.Pipeline(options=PipelineOptions(flags=pipeline_args, **pipeline_options)) as p:
         transcription_dataset_writer(p, input_data, to_tf_example, filter_invalid_tracks, destination, batch_size)

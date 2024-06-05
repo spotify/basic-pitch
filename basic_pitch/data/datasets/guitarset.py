@@ -169,6 +169,7 @@ def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:
     }
     pipeline.run(
         pipeline_options,
+        pipeline_args,
         input_data,
         GuitarSetToTfExample(known_args.source, download=True),
         GuitarSetInvalidTracks(),
@@ -182,6 +183,5 @@ if __name__ == "__main__":
     commandline.add_default(parser, os.path.basename(os.path.splitext(__file__)[0]))
     commandline.add_split(parser)
     known_args, pipeline_args = parser.parse_known_args()
-    print(pipeline_args)
 
     main(known_args, pipeline_args)

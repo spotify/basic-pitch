@@ -97,7 +97,12 @@ def early_downsample_count(nyquist_hz: float, filter_cutoff_hz: float, hop_lengt
 
 
 def get_early_downsample_params(
-    sr: Union[float, int], hop_length: int, fmax_t: float, Q: float, n_octaves: int, dtype: tf.dtypes.DType
+    sr: Union[float, int],
+    hop_length: int,
+    fmax_t: float,
+    Q: float,
+    n_octaves: int,
+    dtype: tf.dtypes.DType,
 ) -> Tuple[Union[float, int], int, float, np.array, bool]:
     """Compute downsampling parameters used for early downsampling"""
 

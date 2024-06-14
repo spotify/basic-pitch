@@ -55,12 +55,13 @@ def test_predict() -> None:
     assert all(note_pitch_max)
     assert isinstance(note_events, list)
 
-    expected_model_output = np.load("tests/resources/vocadito_10/model_output.npz", allow_pickle=True)["arr_0"].item()
+    expected_model_output = np.load(RESOURCES_PATH / "vocadito_10" / "model_output.npz", allow_pickle=True)[
+        "arr_0"
+    ].item()
     for k in expected_model_output.keys():
         np.testing.assert_allclose(expected_model_output[k], model_output[k], atol=1e-4, rtol=0)
 
-    expected_note_events = np.load("tests/resources/vocadito_10/note_events.npz", allow_pickle=True)["arr_0"]
-
+    expected_note_events = np.load(RESOURCES_PATH / "vocadito_10" / "note_events.npz", allow_pickle=True)["arr_0"]
     assert len(expected_note_events) == len(note_events)
     for expected, calculated in zip(expected_note_events, note_events):
         for i in range(len(expected)):

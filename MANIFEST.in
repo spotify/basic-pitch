@@ -1,5 +1,6 @@
 include *.txt tox.ini *.rst *.md LICENSE
 include catalog-info.yaml
-recursive-include tests *.py *.wav *.npz
-recursive-include basic_pitch *.py
+include Dockerfile .dockerignore
+recursive-include tests *.py *.wav *.npz *.jams *.zip
+recursive-include basic_pitch *.py *.md
 recursive-include basic_pitch/saved_models *.index *.pb variables.data* *.mlmodel *.json *.onnx *.tflite *.bin

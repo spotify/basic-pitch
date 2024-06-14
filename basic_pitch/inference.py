@@ -96,7 +96,7 @@ class Model:
             present.append("CoreML")
             try:
                 self.model_type = Model.MODEL_TYPES.COREML
-                self.model = ct.models.MLModel(str(model_path))
+                self.model = ct.models.MLModel(str(model_path), compute_units=ct.ComputeUnit.CPU_ONLY)
                 return
             except Exception as e:
                 if str(model_path).endswith(".mlpackage"):
@@ -224,7 +224,7 @@ def get_audio_input(
             length of original audio file, in frames, BEFORE padding.
 
     """
-    assert overlap_len % 2 == 0, "overlap_length must be even, got {}".format(overlap_len)
+    assert overlap_len % 2 == 0, f"overlap_length must be even, got {overlap_len}"
 
     audio_original, _ = librosa.load(str(audio_path), sr=AUDIO_SAMPLE_RATE, mono=True)
 

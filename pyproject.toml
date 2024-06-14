@@ -49,9 +49,18 @@ namespaces = false
 
 [project.scripts]
 basic-pitch = "basic_pitch.predict:main"
+bp-download = "basic_pitch.data.download:main"
 
 [project.optional-dependencies]
+data = [
+    "basic_pitch[tf]",
+    "apache_beam",
+    "mirdata",
+    "smart_open",
+    "sox"
+]
 test = [
+	"basic_pitch[data]",
 	"coverage>=5.0.2",
 	"pytest>=6.1.1",
 	"pytest-mock",
@@ -64,7 +73,7 @@ coreml = ["coremltools"]
 onnx = ["onnxruntime"]
 docs = ["mkdocs>=1.0.4"]
 dev = [
-	"basic_pitch[test,tf,coreml,onnx,docs]",
+	"basic_pitch[data,test,tf,coreml,onnx,docs]",
 	"mypy",
 	"tox",
 ]

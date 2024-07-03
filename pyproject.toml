@@ -53,7 +53,7 @@ bp-download = "basic_pitch.data.download:main"
 
 [project.optional-dependencies]
 data = [
-    "basic_pitch[tf]",
+    "basic_pitch[tf,test]",
     "apache_beam",
     "mirdata",
     "smart_open",

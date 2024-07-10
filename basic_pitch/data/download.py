@@ -24,10 +24,7 @@ from basic_pitch.data.datasets.ikala import main as ikala_main
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-DATASET_DICT = {
-    "guitarset": guitarset_main,
-    "ikala": ikala_main
-}
+DATASET_DICT = {"guitarset": guitarset_main, "ikala": ikala_main}
 
 
 def main() -> None:

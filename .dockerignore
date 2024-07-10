@@ -1,0 +1,8 @@
+.git
+.tox
+**/.mypy_cache
+**/.pytest_cache
+**/__pycache__
+**/*.wav
+**/saved_models
+**/basic-pitch/saved_models

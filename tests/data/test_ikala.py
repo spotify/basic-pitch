@@ -26,9 +26,7 @@ from basic_pitch.data.datasets.ikala import (
 )
 
 
-def test_guitar_set_to_tf_example(tmpdir: str) -> None:
-    # TODO: Acquire test data
-    pass
+# TODO: Create test_ikala_to_tf_example
 
 
 def test_ikala_invalid_tracks(tmpdir: str) -> None:

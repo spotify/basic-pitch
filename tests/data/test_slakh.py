@@ -61,16 +61,14 @@ def test_slakh_to_tf_example(tmpdir: str) -> None:
 
 def test_slakh_invalid_tracks(tmpdir: str) -> None:
     split_labels = ["train", "validation", "test"]
-    input_data = [(TRAIN_PIANO_TRACK_ID, "train"),
-                  (VALID_PIANO_TRACK_ID, "validation"),
-                  (TEST_PIANO_TRACK_ID, "test")]
+    input_data = [(TRAIN_PIANO_TRACK_ID, "train"), (VALID_PIANO_TRACK_ID, "validation"), (TEST_PIANO_TRACK_ID, "test")]
 
     with TestPipeline() as p:
         splits = (
             p
             | "Create PCollection" >> beam.Create(input_data)
-            | "Tag it" >> beam.ParDo(
-                SlakhFilterInvalidTracks(str(RESOURCES_PATH / "data" / "slakh"))).with_outputs(*split_labels)
+            | "Tag it"
+            >> beam.ParDo(SlakhFilterInvalidTracks(str(RESOURCES_PATH / "data" / "slakh"))).with_outputs(*split_labels)
         )
 
         for split in split_labels:
@@ -87,15 +85,14 @@ def test_slakh_invalid_tracks(tmpdir: str) -> None:
 
 def test_slakh_invalid_tracks_omitted(tmpdir: str) -> None:
     split_labels = ["train", "omitted"]
-    input_data = [(TRAIN_PIANO_TRACK_ID, "train"),
-                  (OMITTED_PIANO_TRACK_ID, "omitted")]
+    input_data = [(TRAIN_PIANO_TRACK_ID, "train"), (OMITTED_PIANO_TRACK_ID, "omitted")]
 
     with TestPipeline() as p:
         splits = (
             p
             | "Create PCollection" >> beam.Create(input_data)
-            | "Tag it" >> beam.ParDo(
-                SlakhFilterInvalidTracks(str(RESOURCES_PATH / "data" / "slakh"))).with_outputs(*split_labels)
+            | "Tag it"
+            >> beam.ParDo(SlakhFilterInvalidTracks(str(RESOURCES_PATH / "data" / "slakh"))).with_outputs(*split_labels)
         )
 
         for split in split_labels:
@@ -114,16 +111,14 @@ def test_slakh_invalid_tracks_omitted(tmpdir: str) -> None:
 
 def test_slakh_invalid_tracks_drums(tmpdir: str) -> None:
     split_labels = ["train", "validation", "test"]
-    input_data = [(TRAIN_DRUMS_TRACK_ID, "train"),
-                  (VALID_DRUMS_TRACK_ID, "validation"),
-                  (TEST_DRUMS_TRACK_ID, "test")]
+    input_data = [(TRAIN_DRUMS_TRACK_ID, "train"), (VALID_DRUMS_TRACK_ID, "validation"), (TEST_DRUMS_TRACK_ID, "test")]
 
     with TestPipeline() as p:
         splits = (
             p
             | "Create PCollection" >> beam.Create(input_data)
-            | "Tag it" >> beam.ParDo(
-                SlakhFilterInvalidTracks(str(RESOURCES_PATH / "data" / "slakh"))).with_outputs(*split_labels)
+            | "Tag it"
+            >> beam.ParDo(SlakhFilterInvalidTracks(str(RESOURCES_PATH / "data" / "slakh"))).with_outputs(*split_labels)
         )
 
         for split in split_labels:

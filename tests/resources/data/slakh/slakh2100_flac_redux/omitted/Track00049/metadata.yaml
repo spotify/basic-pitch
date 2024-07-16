@@ -1,0 +1,72 @@
+UUID: 763348b79ed855fa294a7c980392178b
+audio_dir: Track00049/stems
+lmd_midi_dir: lmd_matched/G/J/U/TRGJUQY12903CF4754/763348b79ed855fa294a7c980392178b.mid
+midi_dir: Track00049/MIDI
+normalization_factor: -13.0
+normalized: true
+overall_gain: 0.22431102283631815
+stems:
+  S00:
+    audio_rendered: true
+    inst_class: Bass
+    integrated_loudness: -25.98403373639739
+    is_drum: false
+    midi_program_name: Electric Bass (finger)
+    midi_saved: true
+    plugin_name: funk_bass.nkm
+    program_num: 33
+  S01:
+    audio_rendered: true
+    inst_class: Guitar
+    integrated_loudness: -25.983388175138032
+    is_drum: false
+    midi_program_name: Acoustic Guitar (steel)
+    midi_saved: true
+    plugin_name: /Library/Audio/Plug-Ins/Components/AGML2.component
+    program_num: 25
+  S02:
+    audio_rendered: true
+    inst_class: Guitar
+    integrated_loudness: -25.984039857293364
+    is_drum: false
+    midi_program_name: Acoustic Guitar (steel)
+    midi_saved: true
+    plugin_name: /Library/Audio/Plug-Ins/Components/AGML2.component
+    program_num: 25
+  S03:
+    audio_rendered: true
+    inst_class: Synth Pad
+    integrated_loudness: -25.98327751795764
+    is_drum: false
+    midi_program_name: Pad 7 (halo)
+    midi_saved: true
+    plugin_name: dawn_chorus.nkm
+    program_num: 94
+  S04:
+    audio_rendered: true
+    inst_class: Synth Pad
+    integrated_loudness: -25.983253024644508
+    is_drum: false
+    midi_program_name: Pad 7 (halo)
+    midi_saved: true
+    plugin_name: dawn_chorus.nkm
+    program_num: 94
+  S05:
+    audio_rendered: true
+    inst_class: Piano
+    integrated_loudness: -25.984036521364235
+    is_drum: false
+    midi_program_name: Honky-tonk Piano
+    midi_saved: true
+    plugin_name: the_giant_vibrant.nkm
+    program_num: 3
+  S06:
+    audio_rendered: true
+    inst_class: Drums
+    integrated_loudness: -25.98383151293373
+    is_drum: true
+    midi_program_name: Drums
+    midi_saved: true
+    plugin_name: ar_modern_white_kit_full.nkm
+    program_num: 128
+target_peak: -1.0

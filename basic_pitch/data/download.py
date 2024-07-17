@@ -20,11 +20,12 @@ import logging
 from basic_pitch.data import commandline
 from basic_pitch.data.datasets.guitarset import main as guitarset_main
 from basic_pitch.data.datasets.ikala import main as ikala_main
+from basic_pitch.data.datasets.slakh import main as slakh_main
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-DATASET_DICT = {"guitarset": guitarset_main, "ikala": ikala_main}
+DATASET_DICT = {"guitarset": guitarset_main, "ikala": ikala_main, "slakh": slakh_main}
 
 
 def main() -> None:

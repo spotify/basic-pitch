@@ -1,1 +1,38 @@
-[{"canonical_composer": "Fr\u00e9d\u00e9ric Chopin", "canonical_title": "12 Etudes, Op. 25", "split": "train", "year": 2004, "midi_filename": "2004/MIDI-Unprocessed_SMF_05_R1_2004_01_ORIG_MID--AUDIO_05_R1_2004_03_Track03_wav.midi", "audio_filename": "2004/MIDI-Unprocessed_SMF_05_R1_2004_01_ORIG_MID--AUDIO_05_R1_2004_03_Track03_wav.wav", "duration": 327.327025835}, {"canonical_composer": "Johann Sebastian Bach", "canonical_title": "French Suite No. 5 in G Major", "split": "train", "year": 2004, "midi_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_05_Track05_wav.midi", "audio_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_05_Track05_wav.wav", "duration": 968.256759019}, {"canonical_composer": "Sergei Rachmaninoff", "canonical_title": "Etude-Tableaux, Opus 33 No. 3 in C Minor", "split": "validation", "year": 2004, "midi_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_06_Track06_wav.midi", "audio_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_06_Track06_wav.wav", "duration": 267.438313619}, {"canonical_composer": "Sergei Rachmaninoff", "canonical_title": "Etude-Tableaux, Opus 39 No. 8 in D Minor", "split": "test", "year": 2004, "midi_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_08_Track08_wav.midi", "audio_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_08_Track08_wav.wav", "duration": 190.852001088}]
+[
+    {
+        "canonical_composer": "Fr\u00e9d\u00e9ric Chopin",
+        "canonical_title": "12 Etudes, Op. 25",
+        "split": "train",
+        "year": 2004,
+        "midi_filename": "2004/MIDI-Unprocessed_SMF_05_R1_2004_01_ORIG_MID--AUDIO_05_R1_2004_03_Track03_wav.midi",
+        "audio_filename": "2004/MIDI-Unprocessed_SMF_05_R1_2004_01_ORIG_MID--AUDIO_05_R1_2004_03_Track03_wav.wav",
+        "duration": 327.327025835
+    },
+    {
+        "canonical_composer": "Johann Sebastian Bach",
+        "canonical_title": "French Suite No. 5 in G Major",
+        "split": "train",
+        "year": 2004,
+        "midi_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_05_Track05_wav.midi",
+        "audio_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_05_Track05_wav.wav",
+        "duration": 968.256759019
+    },
+    {
+        "canonical_composer": "Sergei Rachmaninoff",
+        "canonical_title": "Etude-Tableaux, Opus 33 No. 3 in C Minor",
+        "split": "validation",
+        "year": 2004,
+        "midi_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_06_Track06_wav.midi",
+        "audio_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_06_Track06_wav.wav",
+        "duration": 267.438313619
+    },
+    {
+        "canonical_composer": "Sergei Rachmaninoff",
+        "canonical_title": "Etude-Tableaux, Opus 39 No. 8 in D Minor",
+        "split": "test",
+        "year": 2004,
+        "midi_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_08_Track08_wav.midi",
+        "audio_filename": "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_08_Track08_wav.wav",
+        "duration": 190.852001088
+    }
+]

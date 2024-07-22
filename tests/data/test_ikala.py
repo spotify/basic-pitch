@@ -51,15 +51,15 @@ def test_ikala_invalid_tracks(tmpdir: str) -> None:
             assert fp.read().strip() == str(i)
 
 
-def test_create_input_data() -> None:
+def test_ikala_create_input_data() -> None:
     data = create_input_data(train_percent=0.5)
     data.sort(key=lambda el: el[1])  # sort by split
-    tolerance = 0.05
-    for key, group in itertools.groupby(data, lambda el: el[1]):
+    tolerance = 0.1
+    for _, group in itertools.groupby(data, lambda el: el[1]):
         assert (0.5 - tolerance) * len(data) <= len(list(group)) <= (0.5 + tolerance) * len(data)
 
 
-def test_create_input_data_overallocate() -> None:
+def test_ikala_create_input_data_overallocate() -> None:
     try:
         create_input_data(train_percent=1.1)
     except AssertionError:

@@ -54,7 +54,7 @@ def test_medleydb_pitch_invalid_tracks(tmpdir: str) -> None:
 def test_medleydb_create_input_data() -> None:
     data = create_input_data(train_percent=0.5)
     data.sort(key=lambda el: el[1])  # sort by split
-    tolerance = 0.05
+    tolerance = 0.01
     for _, group in itertools.groupby(data, lambda el: el[1]):
         assert (0.5 - tolerance) * len(data) <= len(list(group)) <= (0.5 + tolerance) * len(data)
 

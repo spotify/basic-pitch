@@ -136,17 +136,19 @@ def create_input_data(
     if seed:
         random.seed(seed)
 
-    def determine_split() -> str:
-        partition = random.uniform(0, 1)
-        if partition < validation_bound:
+    def determine_split(index: int) -> str:
+        if index < len(track_ids) * validation_bound:
             return "train"
-        if partition < test_bound:
+        elif index < len(track_ids) * test_bound:
             return "validation"
-        return "test"
+        else:
+            return "test"
 
     guitarset = mirdata.initialize("guitarset")
+    track_ids = guitarset.track_ids
+    random.shuffle(track_ids)
 
-    return [(track_id, determine_split()) for track_id in guitarset.track_ids]
+    return [(track_id, determine_split(i)) for i, track_id in enumerate(track_ids)]
 
 
 def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:

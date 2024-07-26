@@ -136,22 +136,17 @@ class MedleyDbPitchToTfExample(beam.DoFn):
 def create_input_data(train_percent: float, seed: Optional[int] = None) -> List[Tuple[str, str]]:
     assert train_percent < 1.0, "Don't over allocate the data!"
 
-    # Test percent is 1 - train - validation
-    validation_bound = train_percent
-
     if seed:
         random.seed(seed)
 
-    def determine_split() -> str:
-        partition = random.uniform(0, 1)
-        if partition < validation_bound:
-            return "train"
-        return "validation"
-
     medleydb_pitch = mirdata.initialize("medleydb_pitch")
-    medleydb_pitch.download()
+    track_ids = medleydb_pitch.track_ids
+    random.shuffle(track_ids)
 
-    return [(track_id, determine_split()) for track_id in medleydb_pitch.track_ids]
+    def determine_split(index: int) -> str:
+        return "train" if index < len(track_ids) * train_percent else "validation"
+
+    return [(track_id, determine_split(i)) for i, track_id in enumerate(track_ids)]
 
 
 def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:

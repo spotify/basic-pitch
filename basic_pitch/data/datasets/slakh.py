@@ -44,7 +44,7 @@ class SlakhFilterInvalidTracks(beam.DoFn):
         import tempfile
 
         import apache_beam as beam
-        import sox
+        import ffmpeg
 
         from basic_pitch.constants import (
             AUDIO_N_CHANNELS,
@@ -77,11 +77,10 @@ class SlakhFilterInvalidTracks(beam.DoFn):
                 return None
 
             local_wav_path = "{}_tmp.wav".format(track_local.audio_path)
-            tfm = sox.Transformer()
-            tfm.rate(AUDIO_SAMPLE_RATE)
-            tfm.channels(AUDIO_N_CHANNELS)
             try:
-                tfm.build(track_local.audio_path, local_wav_path)
+                ffmpeg.input(track_local.audio_path).output(
+                    local_wav_path, ar=AUDIO_SAMPLE_RATE, ac=AUDIO_N_CHANNELS
+                ).run()
             except Exception as e:
                 logging.info(f"Could not process {local_wav_path}. Exception: {e}")
                 return None
@@ -113,7 +112,7 @@ class SlakhToTfExample(beam.DoFn):
         import tempfile
 
         import numpy as np
-        import sox
+        import ffmpeg
 
         from basic_pitch.constants import (
             AUDIO_N_CHANNELS,
@@ -145,12 +144,11 @@ class SlakhToTfExample(beam.DoFn):
                         d.write(s.read())
 
                 local_wav_path = "{}_tmp.wav".format(track_local.audio_path)
-                tfm = sox.Transformer()
-                tfm.rate(AUDIO_SAMPLE_RATE)
-                tfm.channels(AUDIO_N_CHANNELS)
-                tfm.build(track_local.audio_path, local_wav_path)
+                ffmpeg.input(track_local.audio_path).output(
+                    local_wav_path, ar=AUDIO_SAMPLE_RATE, ac=AUDIO_N_CHANNELS
+                ).run()
 
-                duration = sox.file_info.duration(local_wav_path)
+                duration = float(ffmpeg.probe(local_wav_path)["format"]["duration"])
                 time_scale = np.arange(0, duration + ANNOTATION_HOP, ANNOTATION_HOP)
                 n_time_frames = len(time_scale)
 

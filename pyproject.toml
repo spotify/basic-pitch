@@ -57,7 +57,8 @@ data = [
     "apache_beam",
     "mirdata",
     "smart_open",
-    "sox"
+    "sox",
+    "ffmpeg-python"
 ]
 test = [
 	"basic_pitch[data]",

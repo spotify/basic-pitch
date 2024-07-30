@@ -179,8 +179,14 @@ def test_maestro_invalid_tracks_over_15_min(tmpdir: str) -> None:
 
 
 def test_maestro_create_input_data() -> None:
+    """ 
+    A commuted metadata file is included in the repo for testing. mirdata references the metadata file to 
+    populate the tracklist with metadata. Since the file is commuted to only the filenames referenced here,
+    we only consider these when testing the metadata. 
+    """
     data = create_input_data(str(MAESTRO_TEST_DATA_PATH))
     assert len(data)
 
-    splits = set(map(lambda el: el[1], data))
+    test_fnames = {TRAIN_TRACK_ID, VALID_TRACK_ID, TEST_TRACK_ID, GT_15M_TRACK_ID}
+    splits = set(map(lambda el: el[1], [d for d in data if d[0].split('.')[0] in test_fnames]))
     assert splits == set(["train", "validation", "test"])

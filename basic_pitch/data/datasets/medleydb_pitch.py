@@ -19,9 +19,8 @@ import argparse
 import logging
 import os
 import random
-import sys
 import time
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import apache_beam as beam
 import mirdata
@@ -29,14 +28,14 @@ import mirdata
 from basic_pitch.data import commandline, pipeline
 
 
-class IkalaInvalidTracks(beam.DoFn):
+class MedleyDbPitchInvalidTracks(beam.DoFn):
     def process(self, element: Tuple[str, str], *args: Tuple[Any, Any], **kwargs: Dict[str, Any]) -> Any:
         track_id, split = element
         yield beam.pvalue.TaggedOutput(split, track_id)
 
 
-class IkalaToTfExample(beam.DoFn):
-    DOWNLOAD_ATTRIBUTES = ["audio_path", "notes_pyin_path", "f0_path"]
+class MedleyDbPitchToTfExample(beam.DoFn):
+    DOWNLOAD_ATTRIBUTES = ["audio_path", "notes_pyin_path", "pitch_path"]
 
     def __init__(self, source: str, download: bool) -> None:
         self.source = source
@@ -44,13 +43,12 @@ class IkalaToTfExample(beam.DoFn):
 
     def setup(self) -> None:
         import apache_beam as beam
-        import os
         import mirdata
 
-        self.ikala_remote = mirdata.initialize("ikala", data_home=os.path.join(self.source, "iKala"))
+        self.medleydb_pitch_remote = mirdata.initialize("medleydb_pitch", data_home=self.source)
         self.filesystem = beam.io.filesystems.FileSystems()  # TODO: replace with fsspec
         if self.download:
-            self.ikala_remote.download()
+            self.medleydb_pitch_remote.download()
 
     def process(self, element: List[str], *args: Tuple[Any, Any], **kwargs: Dict[str, Any]) -> List[Any]:
         import tempfile
@@ -64,19 +62,20 @@ class IkalaToTfExample(beam.DoFn):
             FREQ_BINS_CONTOURS,
             FREQ_BINS_NOTES,
             ANNOTATION_HOP,
-            N_FREQ_BINS_CONTOURS,
             N_FREQ_BINS_NOTES,
+            N_FREQ_BINS_CONTOURS,
         )
-        from basic_pitch.data import tf_example_serialization
+        from basic_pitch.dataset import tf_example_serialization
 
         logging.info(f"Processing {element}")
         batch = []
 
         for track_id in element:
-            track_remote = self.ikala_remote.track(track_id)
+            track_remote = self.medleydb_pitch_remote.track(track_id)
+
             with tempfile.TemporaryDirectory() as local_tmp_dir:
-                ikala_local = mirdata.initialize("ikala", local_tmp_dir)
-                track_local = ikala_local.track(track_id)
+                medleydb_pitch_local = mirdata.initialize("medleydb_pitch", local_tmp_dir)
+                track_local = medleydb_pitch_local.track(track_id)
 
                 for attr in self.DOWNLOAD_ATTRIBUTES:
                     source = getattr(track_remote, attr)
@@ -85,11 +84,10 @@ class IkalaToTfExample(beam.DoFn):
                     with self.filesystem.open(source) as s, open(dest, "wb") as d:
                         d.write(s.read())
 
+                # will be in temp dir and get cleaned up
                 local_wav_path = "{}_tmp.wav".format(track_local.audio_path)
-
                 tfm = sox.Transformer()
                 tfm.rate(AUDIO_SAMPLE_RATE)
-                tfm.remix({1: [2]})
                 tfm.channels(AUDIO_N_CHANNELS)
                 tfm.build(track_local.audio_path, local_wav_path)
 
@@ -107,20 +105,20 @@ class IkalaToTfExample(beam.DoFn):
                     note_shape = (n_time_frames, N_FREQ_BINS_NOTES)
                 # if there are no notes, return empty note indices
                 else:
+                    note_shape = (0, 0)
                     note_indices = []
                     onset_indices = []
                     note_values = []
                     onset_values = []
-                    note_shape = (0, 0)
 
-                contour_indices, contour_values = track_local.f0.to_sparse_index(
+                contour_indices, contour_values = track_local.pitch.to_sparse_index(
                     time_scale, "s", FREQ_BINS_CONTOURS, "hz"
                 )
 
                 batch.append(
                     tf_example_serialization.to_transcription_tfexample(
                         track_id,
-                        "ikala",
+                        "medleydb_pitch",
                         local_wav_path,
                         note_indices,
                         note_values,
@@ -141,8 +139,8 @@ def create_input_data(train_percent: float, seed: Optional[int] = None) -> List[
     if seed:
         random.seed(seed)
 
-    ikala = mirdata.initialize("ikala")
-    track_ids = ikala.track_ids
+    medleydb_pitch = mirdata.initialize("medleydb_pitch")
+    track_ids = medleydb_pitch.track_ids
     random.shuffle(track_ids)
 
     def determine_split(index: int) -> str:
@@ -154,27 +152,27 @@ def create_input_data(train_percent: float, seed: Optional[int] = None) -> List[
 def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:
     time_created = int(time.time())
     destination = commandline.resolve_destination(known_args, time_created)
+    input_data = create_input_data(known_args.train_percent, known_args.split_seed)
 
     pipeline_options = {
         "runner": known_args.runner,
-        "job_name": f"ikala-tfrecords-{time_created}",
+        "job_name": f"medleydb-pitch-tfrecords-{time_created}",
         "machine_type": "e2-standard-4",
         "num_workers": 25,
         "disk_size_gb": 128,
-        "experiments": ["use_runner_v2", "no_use_multiple_sdk_containers"],
+        "experiments": ["use_runner_v2"],
         "save_main_session": True,
         "sdk_container_image": known_args.sdk_container_image,
         "job_endpoint": known_args.job_endpoint,
         "environment_type": "DOCKER",
         "environment_config": known_args.sdk_container_image,
     }
-    input_data = create_input_data(known_args.train_percent, known_args.split_seed)
     pipeline.run(
         pipeline_options,
         pipeline_args,
         input_data,
-        IkalaToTfExample(known_args.source, download=True),
-        IkalaInvalidTracks(known_args.source),
+        MedleyDbPitchToTfExample(known_args.source, download=True),
+        MedleyDbPitchInvalidTracks(),
         destination,
         known_args.batch_size,
     )
@@ -184,6 +182,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     commandline.add_default(parser, os.path.basename(os.path.splitext(__file__)[0]))
     commandline.add_split(parser)
-    known_args, pipeline_args = parser.parse_known_args(sys.argv)
+    known_args, pipeline_args = parser.parse_known_args()
 
     main(known_args, pipeline_args)

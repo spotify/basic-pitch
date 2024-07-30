@@ -188,5 +188,5 @@ def test_maestro_create_input_data() -> None:
     assert len(data)
 
     test_fnames = {TRAIN_TRACK_ID, VALID_TRACK_ID, TEST_TRACK_ID, GT_15M_TRACK_ID}
-    splits = set(map(lambda el: el[1], [d for d in data if d[0].split(".")[0] in test_fnames]))
+    splits = {d[1] for d in data if d[0].split(".")[0] in test_fnames}
     assert splits == set(["train", "validation", "test"])

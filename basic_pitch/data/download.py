@@ -31,7 +31,7 @@ DATASET_DICT = {
     "guitarset": guitarset_main,
     "ikala": ikala_main,
     "maestro": maestro_main,
-    "medleydb_pitch": medleydb_pitch_main
+    "medleydb_pitch": medleydb_pitch_main,
 }
 
 

@@ -33,7 +33,7 @@ RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
 TRACK_ID = "00_BN1-129-Eb_comp"
 
 
-def test_guitar_set_to_tf_example(tmpdir: str) -> None:
+def test_guitarset_to_tf_example(tmpdir: str) -> None:
     input_data: List[str] = [TRACK_ID]
     with TestPipeline() as p:
         (
@@ -51,7 +51,7 @@ def test_guitar_set_to_tf_example(tmpdir: str) -> None:
         assert len(data) != 0
 
 
-def test_guitar_set_invalid_tracks(tmpdir: str) -> None:
+def test_guitarset_invalid_tracks(tmpdir: str) -> None:
     split_labels = ["train", "test", "validation"]
     input_data = [(str(i), split) for i, split in enumerate(split_labels)]
     with TestPipeline() as p:
@@ -73,7 +73,7 @@ def test_guitar_set_invalid_tracks(tmpdir: str) -> None:
             assert fp.read().strip() == str(i)
 
 
-def test_create_input_data() -> None:
+def test_guitarset_create_input_data() -> None:
     data = create_input_data(train_percent=0.33, validation_percent=0.33)
     data.sort(key=lambda el: el[1])  # sort by split
     tolerance = 0.1
@@ -81,7 +81,7 @@ def test_create_input_data() -> None:
         assert (0.33 - tolerance) * len(data) <= len(list(group)) <= (0.33 + tolerance) * len(data)
 
 
-def test_create_input_data_overallocate() -> None:
+def test_guitarset_create_input_data_overallocate() -> None:
     try:
         create_input_data(train_percent=0.6, validation_percent=0.6)
     except AssertionError:

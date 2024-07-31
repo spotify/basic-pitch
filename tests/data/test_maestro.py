@@ -140,7 +140,7 @@ def test_maestro_invalid_tracks(tmp_path: pathlib.Path) -> None:
             )
 
     for track_id, split in input_data:
-        with open(str(tmp_path / f"output_{split}.txt"), "r") as fp:
+        with open(tmp_path / f"output_{split}.txt", "r") as fp:
             assert fp.read().strip() == track_id
 
 
@@ -174,7 +174,7 @@ def test_maestro_invalid_tracks_over_15_min(tmp_path: pathlib.Path) -> None:
             )
 
     for _, split in input_data:
-        with open(str(tmp_path / f"output_{split}.txt"), "r") as fp:
+        with open(tmp_path / f"output_{split}.txt", "r") as fp:
             assert fp.read().strip() == ""
 
 

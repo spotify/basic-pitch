@@ -30,13 +30,13 @@ jobs:
           python-version: ${{ matrix.py }}
       - uses: actions/checkout@v3
       - name: Install soundlibs Ubuntu
-        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y --fix-missing pkg-config libsndfile1 sox
+        run: sudo apt-get update && sudo apt-get install --no-install-recommends -y --fix-missing pkg-config libsndfile1 sox ffmpeg
         if: matrix.os == 'ubuntu-latest'
       - name: Install soundlibs MacOs
-        run: brew install libsndfile llvm libomp sox
+        run: brew install libsndfile llvm libomp sox ffmpeg
         if: matrix.os == 'macos-latest-xlarge'
       - name: Install soundlibs Windows
-        run: choco install libsndfile sox.portable
+        run: choco install libsndfile sox.portable flac ffmpeg
         if: matrix.os == 'windows-latest'
       - name: Upgrade pip
         run: python -m pip install -U pip

@@ -1,0 +1,107 @@
+UUID: 52dc589baea0c387807aa964094e0cba
+audio_dir: Track01501/stems
+lmd_midi_dir: lmd_matched/Y/C/E/TRYCEEK128F42A2C7B/52dc589baea0c387807aa964094e0cba.mid
+midi_dir: Track01501/MIDI
+normalization_factor: -13.0
+normalized: true
+overall_gain: 0.15755727075730824
+stems:
+  S00:
+    audio_rendered: true
+    inst_class: Piano
+    integrated_loudness: -22.121310057465305
+    is_drum: false
+    midi_program_name: Bright Acoustic Piano
+    midi_saved: true
+    plugin_name: ragtime_piano.nkm
+    program_num: 1
+  S01:
+    audio_rendered: true
+    inst_class: Strings (continued)
+    integrated_loudness: -24.49914258227348
+    is_drum: false
+    midi_program_name: String Ensemble 1
+    midi_saved: true
+    plugin_name: string_ensemble.nkm
+    program_num: 48
+  S02:
+    audio_rendered: true
+    inst_class: Chromatic Percussion
+    integrated_loudness: -26.533255386228614
+    is_drum: false
+    midi_program_name: Xylophone
+    midi_saved: true
+    plugin_name: hybrid_keys_futurebells.nkm
+    program_num: 13
+  S03:
+    audio_rendered: true
+    inst_class: Drums
+    integrated_loudness: -24.128849800212254
+    is_drum: true
+    midi_program_name: Drums
+    midi_saved: true
+    plugin_name: session_kit_full.nkm
+    program_num: 128
+  S04:
+    audio_rendered: true
+    inst_class: Bass
+    integrated_loudness: -18.10473562363928
+    is_drum: false
+    midi_program_name: Fretless Bass
+    midi_saved: true
+    plugin_name: scarbee_rickenbacker_bass_palm_muted.nkm
+    program_num: 35
+  S05:
+    audio_rendered: true
+    inst_class: Pipe
+    integrated_loudness: -13.90182238157093
+    is_drum: false
+    midi_program_name: Flute
+    midi_saved: true
+    plugin_name: flute_essential.nkm
+    program_num: 73
+  S06:
+    audio_rendered: true
+    inst_class: Piano
+    integrated_loudness: -19.73242818313494
+    is_drum: false
+    midi_program_name: Electric Piano 1
+    midi_saved: true
+    plugin_name: scarbee_pianet.nkm
+    program_num: 4
+  S07:
+    audio_rendered: true
+    inst_class: Pipe
+    integrated_loudness: -16.951648378470882
+    is_drum: false
+    midi_program_name: Flute
+    midi_saved: true
+    plugin_name: flute_essential.nkm
+    program_num: 73
+  S08:
+    audio_rendered: true
+    inst_class: Guitar
+    integrated_loudness: -14.33787711924181
+    is_drum: false
+    midi_program_name: Overdriven Guitar
+    midi_saved: true
+    plugin_name: elektrik_guitar.nkm
+    program_num: 29
+  S09:
+    audio_rendered: false
+    inst_class: Strings
+    is_drum: false
+    midi_program_name: Timpani
+    midi_saved: true
+    plugin_name: timpani.nkm
+    program_num: 47
+  S10:
+    audio_rendered: true
+    inst_class: Pipe
+    integrated_loudness: -11.448306981147374
+    is_drum: false
+    midi_program_name: Pan Flute
+    midi_saved: true
+    plugin_name: flutes_essential.nkm
+    program_num: 75
+target_peak: -1.0

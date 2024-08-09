@@ -211,7 +211,7 @@ def sample_datasets(
     choice_dataset = tf.data.Dataset.range(
         n_datasets
     ).repeat()  # this repeat is critical! if not, only n_dataset points will be sampled!!
-    return tf.data.Datasets.choose_from_datasets(ds_list, choice_dataset)
+    return tf.data.Dataset.choose_from_datasets(ds_list, choice_dataset)
 
 
 def transcription_file_generator(

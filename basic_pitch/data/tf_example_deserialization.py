@@ -219,7 +219,7 @@ def transcription_file_generator(
     dataset_names: List[str],
     datasets_base_path: str,
     sample_weights: np.ndarray,
-) -> Tuple[Callable[[], Iterator[str]], bool]:
+) -> Tuple[Callable[[], Iterator[tf.Tensor]], bool]:
     """
     dataset_names: list of dataset dataset_names
     """
@@ -235,7 +235,7 @@ def transcription_file_generator(
     return lambda: _validation_file_generator(file_dict), True
 
 
-def _train_file_generator(x: Dict[str, List[str]], weights: np.ndarray) -> Iterator[str]:
+def _train_file_generator(x: Dict[str, tf.data.Dataset], weights: np.ndarray) -> Iterator[tf.Tensor]:
     x = {k: list(v) for (k, v) in x.items()}
     keys = list(x.keys())
     # shuffle each list
@@ -248,7 +248,7 @@ def _train_file_generator(x: Dict[str, List[str]], weights: np.ndarray) -> Itera
         yield fpath
 
 
-def _validation_file_generator(x: Dict[str, tf.data.Dataset]) -> Iterator[str]:
+def _validation_file_generator(x: Dict[str, tf.data.Dataset]) -> Iterator[tf.Tensor]:
     x = {k: list(v) for (k, v) in x.items()}
     # loop until there are no more test files
     while any(x.values()):

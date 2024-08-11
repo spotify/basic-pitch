@@ -151,8 +151,8 @@ def main(
 def console_entry_point() -> None:
     """From pip installed script."""
     parser = argparse.ArgumentParser(description="")
-    parser.add_argument("--source", help="Path to directory containing train/validation splits.")
-    parser.add_argument("--output", help="Directory to save the model in.")
+    parser.add_argument("--source", required=True, help="Path to directory containing train/validation splits.")
+    parser.add_argument("--output", required=True, help="Directory to save the model in.")
     parser.add_argument("-e", "--epochs", type=int, default=500, help="Number of training epochs.")
     parser.add_argument(
         "-b",

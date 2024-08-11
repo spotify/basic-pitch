@@ -25,6 +25,8 @@ from mido import MidiFile, MidiTrack, Message
 
 
 def create_mock_wav(output_fpath: pathlib.Path, duration_min: int) -> None:
+    assert output_fpath.suffix == ".wav"
+
     duration_seconds = duration_min * 60
     sample_rate = 44100
     n_channels = 2  # Stereo
@@ -45,6 +47,8 @@ def create_mock_wav(output_fpath: pathlib.Path, duration_min: int) -> None:
 
 
 def create_mock_flac(output_fpath: pathlib.Path) -> None:
+    assert output_fpath.suffix == ".flac"
+
     frequency = 440  # A4
     duration = 2  # seconds
     sample_rate = 44100  # standard
@@ -60,6 +64,7 @@ def create_mock_flac(output_fpath: pathlib.Path) -> None:
 
 
 def create_mock_midi(output_fpath: pathlib.Path) -> None:
+    assert output_fpath.suffix in (".mid", ".midi")
     # Create a new MIDI file with one track
     mid = MidiFile()
     track = MidiTrack()

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 #
-# Copyright 2022 Spotify AB
+# Copyright 2024 Spotify AB
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
 import os
 
 from typing import Any, Dict
@@ -23,27 +22,6 @@ from typing import Any, Dict
 import tensorflow as tf
 
 from basic_pitch import visualize
-
-
-class SavedModelCallback(tf.keras.callbacks.Callback):
-    def __init__(self, output_path: str, monitor: str):
-        self.output_savemodel_path = output_path
-        self.monitor = monitor  # 'val_loss' typically
-        self.best_loss_so_far = 1000000.0
-
-    def on_epoch_end(self, epoch: int, logs: Dict[Any, Any]) -> None:
-        loss = logs.get(self.monitor)
-        if loss is None:
-            logging.warning("SaveModelCallback: monitored variable %s is not defined in logs, skipping" % self.monitor)
-        else:
-            if loss < self.best_loss_so_far:
-                output_path = os.path.join(
-                    self.output_savemodel_path,
-                    "%d/model" % epoch,
-                )
-                logging.info("SaveModelCallback: saving model at iteration %d in %s" % (epoch, output_path))
-                tf.saved_model.save(self.model, output_path)
-                self.best_loss_so_far = loss
 
 
 class VisualizeCallback(tf.keras.callbacks.Callback):
@@ -66,6 +44,7 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch: int, logs: Dict[Any, Any]) -> None:
         # the first two outputs of generator needs to be the input and the targets
+        print(f"epoch: {epoch}, logs: {logs}")
         train_inputs, train_targets = next(self.train_iter)[:2]
         validation_inputs, validation_targets = next(self.validation_iter)[:2]
         for stage, inputs, targets, loss in [

@@ -34,7 +34,7 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
         original_validation_ds: tf.data.Dataset,
         contours: bool,
     ):
-        super(VisualizeCallback, self).__init__()
+        super().__init__()
         self.train_iter = iter(train_ds)
         self.validation_iter = iter(validation_ds)
         self.validation_ds = original_validation_ds
@@ -44,7 +44,6 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch: int, logs: Dict[Any, Any]) -> None:
         # the first two outputs of generator needs to be the input and the targets
-        print(f"epoch: {epoch}, logs: {logs}")
         train_inputs, train_targets = next(self.train_iter)[:2]
         validation_inputs, validation_targets = next(self.validation_iter)[:2]
         for stage, inputs, targets, loss in [

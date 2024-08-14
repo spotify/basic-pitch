@@ -16,12 +16,15 @@
 # limitations under the License.
 
 import numpy as np
+import os
 import tensorflow as tf
 
 from typing import Dict
 
 from basic_pitch.callbacks import VisualizeCallback
 from basic_pitch.constants import AUDIO_N_SAMPLES, ANNOTATIONS_N_SEMITONES, ANNOT_N_FRAMES
+
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 
 class MockModel(tf.keras.Model):
@@ -47,6 +50,21 @@ def create_mock_dataset() -> tf.data.Dataset:
 
 
 def test_visualize_callback_on_epoch_end(tmpdir: str) -> None:
+
+    vc = VisualizeCallback(
+        train_ds=create_mock_dataset(),
+        validation_ds=create_mock_dataset(),
+        tensorboard_dir=str(tmpdir),
+        original_validation_ds=create_mock_dataset(),
+        contours=True,
+    )
+
+    vc.model = MockModel()
+
+    vc.on_epoch_end(1, {"loss": np.random.random(), "val_loss": np.random.random()})
+
+
+def test_visualize_callback_on_epoch_end_with_model(tmpdir: str) -> None:
     model = MockModel()
     model.compile(optimizer="adam", loss="mse")
 
@@ -66,5 +84,5 @@ def test_visualize_callback_on_epoch_end(tmpdir: str) -> None:
         contours=True,
     )
 
-    history = model.fit(x_train, y_train, epochs=1, validation_split=0.5, callbacks=[vc])
+    history = model.fit(x_train, y_train, epochs=1, validation_split=0.5, callbacks=[vc], verbose=0)
     assert history

@@ -52,6 +52,7 @@ TIMES = librosa.core.frames_to_time(
 
 
 def get_input_model() -> tf.keras.Model:
+    """define a model that generates the CQT (Constant-Q Transform) of input audio"""
     inputs = tf.keras.Input(shape=(AUDIO_N_SAMPLES, 1))  # (batch, time, ch)
     x = models.get_cqt(inputs, 1, False)
     model = tf.keras.Model(inputs=inputs, outputs=x)
@@ -83,7 +84,8 @@ def visualize_transcription(
         outputs: batch of output data (dictionary)
         loss: loss value for epoch
         step: which epoch this is
-
+        sonify: sonify outputs
+        contours: plot note contours
     """
     with file_writer.as_default():
         # create audio player
@@ -169,11 +171,19 @@ def visualize_transcription(
         # plot max
         if contours:
             tf.summary.scalar(f"{stage}/contour-max", np.max(outputs["contour"]), step=step)
+
         tf.summary.scalar(f"{stage}/note-max", np.max(outputs["note"]), step=step)
         tf.summary.scalar(f"{stage}/onset-max", np.max(outputs["onset"]), step=step)
 
 
 def _array_to_sonification(array: tf.Tensor, max_outputs: int, clip: float = 0.3) -> tf.Tensor:
+    """sonify time frequency representation of audio
+
+    Args:
+        array: time-frequency representation of audio
+        max_outputs: the number of grams / batches to process / append to the resulting output
+        clip: value below which signal is 0'd out.
+    """
     gram_batch = tf.transpose(array, perm=[0, 2, 1]).numpy()
     audio_list = []
 
@@ -194,6 +204,14 @@ def _array_to_sonification(array: tf.Tensor, max_outputs: int, clip: float = 0.3
 
 
 def _audio_input(audio: tf.Tensor) -> tf.Tensor:
+    """Gets the Constant-Q transform of audio input using the input model defined above.
+
+    Args:
+        audio: the audio signal to process
+
+    Returns:
+        constant-q transform of the audio (3 bins per semitone, ~11ms hop size.)
+    """
     audio_in = INPUT_MODEL(audio)
     return tf.transpose(audio_in, perm=[0, 2, 1, 3])
 

@@ -26,20 +26,31 @@ from basic_pitch import visualize
 
 class VisualizeCallback(tf.keras.callbacks.Callback):
     # TODO RACHEL make this WAY faster
+    """
+    Callback to run during training to create tensorboard visualizations per epoch.
+
+        Attributes:
+            train_ds: training dataset to use for prediction / visualization / sonification / summarization
+            valid_ds: validation dataset to use for "" ""
+            tensorboard_dir: directory to output "" ""
+            sonify: whether to include sonifications in tensorboard
+            contours: whether to plot note contours in tensorboard
+    """
+
     def __init__(
         self,
         train_ds: tf.data.Dataset,
         validation_ds: tf.data.Dataset,
         tensorboard_dir: str,
-        original_validation_ds: tf.data.Dataset,
+        sonify: bool,
         contours: bool,
     ):
         super().__init__()
         self.train_iter = iter(train_ds)
         self.validation_iter = iter(validation_ds)
-        self.validation_ds = original_validation_ds
         self.tensorboard_dir = os.path.join(tensorboard_dir, "tensorboard_logs")
         self.file_writer = tf.summary.create_file_writer(tensorboard_dir)
+        self.sonify = sonify
         self.contours = contours
 
     def on_epoch_end(self, epoch: int, logs: Dict[Any, Any]) -> None:
@@ -59,6 +70,6 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
                 outputs,
                 loss,
                 epoch,
-                self.validation_ds,
+                sonify=self.sonify,
                 contours=self.contours,
             )

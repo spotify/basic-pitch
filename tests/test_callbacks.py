@@ -16,7 +16,6 @@
 # limitations under the License.
 
 import numpy as np
-import os
 import tensorflow as tf
 
 from typing import Dict
@@ -53,7 +52,7 @@ def test_visualize_callback_on_epoch_end(tmpdir: str) -> None:
         train_ds=create_mock_dataset(),
         validation_ds=create_mock_dataset(),
         tensorboard_dir=str(tmpdir),
-        original_validation_ds=create_mock_dataset(),
+        sonify=True,
         contours=True,
     )
 

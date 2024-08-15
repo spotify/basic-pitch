@@ -44,11 +44,31 @@ def main(
     size_evaluation_callback_datasets: int,
     datasets_to_use: List[str],
     dataset_sampling_frequency: np.ndarray,
+    no_sonify: bool,
     no_contours: bool,
     weighted_onset_loss: bool,
     positive_onset_weight: float,
 ) -> None:
-    """Parse config and run training or evaluation."""
+    """Parse config and run training or evaluation.
+
+    Args:
+        source: source directory for data
+        output: output directory for trained model / checkpoints / tensorboard
+        batch_size: batch size for data.
+        shuffle_size: size of shuffle buffer (only for training set) for the data shuffling mechanism
+        learning_rate: learning_rate for training
+        epochs: number of epochs to train for
+        steps_per_epoch: the number of batches to process per epoch during training
+        validation_steps: the number of validation batches to evaluate on per epoch
+        size_evaluation_callback_datasets: the batch size to use for visualization / logging
+        datasets_to_use: which datasets to train / evaluate on e.g. guitarset, medleydb_pitch, slakh
+        dataset_sampling_frequency: distribution weighting vector corresponding to datasets determining how they
+            are sampled from during training / validation dataset creation.
+        no_sonify: Whether or not to include sonifications in tensorboard.
+        no_contours: Whether or not to include contours in the output.
+        weighted_onset_loss: whether or not to use a weighted cross entropy loss.
+        positive_onset_weight: weighting factor for the positive labels.
+    """
     # configuration.add_externals()
     logging.info(f"source directory: {source}")
     logging.info(f"output directory: {output}")
@@ -115,7 +135,7 @@ def main(
             train_visualization_ds,
             validation_visualization_ds,
             tensorboard_log_dir,
-            validation_ds.take(validation_steps),
+            not no_sonify,
             not no_contours,
         ),
     ]
@@ -203,6 +223,12 @@ def console_entry_point() -> None:
             help=f"Use {dataset} dataset in training",
         )
     parser.add_argument(
+        "--no-sonify",
+        action="store_true",
+        default=False,
+        help="if given, exclude sonifications from the tensorboard / data visualization",
+    )
+    parser.add_argument(
         "--no-contours",
         action="store_true",
         default=False,
@@ -251,6 +277,7 @@ def console_entry_point() -> None:
         args.size_evaluation_callback_datasets,
         datasets_to_use,
         dataset_sampling_frequency,
+        args.dont_sonify,
         args.no_contours,
         args.weighted_onset_loss,
         args.positive_onset_weight,

@@ -73,10 +73,7 @@ def prepare_datasets(
 
     # check that the base dataset returned by ds_function is FINITE
     for ds in [ds_train, ds_validation]:
-        tf.debugging.assert_none_equal(
-            tf.cast(tf.data.experimental.cardinality(ds), tf.int32),
-            tf.data.experimental.INFINITE_CARDINALITY,
-        )
+        assert tf.cast(tf.data.experimental.cardinality(ds), tf.int32) != tf.data.experimental.INFINITE_CARDINALITY
 
     # training dataset
     if training_shuffle_buffer_size > 0:
@@ -137,10 +134,7 @@ def prepare_visualization_datasets(
 
     # check that the base dataset returned by ds_function is FINITE
     for ds in [ds_train, ds_validation]:
-        tf.debugging.assert_none_equal(
-            tf.cast(tf.data.experimental.cardinality(ds), tf.int32),
-            tf.data.experimental.INFINITE_CARDINALITY,
-        )
+        assert tf.cast(tf.data.experimental.cardinality(ds), tf.int32) != tf.data.experimental.INFINITE_CARDINALITY
 
     # training dataset
     ds_train = ds_train.repeat().batch(batch_size).prefetch(tf.data.AUTOTUNE)

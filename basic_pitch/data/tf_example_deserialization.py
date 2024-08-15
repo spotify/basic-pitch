@@ -33,6 +33,7 @@ from basic_pitch.constants import (
     AUDIO_WINDOW_LENGTH,
     N_FREQ_BINS_NOTES,
     N_FREQ_BINS_CONTOURS,
+    Split,
 )
 
 N_SAMPLES_PER_TRACK = 20
@@ -59,13 +60,13 @@ def prepare_datasets(
 
     # init both
     ds_train = sample_datasets(
-        "train",
+        Split.train,
         datasets_base_path,
         datasets=datasets_to_use,
         dataset_sampling_frequency=dataset_sampling_frequency,
     )
     ds_validation = sample_datasets(
-        "validation",
+        Split.validation,
         datasets_base_path,
         datasets=datasets_to_use,
         dataset_sampling_frequency=dataset_sampling_frequency,
@@ -118,14 +119,14 @@ def prepare_visualization_datasets(
     assert validation_steps is not None and validation_steps > 0
 
     ds_train = sample_datasets(
-        "train",
+        Split.train,
         datasets_base_path,
         datasets=datasets_to_use,
         dataset_sampling_frequency=dataset_sampling_frequency,
         n_samples_per_track=1,
     )
     ds_validation = sample_datasets(
-        "validation",
+        Split.validation,
         datasets_base_path,
         datasets=datasets_to_use,
         dataset_sampling_frequency=dataset_sampling_frequency,
@@ -153,7 +154,7 @@ def prepare_visualization_datasets(
 
 
 def sample_datasets(
-    split: str,
+    split: Split,
     datasets_base_path: str,
     datasets: List[str],
     dataset_sampling_frequency: np.ndarray,
@@ -161,8 +162,7 @@ def sample_datasets(
     n_samples_per_track: int = N_SAMPLES_PER_TRACK,
     pairs: bool = False,
 ) -> tf.data.Dataset:
-    assert split in ["train", "validation"]
-    if split == "validation":
+    if split == Split.validation:
         n_shuffle = 0
         pairs = False
         if n_samples_per_track != 1:
@@ -209,7 +209,7 @@ def sample_datasets(
 
 
 def transcription_file_generator(
-    split: str,
+    split: Split,
     dataset_names: List[str],
     datasets_base_path: str,
     sample_weights: np.ndarray,
@@ -219,12 +219,12 @@ def transcription_file_generator(
     """
     file_dict = {
         dataset_name: tf.data.Dataset.list_files(
-            os.path.join(datasets_base_path, dataset_name, "splits", split, "*tfrecord")
+            os.path.join(datasets_base_path, dataset_name, "splits", split.name, "*tfrecord")
         )
         for dataset_name in dataset_names
     }
 
-    if split == "train":
+    if split == Split.train:
         return lambda: _train_file_generator(file_dict, sample_weights), False
     return lambda: _validation_file_generator(file_dict), True
 

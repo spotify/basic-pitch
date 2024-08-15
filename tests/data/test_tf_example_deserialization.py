@@ -24,6 +24,7 @@ import tensorflow as tf
 from apache_beam.testing.test_pipeline import TestPipeline
 from typing import List
 
+from basic_pitch.constants import Split
 from basic_pitch.data.datasets.guitarset import GuitarSetToTfExample
 from basic_pitch.data.pipeline import WriteBatchToTfRecord
 from basic_pitch.data.tf_example_deserialization import (
@@ -135,7 +136,7 @@ def test_sample_datasets(tmp_path: pathlib.Path) -> None:
     datasets_home = setup_test_resources(tmp_path)
 
     ds = sample_datasets(
-        split="train",
+        split=Split.train,
         datasets_base_path=str(datasets_home),
         datasets=["guitarset"],
         dataset_sampling_frequency=np.array([1]),
@@ -148,12 +149,12 @@ def test_sample_datasets(tmp_path: pathlib.Path) -> None:
 
 
 def test_transcription_file_generator_train(tmp_path: pathlib.Path) -> None:
-    dataset_path = tmp_path / "test_ds" / "splits" / "train"
+    dataset_path = tmp_path / "test_ds" / "splits" / Split.train.name
     dataset_path.mkdir(parents=True)
     create_empty_tfrecord(dataset_path / "test.tfrecord")
 
     file_gen, random_seed = transcription_file_generator(
-        "train", ["test_ds"], datasets_base_path=str(tmp_path), sample_weights=np.array([1])
+        Split.train, ["test_ds"], datasets_base_path=str(tmp_path), sample_weights=np.array([1])
     )
 
     assert random_seed is False
@@ -167,12 +168,12 @@ def test_transcription_file_generator_train(tmp_path: pathlib.Path) -> None:
 
 
 def test_transcription_file_generator_valid(tmp_path: pathlib.Path) -> None:
-    dataset_path = tmp_path / "test_ds" / "splits" / "valid"
+    dataset_path = tmp_path / "test_ds" / "splits" / Split.validation.name
     dataset_path.mkdir(parents=True)
     create_empty_tfrecord(dataset_path / "test.tfrecord")
 
     file_gen, random_seed = transcription_file_generator(
-        "valid", ["test_ds"], datasets_base_path=str(tmp_path), sample_weights=np.array([1])
+        Split.validation, ["test_ds"], datasets_base_path=str(tmp_path), sample_weights=np.array([1])
     )
 
     assert random_seed is True

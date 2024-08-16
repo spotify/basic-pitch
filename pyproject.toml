@@ -1,6 +1,6 @@
 [project]
 name = "basic-pitch"
-version = "0.3.3"
+version = "0.4.0"
 description = "Basic Pitch, a lightweight yet powerful audio-to-MIDI converter with pitch bend detection."
 readme = "README.md"
 keywords = []

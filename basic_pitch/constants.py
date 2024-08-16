@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 #
-# Copyright 2022 Spotify AB
+# Copyright 2024 Spotify AB
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 # limitations under the License.
 
 import numpy as np
+
+from enum import Enum
 
 FFT_HOP = 256
 N_FFT = 8 * FFT_HOP
@@ -59,3 +61,9 @@ def _freq_bins(bins_per_semitone: int, base_frequency: float, n_semitones: int) 
 
 FREQ_BINS_NOTES = _freq_bins(NOTES_BINS_PER_SEMITONE, ANNOTATIONS_BASE_FREQUENCY, ANNOTATIONS_N_SEMITONES)
 FREQ_BINS_CONTOURS = _freq_bins(CONTOURS_BINS_PER_SEMITONE, ANNOTATIONS_BASE_FREQUENCY, ANNOTATIONS_N_SEMITONES)
+
+
+class Split(Enum):
+    train = "train"
+    validation = "validation"
+    test = "test"

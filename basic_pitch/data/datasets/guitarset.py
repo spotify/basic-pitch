@@ -95,7 +95,6 @@ class GuitarSetToTfExample(beam.DoFn):
                 duration = sox.file_info.duration(local_wav_path)
                 time_scale = np.arange(0, duration + ANNOTATION_HOP, ANNOTATION_HOP)
                 n_time_frames = len(time_scale)
-
                 note_indices, note_values = track_local.notes_all.to_sparse_index(
                     time_scale, "s", FREQ_BINS_NOTES, "hz"
                 )

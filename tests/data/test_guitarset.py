@@ -18,6 +18,7 @@ import apache_beam as beam
 import itertools
 import os
 import pathlib
+import shutil
 
 from apache_beam.testing.test_pipeline import TestPipeline
 from typing import List
@@ -29,24 +30,41 @@ from basic_pitch.data.datasets.guitarset import (
 )
 from basic_pitch.data.pipeline import WriteBatchToTfRecord
 
+from utils import create_mock_wav
+
 RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
 TRACK_ID = "00_BN1-129-Eb_comp"
 
 
-def test_guitarset_to_tf_example(tmpdir: str) -> None:
+def test_guitarset_to_tf_example(tmp_path: pathlib.Path) -> None:
+    mock_guitarset_home = tmp_path / "guitarset"
+    mock_guitarset_audio = mock_guitarset_home / "audio_mono-mic"
+    mock_guitarset_annotations = mock_guitarset_home / "annotation"
+    output_dir = tmp_path / "output"
+
+    mock_guitarset_audio.mkdir(parents=True)
+    mock_guitarset_annotations.mkdir(parents=True)
+    output_dir.mkdir()
+
+    create_mock_wav(mock_guitarset_audio / f"{TRACK_ID}_mic.wav", duration_min=1)
+    shutil.copy(
+        RESOURCES_PATH / "data" / "guitarset" / "annotation" / f"{TRACK_ID}.jams",
+        mock_guitarset_annotations / f"{TRACK_ID}.jams",
+    )
+
     input_data: List[str] = [TRACK_ID]
     with TestPipeline() as p:
         (
             p
             | "Create PCollection of track IDs" >> beam.Create([input_data])
-            | "Create tf.Example"
-            >> beam.ParDo(GuitarSetToTfExample(str(RESOURCES_PATH / "data" / "guitarset"), download=False))
-            | "Write to tfrecord" >> beam.ParDo(WriteBatchToTfRecord(tmpdir))
+            | "Create tf.Example" >> beam.ParDo(GuitarSetToTfExample(str(mock_guitarset_home), download=False))
+            | "Write to tfrecord" >> beam.ParDo(WriteBatchToTfRecord(str(output_dir)))
         )
 
-    assert len(os.listdir(tmpdir)) == 1
-    assert os.path.splitext(os.listdir(tmpdir)[0])[-1] == ".tfrecord"
-    with open(os.path.join(tmpdir, os.listdir(tmpdir)[0]), "rb") as fp:
+    listdir = os.listdir(output_dir)
+    assert len(listdir) == 1
+    assert os.path.splitext(listdir[0])[-1] == ".tfrecord"
+    with open(output_dir / listdir[0], "rb") as fp:
         data = fp.read()
         assert len(data) != 0
 
@@ -77,7 +95,7 @@ def test_guitarset_create_input_data() -> None:
     data = create_input_data(train_percent=0.33, validation_percent=0.33)
     data.sort(key=lambda el: el[1])  # sort by split
     tolerance = 0.1
-    for key, group in itertools.groupby(data, lambda el: el[1]):
+    for _, group in itertools.groupby(data, lambda el: el[1]):
         assert (0.33 - tolerance) * len(data) <= len(list(group)) <= (0.33 + tolerance) * len(data)
 
 

@@ -129,7 +129,10 @@ class Model:
             present.append("ONNX")
             try:
                 self.model_type = Model.MODEL_TYPES.ONNX
-                self.model = ort.InferenceSession(str(model_path), providers=["CPUExecutionProvider"])
+                providers = ["CPUExecutionProvider"]
+                if "CUDAExecutionProvider" in ort.get_available_providers():
+                    providers.insert(0, "CUDAExecutionProvider")
+                self.model = ort.InferenceSession(str(model_path), providers=providers)
                 return
             except Exception as e:
                 if str(model_path).endswith(".onnx"):

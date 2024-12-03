@@ -105,13 +105,18 @@ basic-pitch --help
 
 **predict()**
 
-Import `basic-pitch` into your own Python code and run the [`predict`](basic_pitch/inference.py) functions directly, providing an `<input-audio-path>` and returning the model's prediction results:
+Import `basic-pitch` into your own Python code and run the [`predict`](basic_pitch/inference.py) functions directly, providing an `<input-audio-path>` or an `<array-of-samples>` and returning the model's prediction results:
 
 ```python
 from basic_pitch.inference import predict
-from basic_pitch import ICASSP_2022_MODEL_PATH
 
+# get model predictions given an audio file
 model_output, midi_data, note_events = predict(<input-audio-path>)
+
+# or alternatively, provide an array of samples
+audio_array, sample_rate = librosa.load(<input-audio-path>, mono=True, duration=10.0, offset=5.0)
+model_output, midi_data, note_events = predict(audio_array, sample_rate)
+
 ```
 
 - `<minimum-frequency>` & `<maximum-frequency>` (*float*s) set the maximum and minimum allowed note frequency, in Hz, returned by the model. Pitch events with frequencies outside of this range will be excluded from the prediction results.

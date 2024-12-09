@@ -55,7 +55,7 @@ def model_output_to_notes(
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     midi_tempo: float = 120,
-    pitch_offset_correction: float = 1.2,  #added parameter to correct pitch offset
+    pitch_offset_correction: float = 1.2,
 ) -> Tuple[pretty_midi.PrettyMIDI, List[Tuple[float, float, int, float, Optional[List[int]]]]]:
     """Convert model output to MIDI * with corrected pitch mapping *
 

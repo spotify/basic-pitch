@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # encoding: utf-8
 #
 # Copyright 2022 Spotify AB
@@ -48,5 +48,5 @@ def test_drop_overlapping_pitch_bends() -> None:
         (4.1, 4.2, 77, 1.0, None),  # overlaps w prev
     ]
     result = drop_overlapping_pitch_bends(note_events_with_pitch_bends)
-    print("Test Result:", result, " ", expected)
+    print("Test Result: /n", result, "/nExpected: /n", expected)
     assert sorted(result) == sorted(expected)

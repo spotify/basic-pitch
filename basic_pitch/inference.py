@@ -156,9 +156,6 @@ class Model:
         if self.model_type == Model.MODEL_TYPES.TENSORFLOW:
             return {k: v.numpy() for k, v in cast(tf.keras.Model, self.model(x)).items()}
         elif self.model_type == Model.MODEL_TYPES.COREML:
-            print(f"isfinite: {np.all(np.isfinite(x))}", flush=True)
-            print(f"shape: {x.shape}", flush=True)
-            print(f"dtype: {x.dtype}", flush=True)
             result = cast(ct.models.MLModel, self.model).predict({"input_2": x})
             return {
                 "note": result["Identity_1"],

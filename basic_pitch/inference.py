@@ -441,6 +441,7 @@ def predict(
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
     midi_tempo: float = 120,
+    verbose: bool = False
 ) -> Tuple[
     Dict[str, np.array],
     pretty_midi.PrettyMIDI,
@@ -465,9 +466,9 @@ def predict(
     """
 
     with no_tf_warnings():
-        if isinstance(audio_path_or_array, np.ndarray):
+        if isinstance(audio_path_or_array, np.ndarray) and verbose:
             print("Predicting MIDI ...")
-        else:
+        elif verbose:
             print(f"Predicting MIDI for {audio_path_or_array}...")
 
         model_output = run_inference(audio_path_or_array, sample_rate, model_or_model_path, debug_file)

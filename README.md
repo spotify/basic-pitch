@@ -148,6 +148,7 @@ If you would like `basic-pitch` orchestrate the generation and saving of our var
 
 ```python
 from basic_pitch.inference import predict_and_save
+from basic_pitch import ICASSP_2022_MODEL_PATH
 
 predict_and_save(
     <input-audio-path-list>,
@@ -156,6 +157,7 @@ predict_and_save(
     <sonify-midi>,
     <save-model-outputs>,
     <save-notes>,
+    <model-path>
 )
 ```
 

@@ -17,13 +17,14 @@
 
 import os
 
-from typing import Any, Dict
+from typing import Any, Dict, Callable
 
 import tensorflow as tf
 
 from basic_pitch import visualize
 
 TENSORBOARD_LOGS_SUBDIR = "tensorboard_logs"
+
 
 class VisualizeCallback(tf.keras.callbacks.Callback):
     """
@@ -49,10 +50,10 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
         use_tf_function: bool = True,
     ):
         super().__init__()
-        self.train_ds = train_ds.take(max_batches).prefatch(prefetch_batches)
+        self.train_ds = train_ds.take(max_batches).prefetch(prefetch_batches)
         self.validation_ds = validation_ds.take(max_batches).prefetch(prefetch_batches)
         self.tensorboard_dir = os.path.join(tensorboard_dir, TENSORBOARD_LOGS_SUBDIR)
-        self.file_writer = tf.summary.create_file_writer(tensorboard_dir)
+        self.file_writer = tf.summary.create_file_writer(self.tensorboard_dir)
         self.sonify = sonify
         self.contours = contours
         self.use_tf_function = use_tf_function
@@ -62,20 +63,18 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
 
         self._predict_fn = None
 
-    def set_module(self, model):
+    def set_model(self, model: tf.keras.Model) -> None:
         super().set_model(model)
         if self.use_tf_function:
-            @tf_function
-            def fast_predict(inputs):
+            def fast_predict(inputs: tf.Tensor) -> Any:
                 return model(inputs, training=False)
-            self._predict_fn = fast_predict
+            self._predict_fn = tf.function(fast_predict)
         else:
             self._predict_fn = model.predict
 
-    def _predict(self, inputs):
+    def _predict(self, inputs: tf.Tensor) -> Any:
         if self._predict_fn is not None:
             outputs = self._predict_fn(inputs)
-            # tf.functions might output as a dict of tensors, convert to numpy:
             if isinstance(outputs, dict):
                 outputs = {k: v.numpy() if hasattr(v, "numpy") else v for k, v in outputs.items()}
             return outputs
@@ -90,15 +89,16 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
             for batch in ds:
                 inputs, targets = batch[:2]
                 outputs = self._predict(inputs)
+                loss_val = logs.get(loss_key)
                 visualize.visualize_transcription(
                     self.file_writer,
                     stage,
                     inputs,
                     targets,
                     outputs,
-                    logs.get(loss_key),
+                    float(loss_val) if loss_val is not None else 0.0,
                     epoch,
                     sonify=self.sonify,
-                    contours=self.contours
+                    contours=self.contours,
                 )
                 break

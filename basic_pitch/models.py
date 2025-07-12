@@ -51,6 +51,7 @@ ONSET_KERNEL_SIZE_1 = (5, 5)
 ONSET_STRIDES_1 = (1, 3)
 ONSET_KERNEL_SIZE_2 = (3, 3)
 
+
 def transcription_loss(y_true: tf.Tensor, y_pred: tf.Tensor, label_smoothing: float) -> tf.Tensor:
     """Really a binary cross entropy loss. Used to calculate the loss between the predicted
     posteriorgrams and the ground truth matrices.

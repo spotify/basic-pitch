@@ -48,6 +48,7 @@ MAGIC_ALIGNMENT_OFFSET = 0.0018
 MIDI_VELOCITY_SCALE = 127
 PITCH_BEND_SCALE = 4096
 
+
 def model_output_to_notes(
     output: Dict[str, np.array],
     onset_thresh: float,

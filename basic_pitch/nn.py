@@ -24,6 +24,7 @@ from basic_pitch.layers.math import log_base_b
 
 SEMITONES_PER_OCTAVE = 12
 
+
 class HarmonicStacking(tf.keras.layers.Layer):
     """Harmonic stacking layer
 

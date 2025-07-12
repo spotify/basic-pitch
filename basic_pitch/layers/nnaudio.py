@@ -41,6 +41,7 @@ DEFAULT_CQT_PAD_MODE = "reflect"
 DEFAULT_CQT_OUTPUT_FORMAT = "Magnitude"
 DEFAULT_LOW_PASS_TRANSITION_BANDWIDTH = 0.001
 
+
 def create_lowpass_filter(
     band_center: float = DEFAULT_BAND_CENTER,
     kernel_length: int = DEFAULT_KERNEL_LENGTH,

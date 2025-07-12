@@ -23,6 +23,8 @@ from typing import Iterator, Union
 
 TF_LOG_LEVEL_KEY = "TF_CPP_MIN_LOG_LEVEL"
 TF_LOG_LEVEL_NO_WARNINGS_VALUE = "3"
+DEFAULT_PRINT_INDENT = "  "
+
 s_print_lock = threading.Lock()
 OUTPUT_EMOJIS = {
     "MIDI": "💅",

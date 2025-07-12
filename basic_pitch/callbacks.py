@@ -23,9 +23,9 @@ import tensorflow as tf
 
 from basic_pitch import visualize
 
+TENSORBOARD_LOGS_SUBDIR = "tensorboard_logs"
 
 class VisualizeCallback(tf.keras.callbacks.Callback):
-    # TODO RACHEL make this WAY faster
     """
     Callback to run during training to create tensorboard visualizations per epoch.
 
@@ -44,32 +44,61 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
         tensorboard_dir: str,
         sonify: bool,
         contours: bool,
+        max_batches: int = 2,
+        prefetch_batches: int = 2,
+        use_tf_function: bool = True,
     ):
         super().__init__()
-        self.train_iter = iter(train_ds)
-        self.validation_iter = iter(validation_ds)
-        self.tensorboard_dir = os.path.join(tensorboard_dir, "tensorboard_logs")
+        self.train_ds = train_ds.take(max_batches).prefatch(prefetch_batches)
+        self.validation_ds = validation_ds.take(max_batches).prefetch(prefetch_batches)
+        self.tensorboard_dir = os.path.join(tensorboard_dir, TENSORBOARD_LOGS_SUBDIR)
         self.file_writer = tf.summary.create_file_writer(tensorboard_dir)
         self.sonify = sonify
         self.contours = contours
+        self.use_tf_function = use_tf_function
+
+        self.train_iter = iter(self.train_ds)
+        self.validation_iter = iter(self.validation_ds)
+
+        self._predict_fn = None
+
+    def set_module(self, model):
+        super().set_model(model)
+        if self.use_tf_function:
+            @tf_function
+            def fast_predict(inputs):
+                return model(inputs, training=False)
+            self._predict_fn = fast_predict
+        else:
+            self._predict_fn = model.predict
+
+    def _predict(self, inputs):
+        if self._predict_fn is not None:
+            outputs = self._predict_fn(inputs)
+            # tf.functions might output as a dict of tensors, convert to numpy:
+            if isinstance(outputs, dict):
+                outputs = {k: v.numpy() if hasattr(v, "numpy") else v for k, v in outputs.items()}
+            return outputs
+        else:
+            return self.model.predict(inputs)
 
     def on_epoch_end(self, epoch: int, logs: Dict[Any, Any]) -> None:
-        # the first two outputs of generator needs to be the input and the targets
-        train_inputs, train_targets = next(self.train_iter)[:2]
-        validation_inputs, validation_targets = next(self.validation_iter)[:2]
-        for stage, inputs, targets, loss in [
-            ("train", train_inputs, train_targets, logs["loss"]),
-            ("validation", validation_inputs, validation_targets, logs["val_loss"]),
+        for stage, ds, loss_key in [
+            ("train", self.train_ds, "loss"),
+            ("validation", self.validation_ds, "val_loss"),
         ]:
-            outputs = self.model.predict(inputs)
-            visualize.visualize_transcription(
-                self.file_writer,
-                stage,
-                inputs,
-                targets,
-                outputs,
-                loss,
-                epoch,
-                sonify=self.sonify,
-                contours=self.contours,
-            )
+            for batch in ds:
+                inputs, targets = batch[:2]
+                outputs = self._predict(inputs)
+                visualize.visualize_transcription(
+                    self.file_writer,
+                    stage,
+                    inputs,
+                    targets,
+                    outputs,
+                    logs.get(loss_key),
+                    epoch,
+                    sonify=self.sonify,
+                    contours=self.contours
+                )
+                break

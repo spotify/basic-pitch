@@ -26,12 +26,26 @@ from typing import Any, List, Optional, Tuple, Union
 
 import scipy.signal
 
+DEFAULT_BAND_CENTER = 0.5
+DEFAULT_KERNEL_LENGTH = 256
+DEFAULT_TRANSITION_BANDWIDTH = 0.03
+DEFAULT_DTYPE = tf.float32
+DEFAULT_WINDOW_BANDWIDTH = 1.5
+DEFAULT_CQT_HOP_LENGTH = 512
+DEFAULT_CQT_FMIN = 32.70
+DEFAULT_CQT_N_BINS = 84
+DEFAULT_CQT_BINS_PER_OCTAVE = 12
+DEFAULT_CQT_BASIS_NORM = 1
+DEFAULT_CQT_WINDOW = "hann"
+DEFAULT_CQT_PAD_MODE = "reflect"
+DEFAULT_CQT_OUTPUT_FORMAT = "Magnitude"
+DEFAULT_LOW_PASS_TRANSITION_BANDWIDTH = 0.001
 
 def create_lowpass_filter(
-    band_center: float = 0.5,
-    kernel_length: int = 256,
-    transition_bandwidth: float = 0.03,
-    dtype: tf.dtypes.DType = tf.float32,
+    band_center: float = DEFAULT_BAND_CENTER,
+    kernel_length: int = DEFAULT_KERNEL_LENGTH,
+    transition_bandwidth: float = DEFAULT_TRANSITION_BANDWIDTH,
+    dtype: tf.dtypes.DType = DEFAULT_DTYPE,
 ) -> np.ndarray:
     """
     Calculate the highest frequency we need to preserve and the lowest frequency we allow
@@ -106,15 +120,15 @@ def get_early_downsample_params(
 ) -> Tuple[Union[float, int], int, float, np.array, bool]:
     """Compute downsampling parameters used for early downsampling"""
 
-    window_bandwidth = 1.5  # for hann window
+    window_bandwidth = DEFAULT_WINDOW_BANDWIDTH  # for hann window
     filter_cutoff = fmax_t * (1 + 0.5 * window_bandwidth / Q)
     sr, hop_length, downsample_factor = early_downsample(sr, hop_length, n_octaves, sr // 2, filter_cutoff)
     if downsample_factor != 1:
         earlydownsample = True
         early_downsample_filter = create_lowpass_filter(
             band_center=1 / downsample_factor,
-            kernel_length=256,
-            transition_bandwidth=0.03,
+            kernel_length=DEFAULT_KERNEL_LENGTH,
+            transition_bandwidth=DEFAULT_TRANSITION_BANDWIDTH,
             dtype=dtype,
         )
     else:
@@ -455,19 +469,19 @@ class CQT2010v2(tf.keras.layers.Layer):
     def __init__(
         self,
         sr: int = 22050,
-        hop_length: int = 512,
-        fmin: float = 32.70,
+        hop_length: int = DEFAULT_CQT_HOP_LENGTH,
+        fmin: float = DEFAULT_CQT_FMIN,
         fmax: Optional[float] = None,
-        n_bins: int = 84,
+        n_bins: int = DEFAULT_CQT_N_BINS,
         filter_scale: int = 1,
-        bins_per_octave: int = 12,
+        bins_per_octave: int = DEFAULT_CQT_BINS_PER_OCTAVE,
         norm: bool = True,
-        basis_norm: int = 1,
-        window: str = "hann",
-        pad_mode: str = "reflect",
+        basis_norm: int = DEFAULT_CQT_BASIS_NORM,
+        window: str = DEFAULT_CQT_WINDOW,
+        pad_mode: str = DEFAULT_CQT_PAD_MODE,
         earlydownsample: bool = True,
         trainable: bool = False,
-        output_format: str = "Magnitude",
+        output_format: str = DEFAULT_CQT_OUTPUT_FORMAT,
         match_torch_exactly: bool = True,
     ):
         super().__init__()
@@ -516,7 +530,11 @@ class CQT2010v2(tf.keras.layers.Layer):
         # This will be used to calculate filter_cutoff and creating CQT kernels
         Q = float(self.filter_scale) / (2 ** (1 / self.bins_per_octave) - 1)
 
-        self.lowpass_filter = create_lowpass_filter(band_center=0.5, kernel_length=256, transition_bandwidth=0.001)
+        self.lowpass_filter = create_lowpass_filter(
+            band_center=DEFAULT_BAND_CENTER,
+            kernel_length=DEFAULT_KERNEL_LENGTH,
+            transition_bandwidth=DEFAULT_LOW_PASS_TRANSITION_BANDWIDTH,
+        )
 
         # Calculate num of filter requires for the kernel
         # n_octaves determines how many resampling requires for the CQT

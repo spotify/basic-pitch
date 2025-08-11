@@ -350,7 +350,7 @@ def model_frames_to_time(n_frames: int) -> np.ndarray:
     window_numbers = np.floor(np.arange(n_frames) / ANNOT_N_FRAMES)
     window_offset = (FFT_HOP / AUDIO_SAMPLE_RATE) * (
         ANNOT_N_FRAMES - (AUDIO_N_SAMPLES / FFT_HOP)
-    ) + MAGIC_ALIGNMENT_OFFSET  # no more magic number :D
+    ) + MAGIC_ALIGNMENT_OFFSET
     times = original_times - (window_offset * window_numbers)
     return times
 

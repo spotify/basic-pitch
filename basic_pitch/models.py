@@ -237,7 +237,7 @@ def model(
         padding="same",
         kernel_initializer=_initializer(),
         kernel_constraint=_kernel_constraint(),
-    )(x_contours)
+    )(x)
 
     x_contours = tfkl.BatchNormalization()(x_contours)
     x_contours = tfkl.ReLU()(x_contours)

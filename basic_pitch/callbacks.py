@@ -30,12 +30,12 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
     """
     Callback to run during training to create tensorboard visualizations per epoch.
 
-        Attributes:
-            train_ds: training dataset to use for prediction / visualization / sonification / summarization
-            valid_ds: validation dataset to use for "" ""
-            tensorboard_dir: directory to output "" ""
-            sonify: whether to include sonifications in tensorboard
-            contours: whether to plot note contours in tensorboard
+    Attributes:
+        train_ds: training dataset used for prediction / visualization / sonification / summarization
+        validation_ds: validation dataset used for prediction / visualization / sonification / summarization
+        tensorboard_dir: directory to output tensorboard logs and visualizations
+        sonify: whether to include sonifications in tensorboard
+        contours: whether to plot note contours in tensorboard
     """
 
     def __init__(

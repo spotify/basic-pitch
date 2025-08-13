@@ -65,6 +65,7 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
 
     def set_model(self, model: tf.keras.Model) -> None:
         super().set_model(model)
+        # if things aren't speeding up, skip tf.function and just use model.predict
         if self.use_tf_function:
             def fast_predict(inputs: tf.Tensor) -> Any:
                 return model(inputs, training=False)
@@ -77,6 +78,8 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
             outputs = self._predict_fn(inputs)
             if isinstance(outputs, dict):
                 outputs = {k: v.numpy() if hasattr(v, "numpy") else v for k, v in outputs.items()}
+            elif isinstance(outputs, (list, tuple)):
+                outputs = [v.numpy() if hasattr(v, "numpy") else v for v in outputs]
             return outputs
         else:
             return self.model.predict(inputs)
@@ -86,19 +89,23 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
             ("train", self.train_ds, "loss"),
             ("validation", self.validation_ds, "val_loss"),
         ]:
+            # only visualize first batch per epoch to save time
             for batch in ds:
                 inputs, targets = batch[:2]
                 outputs = self._predict(inputs)
                 loss_val = logs.get(loss_key)
-                visualize.visualize_transcription(
-                    self.file_writer,
-                    stage,
-                    inputs,
-                    targets,
-                    outputs,
-                    float(loss_val) if loss_val is not None else 0.0,
-                    epoch,
-                    sonify=self.sonify,
-                    contours=self.contours,
-                )
+                try:
+                    visualize.visualize_transcription(
+                        self.file_writer,
+                        stage,
+                        inputs,
+                        targets,
+                        outputs,
+                        float(loss_val) if loss_val is not None else 0.0,
+                        epoch,
+                        sonify=self.sonify,
+                        contours=self.contours,
+                    )
+                except Exception as e:
+                    print(f"Warning: Visualization failed for {stage} at epoch {epoch}: {e}")
                 break

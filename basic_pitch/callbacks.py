@@ -23,6 +23,8 @@ import tensorflow as tf
 
 from basic_pitch import visualize
 
+TENSORBOARD_LOGS_SUBDIR = "tensorboard_logs"
+
 
 class VisualizeCallback(tf.keras.callbacks.Callback):
     # TODO RACHEL make this WAY faster
@@ -48,7 +50,7 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
         super().__init__()
         self.train_iter = iter(train_ds)
         self.validation_iter = iter(validation_ds)
-        self.tensorboard_dir = os.path.join(tensorboard_dir, "tensorboard_logs")
+        self.tensorboard_dir = os.path.join(tensorboard_dir, TENSORBOARD_LOGS_SUBDIR)
         self.file_writer = tf.summary.create_file_writer(tensorboard_dir)
         self.sonify = sonify
         self.contours = contours

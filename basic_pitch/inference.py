@@ -181,6 +181,14 @@ class Model:
             }
 
 
+DEFAULT_ONSET_THRESHOLD = 0.5
+DEFAULT_FRAME_THRESHOLD = 0.3
+DEFAULT_MINIMUM_NOTE_LENGTH_MS = 127.7
+DEFAULT_MINIMUM_MIDI_TEMPO = 120
+DEFAULT_SONIFICATION_SAMPLERATE = 44100
+DEFAULT_OVERLAPPING_FRAMES = 30
+DEFAULT_MIDI_VELOCITY_SCALE = 127
+
 def window_audio_file(
     audio_original: npt.NDArray[np.float32], hop_size: int
 ) -> Iterable[Tuple[npt.NDArray[np.float32], Dict[str, float]]]:
@@ -284,7 +292,7 @@ def run_inference(
         model = Model(model_or_model_path)
 
     # overlap 30 frames
-    n_overlapping_frames = 30
+    n_overlapping_frames = DEFAULT_OVERLAPPING_FRAMES
     overlap_len = n_overlapping_frames * FFT_HOP
     hop_size = AUDIO_N_SAMPLES - overlap_len
 
@@ -405,7 +413,7 @@ def save_note_events(
         writer = csv.writer(fhandle, delimiter=",")
         writer.writerow(["start_time_s", "end_time_s", "pitch_midi", "velocity", "pitch_bend"])
         for start_time, end_time, note_number, amplitude, pitch_bend in note_events:
-            row = [start_time, end_time, note_number, int(np.round(127 * amplitude))]
+            row = [start_time, end_time, note_number, int(np.round(DEFAULT_MIDI_VELOCITY_SCALE * amplitude))]
             if pitch_bend:
                 row.extend(pitch_bend)
             writer.writerow(row)
@@ -414,15 +422,15 @@ def save_note_events(
 def predict(
     audio_path: Union[pathlib.Path, str],
     model_or_model_path: Union[Model, pathlib.Path, str] = ICASSP_2022_MODEL_PATH,
-    onset_threshold: float = 0.5,
-    frame_threshold: float = 0.3,
-    minimum_note_length: float = 127.70,
+    onset_threshold: float = DEFAULT_ONSET_THRESHOLD,
+    frame_threshold: float = DEFAULT_FRAME_THRESHOLD,
+    minimum_note_length: float = DEFAULT_MINIMUM_NOTE_LENGTH_MS,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
-    midi_tempo: float = 120,
+    midi_tempo: float = DEFAULT_MINIMUM_MIDI_TEMPO,
 ) -> Tuple[
     Dict[str, np.array],
     pretty_midi.PrettyMIDI,
@@ -497,16 +505,16 @@ def predict_and_save(
     save_model_outputs: bool,
     save_notes: bool,
     model_or_model_path: Union[Model, str, pathlib.Path],
-    onset_threshold: float = 0.5,
-    frame_threshold: float = 0.3,
-    minimum_note_length: float = 127.70,
+    onset_threshold: float = DEFAULT_ONSET_THRESHOLD,
+    frame_threshold: float = DEFAULT_FRAME_THRESHOLD,
+    minimum_note_length: float = DEFAULT_MINIMUM_NOTE_LENGTH_MS,
     minimum_frequency: Optional[float] = None,
     maximum_frequency: Optional[float] = None,
     multiple_pitch_bends: bool = False,
     melodia_trick: bool = True,
     debug_file: Optional[pathlib.Path] = None,
-    sonification_samplerate: int = 44100,
-    midi_tempo: float = 120,
+    sonification_samplerate: int = DEFAULT_SONIFICATION_SAMPLERATE,
+    midi_tempo: float = DEFAULT_MINIMUM_MIDI_TEMPO,
 ) -> None:
     """Make a prediction and save the results to file.
 

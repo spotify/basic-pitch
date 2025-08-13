@@ -19,6 +19,9 @@ import numpy as np
 
 from enum import Enum
 
+
+SEMITONES_PER_OCTAVE = 12 # for frequency bin calculations
+
 FFT_HOP = 256
 N_FFT = 8 * FFT_HOP
 
@@ -54,7 +57,7 @@ DATASET_SAMPLING_FREQUENCY = {
 
 
 def _freq_bins(bins_per_semitone: int, base_frequency: float, n_semitones: int) -> np.array:
-    d = 2.0 ** (1.0 / (12 * bins_per_semitone))
+    d = 2.0 ** (1.0 / (SEMITONES_PER_OCTAVE * bins_per_semitone))
     bin_freqs = base_frequency * d ** np.arange(bins_per_semitone * n_semitones)
     return bin_freqs
 

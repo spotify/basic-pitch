@@ -20,7 +20,7 @@ import numpy as np
 from enum import Enum
 
 
-SEMITONES_PER_OCTAVE = 12 # for frequency bin calculations
+SEMITONES_PER_OCTAVE = 12  # for frequency bin calculations
 
 FFT_HOP = 256
 N_FFT = 8 * FFT_HOP

@@ -49,7 +49,8 @@ class HarmonicStacking(tf.keras.layers.Layer):
         self.bins_per_semitone = bins_per_semitone
         self.harmonics = harmonics
         self.shifts = [
-            int(tf.math.round(SEMITONES_PER_OCTAVE * self.bins_per_semitone * log_base_b(float(h), 2))) for h in self.harmonics
+            int(tf.math.round(SEMITONES_PER_OCTAVE * self.bins_per_semitone * log_base_b(float(h), 2)))
+            for h in self.harmonics
         ]
         self.n_output_freqs = n_output_freqs
 

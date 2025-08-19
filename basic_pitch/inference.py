@@ -189,6 +189,7 @@ DEFAULT_SONIFICATION_SAMPLERATE = 44100
 DEFAULT_OVERLAPPING_FRAMES = 30
 DEFAULT_MIDI_VELOCITY_SCALE = 127
 
+
 def window_audio_file(
     audio_original: npt.NDArray[np.float32], hop_size: int
 ) -> Iterable[Tuple[npt.NDArray[np.float32], Dict[str, float]]]:

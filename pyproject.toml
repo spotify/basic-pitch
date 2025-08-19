@@ -57,7 +57,9 @@ bp-download = "basic_pitch.data.download:main"
 data = [
     "basic_pitch[tf,test]",
     "apache_beam",
-    "mirdata",
+	# TODO: mirdata 0.3.9 moves dataset indexes files which breaks our tests
+	# Adapt our codebase to release that constraint 
+    "mirdata<=0.3.8",
     "smart_open",
     "sox",
     "ffmpeg-python"

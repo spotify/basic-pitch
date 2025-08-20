@@ -67,8 +67,10 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
         super().set_model(model)
         # if things aren't speeding up, skip tf.function and just use model.predict
         if self.use_tf_function:
+
             def fast_predict(inputs: tf.Tensor) -> Any:
                 return model(inputs, training=False)
+
             self._predict_fn = tf.function(fast_predict)
         else:
             self._predict_fn = model.predict

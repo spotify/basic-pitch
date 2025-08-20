@@ -257,7 +257,9 @@ def note_events_to_midi(
         if not pitch_bend:
             continue
         pitch_bend_times = np.linspace(start_time, end_time, len(pitch_bend))
-        pitch_bend_midi_ticks = np.round(np.array(pitch_bend) * PITCH_BEND_SCALE / CONTOURS_BINS_PER_SEMITONE).astype(int)
+        pitch_bend_midi_ticks = np.round(np.array(pitch_bend) * PITCH_BEND_SCALE / CONTOURS_BINS_PER_SEMITONE).astype(
+            int
+        )
         # This supports pitch bends up to 2 semitones
         # If we estimate pitch bends above/below 2 semitones, crop them here when adding them to the midi file
         pitch_bend_midi_ticks[pitch_bend_midi_ticks > N_PITCH_BEND_TICKS - 1] = N_PITCH_BEND_TICKS - 1
@@ -270,7 +272,7 @@ def note_events_to_midi(
 
 
 def drop_overlapping_pitch_bends(
-    note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]]
+    note_events_with_pitch_bends: List[Tuple[float, float, int, float, Optional[List[int]]]],
 ) -> List[Tuple[float, float, int, float, Optional[List[int]]]]:
     """Drop pitch bends from any notes that overlap in time with another note"""
     note_events = sorted(note_events_with_pitch_bends)

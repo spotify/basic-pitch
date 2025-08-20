@@ -119,7 +119,11 @@ def onset_loss(
     return lambda x, y: transcription_loss(x, y, label_smoothing=label_smoothing)
 
 
-def loss(label_smoothing: float = DEFAULT_LABEL_SMOOTHING, weighted: bool = False, positive_weight: float = DEFAULT_POSITIVE_WEIGHT) -> Dict[str, Any]:
+def loss(
+    label_smoothing: float = DEFAULT_LABEL_SMOOTHING,
+    weighted: bool = False,
+    positive_weight: float = DEFAULT_POSITIVE_WEIGHT,
+) -> Dict[str, Any]:
     """Creates a keras-compatible dictionary of loss functions to calculate
     the loss for the contour, note and onset posteriorgrams.
 

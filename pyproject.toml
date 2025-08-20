@@ -20,7 +20,9 @@ classifiers = [
 dependencies = [
 	"coremltools; platform_system == 'Darwin'",
 	"librosa>=0.8.0",
-	"mir_eval>=0.6",
+	# TODO: mir_eval 0.8.1+ introduces fixes to sonification that broke our tests
+	# Likely we'd like to adapt the tests to release the constraint
+	"mir_eval>=0.6,<=0.8.0",
 	"numpy>=1.18",
 	"onnxruntime; platform_system == 'Windows' and python_version < '3.11'",
 	"pretty_midi>=0.2.9",
@@ -55,7 +57,9 @@ bp-download = "basic_pitch.data.download:main"
 data = [
     "basic_pitch[tf,test]",
     "apache_beam",
-    "mirdata",
+	# TODO: mirdata 0.3.9 moves dataset indexes files which breaks our tests
+	# Adapt our codebase to release that constraint 
+    "mirdata<=0.3.8",
     "smart_open",
     "sox",
     "ffmpeg-python"
@@ -65,7 +69,6 @@ test = [
 	"coverage>=5.0.2",
 	"pytest>=6.1.1",
 	"pytest-mock",
-	"wave",
 	"mido"
 ]
 tf = [

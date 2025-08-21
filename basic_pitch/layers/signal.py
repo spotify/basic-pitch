@@ -183,3 +183,40 @@ class NormalizedLog(tf.keras.layers.Layer):
         log_power_normalized = tf.math.divide_no_nan(log_power_offset, log_power_offset_max)
 
         return tf.reshape(log_power_normalized, tf.shape(inputs))
+
+
+class GlobalNormalizedLog(tf.keras.layers.Layer):
+    """
+    Takes an input with shape (batch, freq_bins, time) and rescales to dB, scaled 0 - 1.
+    The dB range is determined empirically from the CQT implementation by testing frequencies 
+    from 13.8Hz to 8820Hz:
+    - For unit amplitude input (1.0), max dB is 54.7 (occurs at ~30.3 Hz)
+    - For unit amplitude input (1.0), min peak dB is -33.9 (occurs at ~8820 Hz)
+    - For 0.01 amplitude input, min peak dB is -73.9 (occurs at ~8820 Hz)
+    - The 40 dB difference between 1.0 and 0.01 amplitude inputs is preserved across all frequencies
+    """
+
+    def __init__(self):
+        super().__init__()
+        # Minimum peak dB observed for a 0.01 amplitude sinusoid
+        # This ensures we don't clip actual signal content while still suppressing noise
+        self.min_db = -74.0
+        # Maximum dB value determined empirically from CQT of unit amplitude sinusoid across frequencies
+        self.max_db = 54.7
+
+    def build(self, input_shape: tf.Tensor) -> None:
+        super().build(input_shape)
+
+    def call(self, inputs: tf.Tensor) -> tf.Tensor:
+        # convert magnitude to power
+        power = tf.math.square(inputs)
+        log_power = 10 * log_base_b(power + 1e-10, 10)
+        
+        # Values should (!) now between self.min_db and self.max_db, assert this and normalize to [0, 1] range
+        # Don't know how to assert this in a Keras model, so the user of this model has to check this and potentially clip
+        # tf.debugging.assert_greater_equal(tf.math.reduce_min(log_power), self.min_db)
+        # tf.debugging.assert_less_equal(tf.math.reduce_max(log_power), self.max_db)
+        log_power = tf.clip_by_value(log_power, self.min_db, self.max_db)
+        normalized = (log_power - self.min_db) / (self.max_db - self.min_db)
+        
+        return normalized

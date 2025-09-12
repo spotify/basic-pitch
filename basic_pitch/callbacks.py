@@ -91,8 +91,10 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
             ("train", self.train_ds, "loss"),
             ("validation", self.validation_ds, "val_loss"),
         ]:
-            # only visualize first batch per epoch to save time
+            batch_count = 0
             for batch in ds:
+                if batch_count >= self.train_ds._variant_tensor.shape[0] if stage == "train" else self.validation_ds._variant_tensor.shape[0]:
+                    break
                 inputs, targets = batch[:2]
                 outputs = self._predict(inputs)
                 loss_val = logs.get(loss_key)
@@ -110,4 +112,4 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
                     )
                 except Exception as e:
                     print(f"Warning: Visualization failed for {stage} at epoch {epoch}: {e}")
-                break
+                batch_count += 1

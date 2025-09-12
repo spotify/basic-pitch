@@ -58,8 +58,6 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
         self.contours = contours
         self.use_tf_function = use_tf_function
 
-    self.max_batches = max_batches
-
         self.train_iter = iter(self.train_ds)
         self.validation_iter = iter(self.validation_ds)
 
@@ -67,36 +65,23 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
 
     def set_model(self, model: tf.keras.Model) -> None:
         super().set_model(model)
-        # if things aren't speeding up, skip tf.function and just use model.predict
-        if self.use_tf_function:
-
-            def fast_predict(inputs: tf.Tensor) -> Any:
-                return model(inputs, training=False)
-
-            self._predict_fn = tf.function(fast_predict)
-        else:
-            self._predict_fn = model.predict
+        self._predict_fn = model.predict
 
     def _predict(self, inputs: tf.Tensor) -> Any:
-        if self._predict_fn is not None:
-            outputs = self._predict_fn(inputs)
-            if isinstance(outputs, dict):
-                outputs = {k: v.numpy() if hasattr(v, "numpy") else v for k, v in outputs.items()}
-            elif isinstance(outputs, (list, tuple)):
-                outputs = [v.numpy() if hasattr(v, "numpy") else v for v in outputs]
-            return outputs
-        else:
-            return self.model.predict(inputs)
+        outputs = self._predict_fn(inputs)
+        if isinstance(outputs, dict):
+            outputs = {k: v.numpy() if hasattr(v, "numpy") else v for k, v in outputs.items()}
+        elif isinstance(outputs, (list, tuple)):
+            outputs = [v.numpy() if hasattr(v, "numpy") else v for v in outputs]
+        return outputs
 
     def on_epoch_end(self, epoch: int, logs: Dict[Any, Any]) -> None:
         for stage, ds, loss_key in [
             ("train", self.train_ds, "loss"),
             ("validation", self.validation_ds, "val_loss"),
         ]:
-            batch_count = 0
+            # only visualize first batch per epoch to save time
             for batch in ds:
-                if batch_count >= self.max_batches:
-                    break
                 inputs, targets = batch[:2]
                 outputs = self._predict(inputs)
                 loss_val = logs.get(loss_key)
@@ -114,4 +99,4 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
                     )
                 except Exception as e:
                     print(f"Warning: Visualization failed for {stage} at epoch {epoch}: {e}")
-                batch_count += 1
+                break

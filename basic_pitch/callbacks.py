@@ -58,6 +58,8 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
         self.contours = contours
         self.use_tf_function = use_tf_function
 
+    self.max_batches = max_batches
+
         self.train_iter = iter(self.train_ds)
         self.validation_iter = iter(self.validation_ds)
 
@@ -111,7 +113,5 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
                         contours=self.contours,
                     )
                 except Exception as e:
-                    print(
-                        f"Warning: Visualization failed for {stage} at epoch {epoch}: {e}"
-                    )
+                    print(f"Warning: Visualization failed for {stage} at epoch {epoch}: {e}")
                 batch_count += 1

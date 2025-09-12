@@ -93,7 +93,7 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
         ]:
             batch_count = 0
             for batch in ds:
-                if batch_count >= self.train_ds._variant_tensor.shape[0] if stage == "train" else self.validation_ds._variant_tensor.shape[0]:
+                if batch_count >= self.max_batches:
                     break
                 inputs, targets = batch[:2]
                 outputs = self._predict(inputs)
@@ -111,5 +111,7 @@ class VisualizeCallback(tf.keras.callbacks.Callback):
                         contours=self.contours,
                     )
                 except Exception as e:
-                    print(f"Warning: Visualization failed for {stage} at epoch {epoch}: {e}")
+                    print(
+                        f"Warning: Visualization failed for {stage} at epoch {epoch}: {e}"
+                    )
                 batch_count += 1

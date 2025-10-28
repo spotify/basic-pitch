@@ -23,7 +23,6 @@ from enum import Enum
 SEMITONES_PER_OCTAVE = 12  # for frequency bin calculations
 
 FFT_HOP = 256
-N_FFT = 8 * FFT_HOP
 
 NOTES_BINS_PER_SEMITONE = 1
 CONTOURS_BINS_PER_SEMITONE = 3

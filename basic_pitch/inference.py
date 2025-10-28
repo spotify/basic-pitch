@@ -57,6 +57,7 @@ from basic_pitch.constants import (
     AUDIO_N_SAMPLES,
     ANNOTATIONS_FPS,
     FFT_HOP,
+    AUDIO_WINDOW_LENGTH,
 )
 from basic_pitch.commandline_printing import (
     generating_file_message,
@@ -247,6 +248,7 @@ def unwrap_output(
     output: npt.NDArray[np.float32],
     audio_original_length: int,
     n_overlapping_frames: int,
+    hop_size: int,
 ) -> np.array:
     """Unwrap batched model predictions to a single matrix.
 
@@ -254,6 +256,7 @@ def unwrap_output(
         output: array (n_batches, n_times_short, n_freqs)
         audio_original_length: length of original audio signal (in samples)
         n_overlapping_frames: number of overlapping frames in the output
+        hop_size: size of the hop used when scanning the input audio
 
     Returns:
         array (n_times, n_freqs)
@@ -266,10 +269,14 @@ def unwrap_output(
         # remove half of the overlapping frames from beginning and end
         output = output[:, n_olap:-n_olap, :]
 
+    # Concatenate the frames outputs (overlapping frames removed) into a single dimension
     output_shape = output.shape
-    n_output_frames_original = int(np.floor(audio_original_length * (ANNOTATIONS_FPS / AUDIO_SAMPLE_RATE)))
     unwrapped_output = output.reshape(output_shape[0] * output_shape[1], output_shape[2])
-    return unwrapped_output[:n_output_frames_original, :]  # trim to original audio length
+
+    # trim to number of expected windows in output
+    n_expected_windows = audio_original_length / hop_size
+    n_frames_per_window = (AUDIO_WINDOW_LENGTH * ANNOTATIONS_FPS) - n_overlapping_frames
+    return unwrapped_output[: int(n_expected_windows * n_frames_per_window), :]
 
 
 def run_inference(
@@ -303,7 +310,8 @@ def run_inference(
             output[k].append(v)
 
     unwrapped_output = {
-        k: unwrap_output(np.concatenate(output[k]), audio_original_length, n_overlapping_frames) for k in output
+        k: unwrap_output(np.concatenate(output[k]), audio_original_length, n_overlapping_frames, hop_size)
+        for k in output
     }
 
     if debug_file:

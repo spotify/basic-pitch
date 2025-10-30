@@ -46,8 +46,6 @@ class MaestroInvalidTracks(beam.DoFn):
         self.source = source
 
     def setup(self) -> None:
-        # Oddly enough we dont want to include the gcs bucket uri.
-        # Just the path within the bucket
         self.maestro_remote = mirdata.initialize("maestro", data_home=self.source)
         self.filesystem = beam.io.filesystems.FileSystems()
 
@@ -89,8 +87,6 @@ class MaestroToTfExample(beam.DoFn):
         import apache_beam as beam
         import mirdata
 
-        # Oddly enough we dont want to include the gcs bucket uri.
-        # Just the path within the bucket
         self.maestro_remote = mirdata.initialize("maestro", data_home=self.source)
         self.filesystem = beam.io.filesystems.FileSystems()
         if self.download:

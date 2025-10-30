@@ -165,7 +165,6 @@ def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:
         "save_main_session": True,
         "sdk_container_image": known_args.sdk_container_image,
         "job_endpoint": known_args.job_endpoint,
-        "environment_type": "DOCKER",
         "environment_config": known_args.sdk_container_image,
     }
     input_data = create_input_data(known_args.train_percent, known_args.split_seed)

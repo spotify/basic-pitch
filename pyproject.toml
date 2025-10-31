@@ -20,9 +20,7 @@ classifiers = [
 dependencies = [
 	"coremltools; platform_system == 'Darwin'",
 	"librosa>=0.8.0",
-	# TODO: mir_eval 0.8.1+ introduces fixes to sonification that broke our tests
-	# Likely we'd like to adapt the tests to release the constraint
-	"mir_eval>=0.6,<=0.8.0",
+	"mir_eval>=0.8.1",
 	"numpy>=1.18",
 	"onnxruntime; platform_system == 'Windows' and python_version < '3.11'",
 	"pretty_midi>=0.2.9",

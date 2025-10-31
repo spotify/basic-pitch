@@ -1,0 +1,686 @@
+{
+    "version": "sample_2100-redux",
+    "tracks": {
+      "Track00001-S00": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S00.flac",
+          "bb4a50848831853a086e0f6e5b595804"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S00.mid",
+          "68f9d227a4fd70acdcd80a5bd3b69e22"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S01": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S01.flac",
+          "4faaa87260d154c062da60612d985c21"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S01.mid",
+          "4f7d02354ff2ff7711bfc239e51ac8ee"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S02": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S02.flac",
+          "8986426fd0916708f21b3a6e9a600316"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S02.mid",
+          "ebc174f4f8a1c89c2a8c9ef8b9d9e3ae"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S03": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S03.flac",
+          "f8b0f5dde956ad0b69da420e62570f7e"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S03.mid",
+          "4bf9331befcaa0dbb02322b9426130dd"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S04": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S04.flac",
+          "f5e367786d5c95c69bf4341028cd43b5"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S04.mid",
+          "31c56abf0d23cf683f09eb69bbe0b9ea"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S05": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S05.flac",
+          "64554ff2a2076073e303b1d117beefa9"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S05.mid",
+          "c40df0d092b1eb74d4c6279ef141c6be"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S07": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S07.flac",
+          "2fa435c24b83ba7d6c2d823a378a6f9c"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S07.mid",
+          "106324b42720dbd5cab2f32abb1d2c43"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S08": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S08.flac",
+          "6bd7f7a56713976918406573416dd7d0"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S08.mid",
+          "a9b3fc23e3237e2244217f2188c8efb7"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S09": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S09.flac",
+          "fd911e031f60af304722cf2dc55c60a0"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S09.mid",
+          "9acde011a3d1a48c4fd6b4c9d838bc63"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track00001-S10": {
+        "audio": [
+          "slakh2100_flac_redux/train/Track00001/stems/S10.flac",
+          "d1f6f178be71688cbc7ea58e409cf34d"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/MIDI/S10.mid",
+          "e97c2639abc3ef34fe18b3f979a3ca70"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track01501-S00": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S00.flac",
+          "e2a13a55e60f2f8be146fd8d323777b9"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S00.mid",
+          "e942ef890a1ca4502d1118c223c31da2"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S01": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S01.flac",
+          "05d58c13ac3c7b170e561f7490e2a432"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S01.mid",
+          "18140ecb668b04dc7db88bec51baf926"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S02": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S02.flac",
+          "cc456bcd7cbc960567747382589c1fd2"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S02.mid",
+          "440281aa8ae6061f1bcb7293941709ef"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S03": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S03.flac",
+          "4c1f3fafbe0c5c5a259da499f428bb1e"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S03.mid",
+          "726742af9a4ce30a200a6ae7fe6347ae"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S04": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S04.flac",
+          "e8277f268d6f4941a906a56de921e1be"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S04.mid",
+          "49c5aa5dcd4ee3c740473d9ef13c5f6c"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S05": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S05.flac",
+          "09f9b917264ac77a6f130277128cc6af"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S05.mid",
+          "0f6ba990862772bcfb4ac779d440fd5f"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S06": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S06.flac",
+          "d5bf86c59ad6caec76385fffd2b2c632"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S06.mid",
+          "bfb20d1ad0b2499599496aa247f384df"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S07": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S07.flac",
+          "3379a0d795e7c3c6f6ccac4daceb4a0b"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S07.mid",
+          "2d1e356ccafce5c51f92dff5549a56e5"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S08": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S08.flac",
+          "9a704adc323e84c1803555ff5156db57"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S08.mid",
+          "f3e51a064a5fff6a804864da19e85a5b"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S09": {
+        "audio": [
+          null,
+          null
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S09.mid",
+          "58e00e3d952d84e28f3c6e48f439f405"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01501-S10": {
+        "audio": [
+          "slakh2100_flac_redux/validation/Track01501/stems/S10.flac",
+          "06914458b7546eb56c00a98459862220"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/MIDI/S10.mid",
+          "989b89f9b0a44d99f3897c53f38e5d65"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track01876-S00": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S00.flac",
+          "dea2299d28513ba1636f05f3d4aa7883"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S00.mid",
+          "01c2299f8d6713da475e227bba2e754f"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S01": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S01.flac",
+          "e738e61eaa6fa288feef4be4f76ca761"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S01.mid",
+          "f586cdc0f38cf6245938e77997019d99"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S02": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S02.flac",
+          "1f07610fdbb9778bb1da5ebee9676140"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S02.mid",
+          "3f6959a02b36e64c6fc563543235aa5f"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S03": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S03.flac",
+          "75177cb6043dc25a41ea00d5c5dbe0b8"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S03.mid",
+          "fda5264d0adadf0418b013aab4fdd93d"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S04": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S04.flac",
+          "165807d0ed24f736b727cf30edf784b5"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S04.mid",
+          "51fd931a1c96408682e064e6c696cb9e"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S05": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S05.flac",
+          "a9c81473f330926dce532718f0683288"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S05.mid",
+          "c2e670fb69390428574473cdd5ce4d15"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S06": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S06.flac",
+          "63aee8696a23a3e194059e49a00a6f24"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S06.mid",
+          "9c57e49129c53d1793758e55b41c6266"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S07": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S07.flac",
+          "e0c031c4f851d8fbbbfd872ec188548f"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S07.mid",
+          "8e9e1059edd9b42bcaeedb64b1b86d85"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S08": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S08.flac",
+          "68788ca6ff835e64da685d89f9d41c92"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S08.mid",
+          "2815f0deb431186492277e298c6a22f8"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S09": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S09.flac",
+          "45f1ad752622bd2a55836b810adbb0ed"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S09.mid",
+          "a660be39c5d28a364b1c379bc6ae9387"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S10": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S10.flac",
+          "b07df78cd6078f2859aa4d9295cfc887"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S10.mid",
+          "2dba9d94b65be375d7bdf512015d77f6"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S11": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S11.flac",
+          "4c0fb526728df866a0cc2ed2f1f8a42c"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S11.mid",
+          "3119dacbdbb3a79b2da4215afc1a00cf"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01876-S14": {
+        "audio": [
+          "slakh2100_flac_redux/test/Track01876/stems/S14.flac",
+          "dd57e6105868dc8b89e379150bfe74d6"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/MIDI/S14.mid",
+          "43f6d70e6a501ab13fc87967871cd867"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track00049-S00": {
+        "audio": [
+          "slakh2100_flac_redux/omitted/Track00049/stems/S00.flac",
+          "57c1c98b26adc1d633eb0a2d3781f6c7"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/omitted/Track00049/MIDI/S00.mid",
+          "b1f1131c20e2ea1c9191752305ae1102"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/omitted/Track00049/metadata.yaml",
+          "d2a582e4975f515ea904a08983f9280c"
+        ]
+      },
+      "Track00049-S01": {
+        "audio": [
+          "slakh2100_flac_redux/omitted/Track00049/stems/S01.flac",
+          "fe9f042cfb711f9ebcedcf6fa61dd52f"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/omitted/Track00049/MIDI/S01.mid",
+          "f8f6aad753b9aac1294b932944bc1c4f"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/omitted/Track00049/metadata.yaml",
+          "d2a582e4975f515ea904a08983f9280c"
+        ]
+      },
+      "Track00049-S02": {
+        "audio": [
+          "slakh2100_flac_redux/omitted/Track00049/stems/S02.flac",
+          "386bce38fdffe6dbc3ffcd05ec9ce2f8"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/omitted/Track00049/MIDI/S02.mid",
+          "5c3112d869fd8de8fcbe0949b61542eb"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/omitted/Track00049/metadata.yaml",
+          "d2a582e4975f515ea904a08983f9280c"
+        ]
+      },
+      "Track00049-S03": {
+        "audio": [
+          "slakh2100_flac_redux/omitted/Track00049/stems/S03.flac",
+          "fc7f4bc8c37d0f2c61e7282998304c56"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/omitted/Track00049/MIDI/S03.mid",
+          "9d6af85c810a6da2ee6b1f04c4bd2d67"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/omitted/Track00049/metadata.yaml",
+          "d2a582e4975f515ea904a08983f9280c"
+        ]
+      },
+      "Track00049-S04": {
+        "audio": [
+          "slakh2100_flac_redux/omitted/Track00049/stems/S04.flac",
+          "c157cc90912aeddfa602fe65db762182"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/omitted/Track00049/MIDI/S04.mid",
+          "124fc8c65bd2ec41cec01c23e43651e1"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/omitted/Track00049/metadata.yaml",
+          "d2a582e4975f515ea904a08983f9280c"
+        ]
+      },
+      "Track00049-S05": {
+        "audio": [
+          "slakh2100_flac_redux/omitted/Track00049/stems/S05.flac",
+          "28aac9a171f344dbf778e2d90745bd06"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/omitted/Track00049/MIDI/S05.mid",
+          "0c1728d1e8f8b36a5f92db03be2b92e4"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/omitted/Track00049/metadata.yaml",
+          "d2a582e4975f515ea904a08983f9280c"
+        ]
+      },
+      "Track00049-S06": {
+        "audio": [
+          "slakh2100_flac_redux/omitted/Track00049/stems/S06.flac",
+          "5fd8dab204c533881ca880091b440c34"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/omitted/Track00049/MIDI/S06.mid",
+          "eb5d018b61eb563ee810c8acfb1ffc73"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/omitted/Track00049/metadata.yaml",
+          "d2a582e4975f515ea904a08983f9280c"
+        ]
+      }
+    },
+    "multitracks": {
+      "Track00001": {
+        "tracks": [
+          "Track00001-S00",
+          "Track00001-S01",
+          "Track00001-S02",
+          "Track00001-S03",
+          "Track00001-S04",
+          "Track00001-S05",
+          "Track00001-S07",
+          "Track00001-S08",
+          "Track00001-S09",
+          "Track00001-S10"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/train/Track00001/all_src.mid",
+          "1a81ae092884234f3264e2f45927f00a"
+        ],
+        "mix": [
+          "slakh2100_flac_redux/train/Track00001/mix.flac",
+          "99a8dbff63e86e719cb3162456b0c593"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/train/Track00001/metadata.yaml",
+          "5258ffe8376e16e5e34b71e7323c0477"
+        ]
+      },
+      "Track01876": {
+        "tracks": [
+          "Track01876-S00",
+          "Track01876-S01",
+          "Track01876-S02",
+          "Track01876-S03",
+          "Track01876-S04",
+          "Track01876-S05",
+          "Track01876-S06",
+          "Track01876-S07",
+          "Track01876-S08",
+          "Track01876-S09",
+          "Track01876-S10",
+          "Track01876-S11",
+          "Track01876-S14"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/test/Track01876/all_src.mid",
+          "0f12ae105c1dc821c287b74632748b4e"
+        ],
+        "mix": [
+          "slakh2100_flac_redux/test/Track01876/mix.flac",
+          "daf25d7f73a61f95b557c54718803fc8"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/test/Track01876/metadata.yaml",
+          "a1f3b78e256e5659d01277351bf1d134"
+        ]
+      },
+      "Track01501": {
+        "tracks": [
+          "Track01501-S00",
+          "Track01501-S01",
+          "Track01501-S02",
+          "Track01501-S03",
+          "Track01501-S04",
+          "Track01501-S05",
+          "Track01501-S06",
+          "Track01501-S07",
+          "Track01501-S08",
+          "Track01501-S09",
+          "Track01501-S10"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/validation/Track01501/all_src.mid",
+          "52dc589baea0c387807aa964094e0cba"
+        ],
+        "mix": [
+          "slakh2100_flac_redux/validation/Track01501/mix.flac",
+          "08900bca2fe0af9c65700ca287b28851"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/validation/Track01501/metadata.yaml",
+          "87aaebf369ee5ff24d5eadc5f1ae4258"
+        ]
+      },
+      "Track00049": {
+        "tracks": [
+          "Track00049-S00",
+          "Track00049-S01",
+          "Track00049-S02",
+          "Track00049-S03",
+          "Track00049-S04",
+          "Track00049-S05",
+          "Track00049-S06"
+        ],
+        "midi": [
+          "slakh2100_flac_redux/omitted/Track00049/all_src.mid",
+          "763348b79ed855fa294a7c980392178b"
+        ],
+        "mix": [
+          "slakh2100_flac_redux/omitted/Track00049/mix.flac",
+          "f686f679484148844023372d2ef12bab"
+        ],
+        "metadata": [
+          "slakh2100_flac_redux/omitted/Track00049/metadata.yaml",
+          "d2a582e4975f515ea904a08983f9280c"
+        ]
+      }
+    }
+}

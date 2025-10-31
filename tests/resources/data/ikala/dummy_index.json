@@ -1,0 +1,47 @@
+{
+    "version": "sample",
+    "tracks": {
+      "10161_chorus": {
+        "audio": [
+          "Wavfile/10161_chorus.wav",
+          "278ae003cb0d323e99b9a643c0f2eeda"
+        ],
+        "pitch": [
+          "PitchLabel/10161_chorus.pv",
+          "0d93a011a9e668fd80673049089bbb14"
+        ],
+        "lyrics": [
+          "Lyrics/10161_chorus.lab",
+          "79bbeb72b422056fd43be4e8d63319ce"
+        ],
+        "notes_pyin": [
+          "ikala-pyin-notes/10161_chorus_vamp_pyin_pyin_notes.csv",
+          "015856455537ab232140746f2df7b857"
+        ]
+      },
+      "10161_solo": {
+        "audio": [
+          "Wavfile/10161_solo.wav",
+          "278ae003cb0d323e99b9a643c0f2eeda"
+        ],
+        "pitch": [
+          "PitchLabel/10161_solo.pv",
+          "0d93a011a9e668fd80673049089bbb14"
+        ],
+        "lyrics": [
+          "Lyrics/10161_solo.lab",
+          "79bbeb72b422056fd43be4e8d63319ce"
+        ],
+        "notes_pyin": [
+          "ikala-pyin-notes/10161_solo_vamp_pyin_pyin_notes.csv",
+          "015856455537ab232140746f2df7b857"
+        ]
+      }
+    },
+    "metadata": {
+      "id_mapping": [
+        "id_mapping.txt",
+        "81097b587804ce93e56c7a331ba06abc"
+      ]
+    }
+}

@@ -14,12 +14,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from unittest import mock
 import apache_beam as beam
 import itertools
 import os
 import pathlib
 import shutil
-
+import pytest
+import json
 from apache_beam.testing.test_pipeline import TestPipeline
 from typing import List
 
@@ -35,8 +37,17 @@ from utils import create_mock_wav
 RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
 TRACK_ID = "00_BN1-129-Eb_comp"
 
+GUITAR_SET_TEST_INDEX = json.load(open(RESOURCES_PATH / "data" / "guitarset" / "dummy_index.json"))
 
-def test_guitarset_to_tf_example(tmp_path: pathlib.Path) -> None:
+
+@pytest.fixture  # type: ignore[misc]
+def mock_guitarset_index() -> None:  # type: ignore[misc]
+    with mock.patch("mirdata.datasets.guitarset.Dataset.download"):
+        with mock.patch("mirdata.datasets.guitarset.Dataset._index", new=GUITAR_SET_TEST_INDEX):
+            yield
+
+
+def test_guitarset_to_tf_example(tmp_path: pathlib.Path, mock_guitarset_index: None) -> None:
     mock_guitarset_home = tmp_path / "guitarset"
     mock_guitarset_audio = mock_guitarset_home / "audio_mono-mic"
     mock_guitarset_annotations = mock_guitarset_home / "annotation"
@@ -91,7 +102,7 @@ def test_guitarset_invalid_tracks(tmpdir: str) -> None:
             assert fp.read().strip() == str(i)
 
 
-def test_guitarset_create_input_data() -> None:
+def test_guitarset_create_input_data(mock_guitarset_index: None) -> None:
     data = create_input_data(train_percent=0.33, validation_percent=0.33)
     data.sort(key=lambda el: el[1])  # sort by split
     tolerance = 0.1

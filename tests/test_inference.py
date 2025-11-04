@@ -26,12 +26,13 @@ import pretty_midi
 import numpy as np
 import numpy.typing as npt
 
-from basic_pitch import ICASSP_2022_MODEL_PATH, inference
+from basic_pitch import ICASSP_2022_MODEL_PATH, inference, note_creation
 from basic_pitch.constants import (
     AUDIO_SAMPLE_RATE,
     AUDIO_N_SAMPLES,
     ANNOTATIONS_N_SEMITONES,
     FFT_HOP,
+    ANNOTATION_HOP,
 )
 
 RESOURCES_PATH = pathlib.Path(__file__).parent / "resources"
@@ -54,6 +55,13 @@ def test_predict() -> None:
     assert all(note_pitch_min)
     assert all(note_pitch_max)
     assert isinstance(note_events, list)
+
+    # Check that model output has the expected length according to the last frame second computed downstream
+    # (via model_frames_to_time) with to a few frames of tolerance
+    audio_length_s = librosa.get_duration(filename=test_audio_path)
+    n_model_output_frames = model_output["note"].shape[0]
+    last_frame_s = note_creation.model_frames_to_time(n_model_output_frames)[-1]
+    np.testing.assert_allclose(last_frame_s, audio_length_s, atol=2 * ANNOTATION_HOP)
 
     expected_model_output = np.load(RESOURCES_PATH / "vocadito_10" / "model_output.npz", allow_pickle=True)[
         "arr_0"

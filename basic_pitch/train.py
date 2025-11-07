@@ -277,7 +277,7 @@ def console_entry_point() -> None:
         args.size_evaluation_callback_datasets,
         datasets_to_use,
         dataset_sampling_frequency,
-        args.dont_sonify,
+        args.no_sonify,
         args.no_contours,
         args.weighted_onset_loss,
         args.positive_onset_weight,

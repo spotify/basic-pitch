@@ -5,7 +5,7 @@ The code and scripts in this section deal with training basic pitch on your own.
 * **--runner**: The method used to run the Beam Pipeline for processing the dataset. Options include `DirectRunner`, running directly in the code process running the pipeline, `PortableRunner`, which can be used to run the pipeline in a docker container locally, and `DataflowRunner`, which can be used to run the pipeline in a docker container on Dataflow. 
 * **--timestamped**: If passed, the dataset will be put into a timestamp directory instead of 'splits'.
 * **--batch-size**: Number of examples per tfrecord when partitioning the dataset.
-* **--sdk_container_image**: The Docker container image used to process the data if using `PortableRunner` or `DirectRunner`.
+* **--sdk_container_image**: The Docker container image used to process the data if using `PortableRunner`.
 * **--job_endpoint**: the endpoint where the job is running. It defaults to `embed` which works for `PortableRunner`. 
 
 Additional arguments that work with Beam in general can be used as well, and will be passed along and used by the pipeline. If using `DataflowRunner`, you will be required to pass `--temp_location={Path to GCS Bucket}`, `--staging_location={Path to GCS Bucket}`, `--project={Name of GCS Project}` and `--region={GCS region}`. 

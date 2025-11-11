@@ -223,17 +223,20 @@ def model(
             N_FREQ_BINS_CONTOURS,
         )(x)
 
-    # contour layers - fully convolutional
-    x_contours = tfkl.Conv2D(
-        n_filters_contour,
-        CONTOUR_KERNEL_SIZE_1,
-        padding="same",
-        kernel_initializer=_initializer(),
-        kernel_constraint=_kernel_constraint(),
-    )(x)
+    # contour layers - fully convolutional - /!\ commented out as it was unintentionally skipped
+    # when training the model presented in the paper.
+    # TODO: retrain with layer included and replace checkpoints if it yields benefits
+    #
+    # x_contours = tfkl.Conv2D(
+    #     n_filters_contour,
+    #     CONTOUR_KERNEL_SIZE_1,
+    #     padding="same",
+    #     kernel_initializer=_initializer(),
+    #     kernel_constraint=_kernel_constraint(),
+    # )(x)
 
-    x_contours = tfkl.BatchNormalization()(x_contours)
-    x_contours = tfkl.ReLU()(x_contours)
+    # x_contours = tfkl.BatchNormalization()(x_contours)
+    # x_contours = tfkl.ReLU()(x_contours)
 
     x_contours = tfkl.Conv2D(
         CONTOUR_FILTERS_2,

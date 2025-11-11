@@ -19,9 +19,6 @@ import itertools
 import os
 import pathlib
 import shutil
-import json
-import pytest
-from unittest import mock
 
 from typing import List, Tuple
 
@@ -50,16 +47,6 @@ TEST_DRUMS_TRACK_ID = "Track01876-S08"
 
 OMITTED_PIANO_TRACK_ID = "Track00049-S05"
 OMITTED_DRUMS_TRACK_ID = "Track00049-S06"
-
-
-SLAKH_TEST_INDEX = json.load(open(RESOURCES_PATH / "data" / "slakh" / "dummy_index.json"))
-
-
-@pytest.fixture  # type: ignore[misc]
-def mock_slakh_index() -> None:  # type: ignore[misc]
-    with mock.patch("mirdata.datasets.slakh.Dataset.download"):
-        with mock.patch("mirdata.datasets.slakh.Dataset._index", new=SLAKH_TEST_INDEX):
-            yield
 
 
 # Function to generate a sine wave

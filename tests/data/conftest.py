@@ -21,10 +21,11 @@ def mock_medleydb_pitch_index() -> None:  # type: ignore[misc]
 @pytest.fixture  # type: ignore[misc]
 def mock_maestro_index() -> None:  # type: ignore[misc]
     index_with_metadata = MAESTRO_TEST_INDEX
-    index_with_metadata["metadata"] = METADATA_TEST_INDEX
+    metadata = {mdata["midi_filename"].split(".")[0]: mdata for mdata in METADATA_TEST_INDEX}
     with mock.patch("mirdata.datasets.maestro.Dataset.download"):
-        with mock.patch("mirdata.datasets.maestro.Dataset._index", new=index_with_metadata):
-            yield
+        with mock.patch("mirdata.datasets.maestro.Dataset._metadata", new=metadata):
+            with mock.patch("mirdata.datasets.maestro.Dataset._index", new=index_with_metadata):
+                yield
 
 
 @pytest.fixture  # type: ignore[misc]

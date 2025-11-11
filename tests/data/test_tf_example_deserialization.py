@@ -86,7 +86,7 @@ def setup_test_resources(tmp_path: pathlib.Path) -> pathlib.Path:
     return output_home
 
 
-def test_prepare_datasets(tmp_path: pathlib.Path) -> None:
+def test_prepare_datasets(tmp_path: pathlib.Path, mock_guitarset_index: None) -> None:
     datasets_home = setup_test_resources(tmp_path)
 
     ds_train, ds_valid = prepare_datasets(
@@ -102,7 +102,7 @@ def test_prepare_datasets(tmp_path: pathlib.Path) -> None:
     assert ds_valid is not None and isinstance(ds_valid, tf.data.Dataset)
 
 
-def test_prepare_visualization_dataset(tmp_path: pathlib.Path) -> None:
+def test_prepare_visualization_dataset(tmp_path: pathlib.Path, mock_guitarset_index: None) -> None:
     datasets_home = setup_test_resources(tmp_path)
 
     ds_train, ds_valid = prepare_visualization_datasets(
@@ -117,7 +117,7 @@ def test_prepare_visualization_dataset(tmp_path: pathlib.Path) -> None:
     assert ds_valid is not None and isinstance(ds_train, tf.data.Dataset)
 
 
-def test_sample_datasets(tmp_path: pathlib.Path) -> None:
+def test_sample_datasets(tmp_path: pathlib.Path, mock_guitarset_index: None) -> None:
     """touches the following methods:
     - transcription_dataset
         - parse_transcription_tfexample
@@ -125,6 +125,7 @@ def test_sample_datasets(tmp_path: pathlib.Path) -> None:
         - sparse2dense
         - reduce_transcription_inputs
         - get_sample_weights
+            - _infer_time_size
             - _infer_time_size
         - get_transcription_chunks
             - extract_random_window

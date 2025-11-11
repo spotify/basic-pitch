@@ -17,10 +17,6 @@
 import apache_beam as beam
 import itertools
 import os
-import json
-import pytest
-import pathlib
-from unittest import mock
 
 from apache_beam.testing.test_pipeline import TestPipeline
 
@@ -31,16 +27,6 @@ from basic_pitch.data.datasets.medleydb_pitch import (
 
 
 # TODO: Create test_medleydb_pitch_to_tf_example
-
-RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
-MEDLEYDB_PITCH_TEST_INDEX = json.load(open(RESOURCES_PATH / "data" / "medleydb_pitch" / "dummy_index.json"))
-
-
-@pytest.fixture  # type: ignore[misc]
-def mock_medleydb_pitch_index() -> None:  # type: ignore[misc]
-    with mock.patch("mirdata.datasets.medleydb_pitch.Dataset.download"):
-        with mock.patch("mirdata.datasets.medleydb_pitch.Dataset._index", new=MEDLEYDB_PITCH_TEST_INDEX):
-            yield
 
 
 def test_medleydb_pitch_invalid_tracks(tmpdir: str) -> None:

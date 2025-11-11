@@ -14,13 +14,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import pytest
 import pathlib
-from unittest import mock
 import apache_beam as beam
 import itertools
 import os
-import json
 from apache_beam.testing.test_pipeline import TestPipeline
 
 from basic_pitch.data.datasets.ikala import (
@@ -31,14 +28,6 @@ from basic_pitch.data.datasets.ikala import (
 # TODO: Create test_ikala_to_tf_example
 
 RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
-IKALA_TEST_INDEX = json.load(open(RESOURCES_PATH / "data" / "ikala" / "dummy_index.json"))
-
-
-@pytest.fixture  # type: ignore[misc]
-def mock_ikala_index() -> None:  # type: ignore[misc]
-    with mock.patch("mirdata.datasets.ikala.Dataset.download"):
-        with mock.patch("mirdata.datasets.ikala.Dataset._index", new=IKALA_TEST_INDEX):
-            yield
 
 
 def test_ikala_invalid_tracks(tmpdir: str) -> None:

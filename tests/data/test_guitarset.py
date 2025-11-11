@@ -14,14 +14,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from unittest import mock
 import apache_beam as beam
 import itertools
 import os
 import pathlib
 import shutil
-import pytest
-import json
 from apache_beam.testing.test_pipeline import TestPipeline
 from typing import List
 
@@ -36,15 +33,6 @@ from utils import create_mock_wav
 
 RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
 TRACK_ID = "00_BN1-129-Eb_comp"
-
-GUITAR_SET_TEST_INDEX = json.load(open(RESOURCES_PATH / "data" / "guitarset" / "dummy_index.json"))
-
-
-@pytest.fixture  # type: ignore[misc]
-def mock_guitarset_index() -> None:  # type: ignore[misc]
-    with mock.patch("mirdata.datasets.guitarset.Dataset.download"):
-        with mock.patch("mirdata.datasets.guitarset.Dataset._index", new=GUITAR_SET_TEST_INDEX):
-            yield
 
 
 def test_guitarset_to_tf_example(tmp_path: pathlib.Path, mock_guitarset_index: None) -> None:

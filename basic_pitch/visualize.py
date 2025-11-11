@@ -15,6 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import numpy as np
 import tensorflow as tf
 import mir_eval
@@ -188,12 +189,19 @@ def _array_to_sonification(array: tf.Tensor, max_outputs: int, clip: float = 0.3
     audio_list = []
 
     for i, gram in enumerate(gram_batch):
+        if gram.shape[1] != TIMES.shape[0]:
+            logging.warning(
+                f"Gram shape {gram.shape} does not match times shape {TIMES.shape}, times array will be truncated"
+            )
+            times_truncated = TIMES[: min(gram.shape[1], TIMES.shape[0])]
+        else:
+            times_truncated = TIMES
 
         gram[gram < clip] = 0.0
         y = mir_eval.sonify.time_frequency(
             gram[:MAX_FREQ_INDEX, :],
             FREQS[:MAX_FREQ_INDEX],
-            TIMES,
+            times_truncated,
             fs=SONIFY_FS,
         )
         audio_list.append(y[:, np.newaxis])

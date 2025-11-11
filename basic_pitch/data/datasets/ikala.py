@@ -29,7 +29,7 @@ import mirdata
 from basic_pitch.data import commandline, pipeline
 
 
-# Oct 2025: Ikala remote download is broken # TODO: Re-evaluate later
+# Oct 2025: Ikala remote download is broken on mirdata side # TODO: Re-evaluate later
 class IkalaInvalidTracks(beam.DoFn):
     def process(self, element: Tuple[str, str], *args: Tuple[Any, Any], **kwargs: Dict[str, Any]) -> Any:
         track_id, split = element

@@ -14,7 +14,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import pathlib
 import apache_beam as beam
 import itertools
 import os
@@ -26,8 +25,6 @@ from basic_pitch.data.datasets.ikala import (
 )
 
 # TODO: Create test_ikala_to_tf_example
-
-RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
 
 
 def test_ikala_invalid_tracks(tmpdir: str) -> None:

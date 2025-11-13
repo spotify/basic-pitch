@@ -29,6 +29,7 @@ import mirdata
 from basic_pitch.data import commandline, pipeline
 
 
+# Oct 2025: Ikala remote download is broken on mirdata side # TODO: Re-evaluate later
 class IkalaInvalidTracks(beam.DoFn):
     def process(self, element: Tuple[str, str], *args: Tuple[Any, Any], **kwargs: Dict[str, Any]) -> Any:
         track_id, split = element
@@ -142,6 +143,7 @@ def create_input_data(train_percent: float, seed: Optional[int] = None) -> List[
         random.seed(seed)
 
     ikala = mirdata.initialize("ikala")
+    ikala.download(["index"])
     track_ids = ikala.track_ids
     random.shuffle(track_ids)
 

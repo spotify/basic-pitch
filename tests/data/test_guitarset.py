@@ -19,7 +19,6 @@ import itertools
 import os
 import pathlib
 import shutil
-
 from apache_beam.testing.test_pipeline import TestPipeline
 from typing import List
 
@@ -36,7 +35,7 @@ RESOURCES_PATH = pathlib.Path(__file__).parent.parent / "resources"
 TRACK_ID = "00_BN1-129-Eb_comp"
 
 
-def test_guitarset_to_tf_example(tmp_path: pathlib.Path) -> None:
+def test_guitarset_to_tf_example(tmp_path: pathlib.Path, mock_guitarset_index: None) -> None:
     mock_guitarset_home = tmp_path / "guitarset"
     mock_guitarset_audio = mock_guitarset_home / "audio_mono-mic"
     mock_guitarset_annotations = mock_guitarset_home / "annotation"
@@ -91,7 +90,7 @@ def test_guitarset_invalid_tracks(tmpdir: str) -> None:
             assert fp.read().strip() == str(i)
 
 
-def test_guitarset_create_input_data() -> None:
+def test_guitarset_create_input_data(mock_guitarset_index: None) -> None:
     data = create_input_data(train_percent=0.33, validation_percent=0.33)
     data.sort(key=lambda el: el[1])  # sort by split
     tolerance = 0.1

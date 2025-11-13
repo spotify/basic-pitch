@@ -66,7 +66,7 @@ def create_mock_input_data(data_home: pathlib.Path, input_data: List[Tuple[str, 
         shutil.copy(SLAKH_PATH / split / track_num / "metadata.yaml", track_dir / "metadata.yaml")
 
 
-def test_slakh_to_tf_example(tmp_path: pathlib.Path) -> None:
+def test_slakh_to_tf_example(tmp_path: pathlib.Path, mock_slakh_index: None) -> None:
     mock_slakh_home = tmp_path / "slakh"
     mock_slakh_ext = mock_slakh_home / "slakh2100_flac_redux"
 
@@ -92,7 +92,7 @@ def test_slakh_to_tf_example(tmp_path: pathlib.Path) -> None:
         assert len(data) != 0
 
 
-def test_slakh_invalid_tracks(tmp_path: pathlib.Path) -> None:
+def test_slakh_invalid_tracks(tmp_path: pathlib.Path, mock_slakh_index: None) -> None:
     mock_slakh_home = tmp_path / "slakh"
     mock_slakh_ext = mock_slakh_home / "slakh2100_flac_redux"
 
@@ -119,7 +119,7 @@ def test_slakh_invalid_tracks(tmp_path: pathlib.Path) -> None:
             assert fp.read().strip() == track_id
 
 
-def test_slakh_invalid_tracks_omitted(tmp_path: pathlib.Path) -> None:
+def test_slakh_invalid_tracks_omitted(tmp_path: pathlib.Path, mock_slakh_index: None) -> None:
     mock_slakh_home = tmp_path / "slakh"
     mock_slakh_ext = mock_slakh_home / "slakh2100_flac_redux"
 
@@ -148,7 +148,7 @@ def test_slakh_invalid_tracks_omitted(tmp_path: pathlib.Path) -> None:
         assert fp.read().strip() == ""
 
 
-def test_slakh_invalid_tracks_drums(tmp_path: pathlib.Path) -> None:
+def test_slakh_invalid_tracks_drums(tmp_path: pathlib.Path, mock_slakh_index: None) -> None:
     mock_slakh_home = tmp_path / "slakh"
     mock_slakh_ext = mock_slakh_home / "slakh2100_flac_redux"
 
@@ -175,7 +175,7 @@ def test_slakh_invalid_tracks_drums(tmp_path: pathlib.Path) -> None:
             assert fp.read().strip() == ""
 
 
-def test_create_input_data() -> None:
+def test_create_input_data(mock_slakh_index: None) -> None:
     data = create_input_data()
     for _, group in itertools.groupby(data, lambda el: el[1]):
         assert len(list(group))

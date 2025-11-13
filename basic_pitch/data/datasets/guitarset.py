@@ -144,6 +144,7 @@ def create_input_data(
             return "test"
 
     guitarset = mirdata.initialize("guitarset")
+    guitarset.download(["index"])
     track_ids = guitarset.track_ids
     random.shuffle(track_ids)
 

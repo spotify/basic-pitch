@@ -17,14 +17,12 @@
 import apache_beam as beam
 import itertools
 import os
-
 from apache_beam.testing.test_pipeline import TestPipeline
 
 from basic_pitch.data.datasets.ikala import (
     IkalaInvalidTracks,
     create_input_data,
 )
-
 
 # TODO: Create test_ikala_to_tf_example
 
@@ -51,7 +49,7 @@ def test_ikala_invalid_tracks(tmpdir: str) -> None:
             assert fp.read().strip() == str(i)
 
 
-def test_ikala_create_input_data() -> None:
+def test_ikala_create_input_data(mock_ikala_index: None) -> None:
     data = create_input_data(train_percent=0.5)
     data.sort(key=lambda el: el[1])  # sort by split
     tolerance = 0.1

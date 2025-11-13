@@ -19,7 +19,6 @@ import argparse
 import logging
 import os
 import sys
-import tempfile
 import time
 from typing import Any, Dict, List, TextIO, Tuple
 
@@ -164,20 +163,10 @@ class MaestroToTfExample(beam.DoFn):
         return [batch]
 
 
-def create_input_data(source: str) -> List[Tuple[str, str]]:
-    import apache_beam as beam
-
-    filesystem = beam.io.filesystems.FileSystems()
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        maestro = mirdata.initialize("maestro", data_home=tmpdir)
-        metadata_path = maestro._index["metadata"]["maestro-v2.0.0"][0]
-        with filesystem.open(
-            os.path.join(source, metadata_path),
-        ) as s, open(os.path.join(tmpdir, metadata_path), "wb") as d:
-            d.write(s.read())
-
-        return [(track_id, track.split) for track_id, track in maestro.load_tracks().items()]
+def create_input_data() -> List[Tuple[str, str]]:
+    maestro = mirdata.initialize("maestro")
+    maestro.download(["metadata"])
+    return [(track_id, track.split) for track_id, track in maestro.load_tracks().items()]
 
 
 def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:
@@ -198,7 +187,7 @@ def main(known_args: argparse.Namespace, pipeline_args: List[str]) -> None:
         "environment_type": "DOCKER",
         "environment_config": known_args.sdk_container_image,
     }
-    input_data = create_input_data(known_args.source)
+    input_data = create_input_data()
     pipeline.run(
         pipeline_options,
         pipeline_args,

@@ -1,0 +1,39 @@
+{
+    "version": "sample",
+    "tracks": {
+      "AClassicEducation_NightOwl_STEM_08": {
+        "audio": [
+          "audio/AClassicEducation_NightOwl_STEM_08.wav",
+          "6cfb976517cf377863ba0ef6c66c6a07"
+        ],
+        "pitch": [
+          "pitch/AClassicEducation_NightOwl_STEM_08.csv",
+          "67009ae37766c37d3c29146bf763e06d"
+        ],
+        "notes_pyin": [
+          "medleydb-pitch-pyin-notes/AClassicEducation_NightOwl_STEM_08_vamp_pyin_pyin_notes.csv",
+          "32df71f481f3e49342aee5083ebe9bf6"
+        ]
+      },
+      "BClassicEducation_NightOwl_STEM_08": {
+        "audio": [
+          "audio/BClassicEducation_NightOwl_STEM_08.wav",
+          "6cfb976517cf377863ba0ef6c66c6a07"
+        ],
+        "pitch": [
+          "pitch/BClassicEducation_NightOwl_STEM_08.csv",
+          "67009ae37766c37d3c29146bf763e06d"
+        ],
+        "notes_pyin": [
+          "medleydb-pitch-pyin-notes/BClassicEducation_NightOwl_STEM_08_vamp_pyin_pyin_notes.csv",
+          "32df71f481f3e49342aee5083ebe9bf6"
+        ]
+      }
+    },
+    "metadata": {
+      "medleydb_pitch_metadata": [
+        "medleydb_pitch_metadata.json",
+        "0507b05c14549beccf17ba04d02f50aa"
+      ]
+    }
+}

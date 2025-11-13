@@ -182,6 +182,7 @@ class SlakhToTfExample(beam.DoFn):
 
 def create_input_data() -> List[Tuple[str, str]]:
     slakh = mirdata.initialize("slakh")
+    slakh.download(["index"])
     return [(track_id, track.data_split) for track_id, track in slakh.load_tracks().items()]
 
 

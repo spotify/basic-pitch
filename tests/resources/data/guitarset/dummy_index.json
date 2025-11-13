@@ -1,0 +1,71 @@
+{
+    "version": "sample",
+    "tracks": {
+      "03_BN3-119-G_solo": {
+        "audio_hex_cln": [
+          "audio_hex-pickup_debleeded/03_BN3-119-G_solo_hex_cln.wav",
+          "5b8fc14284710793d1394bd07d44b8d7"
+        ],
+        "audio_hex": [
+          "audio_hex-pickup_original/03_BN3-119-G_solo_hex.wav",
+          "5fdfd2e246fed2263dc917ef345d31b5"
+        ],
+        "audio_mic": [
+          "audio_mono-mic/03_BN3-119-G_solo_mic.wav",
+          "0bef5d2a8aef9e83497887696435623f"
+        ],
+        "audio_mix": [
+          "audio_mono-pickup_mix/03_BN3-119-G_solo_mix.wav",
+          "8ec4845f03e754c04f0576b8ea51dc70"
+        ],
+        "jams": [
+          "annotation/03_BN3-119-G_solo.jams",
+          "ae92a9c2b79e589544a36f785f12f7d2"
+        ]
+      },
+      "00_BN1-129-Eb_comp": {
+        "audio_hex_cln": [
+          "audio_hex-pickup_debleeded/00_BN1-129-Eb_comp_hex_cln.wav",
+          "a95114e82e661108bb53aa7f0a76453e"
+        ],
+        "audio_hex": [
+          "audio_hex-pickup_original/00_BN1-129-Eb_comp_hex.wav",
+          "25cf3ea1d3131e1862e2b7422ededa5f"
+        ],
+        "audio_mic": [
+          "audio_mono-mic/00_BN1-129-Eb_comp_mic.wav",
+          "90afbf41f0bea5afc6c7af0c9c7d45a9"
+        ],
+        "audio_mix": [
+          "audio_mono-pickup_mix/00_BN1-129-Eb_comp_mix.wav",
+          "11d99f35c51d08a8169bddb90474bbd1"
+        ],
+        "jams": [
+          "annotation/00_BN1-129-Eb_comp.jams",
+          "9f68b0708dc1afc361fb1229899b00d0"
+        ]
+      },
+      "00_BN1-147-Gb_comp": {
+        "audio_hex_cln": [
+          "audio_hex-pickup_debleeded/00_BN1-147-Gb_comp_hex_cln.wav",
+          "a95114e82e661108bb53aa7f0a76453e"
+        ],
+        "audio_hex": [
+          "audio_hex-pickup_original/00_BN1-147-Gb_comp_hex.wav",
+          "25cf3ea1d3131e1862e2b7422ededa5f"
+        ],
+        "audio_mic": [
+          "audio_mono-mic/00_BN1-147-Gb_comp_mic.wav",
+          "90afbf41f0bea5afc6c7af0c9c7d45a9"
+        ],
+        "audio_mix": [
+          "audio_mono-pickup_mix/00_BN1-147-Gb_comp_mix.wav",
+          "11d99f35c51d08a8169bddb90474bbd1"
+        ],
+        "jams": [
+          "annotation/00_BN1-147-Gb_comp.jams",
+          "9f68b0708dc1afc361fb1229899b00d0"
+        ]
+      }
+    }
+}

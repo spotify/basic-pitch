@@ -1,0 +1,55 @@
+{
+    "version": "2.0.0",
+    "tracks": {
+      "2018/MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--1": {
+        "midi": [
+          "2018/MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--1.midi",
+          "4901b1578ee4fe8c1696e02f60924949"
+        ],
+        "audio": [
+          "2018/MIDI-Unprocessed_Chamber3_MID--AUDIO_10_R3_2018_wav--1.wav",
+          "1694d8431f01eeb2a18444196550b99d"
+        ]
+      },
+      "2004/MIDI-Unprocessed_SMF_05_R1_2004_01_ORIG_MID--AUDIO_05_R1_2004_03_Track03_wav": {
+        "midi": [
+          "2004/MIDI-Unprocessed_SMF_05_R1_2004_01_ORIG_MID--AUDIO_05_R1_2004_03_Track03_wav.midi",
+          "4901b1578ee4fe8c1696e02f60924949"
+        ],
+        "audio": [
+          "2004/MIDI-Unprocessed_SMF_05_R1_2004_01_ORIG_MID--AUDIO_05_R1_2004_03_Track03_wav.wav",
+          "1694d8431f01eeb2a18444196550b99d"
+        ]
+      },
+      "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_05_Track05_wav": {
+        "midi": [
+          "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_05_Track05_wav.midi",
+          "4901b1578ee4fe8c1696e02f60924949"
+        ],
+        "audio": [
+          "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_05_Track05_wav.wav",
+          "1694d8431f01eeb2a18444196550b99d"
+        ]
+      },
+      "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_06_Track06_wav":{
+        "midi": [
+          "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_06_Track06_wav.midi",
+          "4901b1578ee4fe8c1696e02f60924949"
+        ],
+        "audio": [
+          "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_06_Track06_wav.wav",
+          "1694d8431f01eeb2a18444196550b99d"
+        ]
+      },
+      "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_08_Track08_wav": {
+        "midi": [
+          "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_08_Track08_wav.midi",
+          "4901b1578ee4fe8c1696e02f60924949"
+        ],
+        "audio": [
+          "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_08_Track08_wav.wav",
+          "1694d8431f01eeb2a18444196550b99d"
+        ]
+      }
+    }
+}

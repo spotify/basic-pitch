@@ -140,6 +140,7 @@ def create_input_data(train_percent: float, seed: Optional[int] = None) -> List[
         random.seed(seed)
 
     medleydb_pitch = mirdata.initialize("medleydb_pitch")
+    medleydb_pitch.download(["index"])
     track_ids = medleydb_pitch.track_ids
     random.shuffle(track_ids)
 

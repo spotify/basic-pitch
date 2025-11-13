@@ -16,7 +16,6 @@
 # limitations under the License.
 import os
 import pathlib
-
 from typing import List
 
 import apache_beam as beam
@@ -40,7 +39,7 @@ TEST_TRACK_ID = "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R
 GT_15M_TRACK_ID = "2004/MIDI-Unprocessed_SMF_02_R1_2004_01-05_ORIG_MID--AUDIO_02_R1_2004_05_Track05_wav"
 
 
-def test_maestro_to_tf_example(tmp_path: pathlib.Path) -> None:
+def test_maestro_to_tf_example(tmp_path: pathlib.Path, mock_maestro_index: None) -> None:
     mock_maestro_home = tmp_path / "maestro"
     mock_maestro_ext = mock_maestro_home / "2004"
     mock_maestro_ext.mkdir(parents=True, exist_ok=True)
@@ -68,7 +67,7 @@ def test_maestro_to_tf_example(tmp_path: pathlib.Path) -> None:
         assert len(data) != 0
 
 
-def test_maestro_invalid_tracks(tmp_path: pathlib.Path) -> None:
+def test_maestro_invalid_tracks(tmp_path: pathlib.Path, mock_maestro_index: None) -> None:
     mock_maestro_home = tmp_path / "maestro"
     mock_maestro_ext = mock_maestro_home / "2004"
     mock_maestro_ext.mkdir(parents=True, exist_ok=True)
@@ -98,7 +97,7 @@ def test_maestro_invalid_tracks(tmp_path: pathlib.Path) -> None:
             assert fp.read().strip() == track_id
 
 
-def test_maestro_invalid_tracks_over_15_min(tmp_path: pathlib.Path) -> None:
+def test_maestro_invalid_tracks_over_15_min(tmp_path: pathlib.Path, mock_maestro_index: None) -> None:
     """
     The track id used here is a real track id in maestro, and it is part of the train split, but we mock the data so as
     not to store a large file in git, hence the variable name.
@@ -131,13 +130,13 @@ def test_maestro_invalid_tracks_over_15_min(tmp_path: pathlib.Path) -> None:
             assert fp.read().strip() == ""
 
 
-def test_maestro_create_input_data() -> None:
+def test_maestro_create_input_data(mock_maestro_index: None) -> None:
     """
     A commuted metadata file is included in the repo for testing. mirdata references the metadata file to
     populate the tracklist with metadata. Since the file is commuted to only the filenames referenced here,
     we only consider these when testing the metadata.
     """
-    data = create_input_data(str(MAESTRO_TEST_DATA_PATH))
+    data = create_input_data()
     assert len(data)
 
     test_fnames = {TRAIN_TRACK_ID, VALID_TRACK_ID, TEST_TRACK_ID, GT_15M_TRACK_ID}

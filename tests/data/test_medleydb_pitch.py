@@ -51,7 +51,7 @@ def test_medleydb_pitch_invalid_tracks(tmpdir: str) -> None:
             assert fp.read().strip() == str(i)
 
 
-def test_medleydb_create_input_data() -> None:
+def test_medleydb_create_input_data(mock_medleydb_pitch_index: None) -> None:
     data = create_input_data(train_percent=0.5)
     data.sort(key=lambda el: el[1])  # sort by split
     tolerance = 0.01

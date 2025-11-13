@@ -165,7 +165,7 @@ def get_cqt(inputs: tf.Tensor, n_harmonics: int, use_batchnorm: bool) -> tf.Tens
         n_harmonics: The number of harmonics to capture above the maximum output frequency.
             Used to calculate the number of semitones for the CQT.
         use_batchnorm: If True, applies batch normalization after computing the CQT
-
+        use_fixed_norm: If True, applies fixed normalization after computing the CQT instead of min-max
     Returns:
         The log-normalized CQT of the input audio.
     """

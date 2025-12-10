@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Tuple
 import tensorflow as tf
 from basic_pitch.layers.math import log_base_b
 
@@ -62,7 +62,7 @@ class Stft(tf.keras.layers.Layer):
         self.center = center
         self.pad_mode = pad_mode
 
-    def build(self, input_shape: tf.TensorShape) -> None:
+    def build(self, input_shape: Tuple[Optional[int], ...]) -> None:
         if self.window_length < self.fft_length:
             lpad = (self.fft_length - self.window_length) // 2
             rpad = self.fft_length - self.window_length - lpad
@@ -77,10 +77,11 @@ class Stft(tf.keras.layers.Layer):
             self.final_window_fn = padded_window
 
         if self.center:
+            rank = len(input_shape)
             self.spec = tf.keras.layers.Lambda(
                 lambda x: tf.pad(
                     x,
-                    [[0, 0] for _ in range(input_shape.rank - 1)] + [[self.fft_length // 2, self.fft_length // 2]],
+                    [[0, 0] for _ in range(rank - 1)] + [[self.fft_length // 2, self.fft_length // 2]],
                     mode=self.pad_mode,
                 )
             )
@@ -159,9 +160,9 @@ class NormalizedLog(tf.keras.layers.Layer):
     This layer adds 1e-10 to all values as a way to avoid NaN math.
     """
 
-    def build(self, input_shape: tf.Tensor) -> None:
+    def build(self, input_shape: Tuple[Optional[int], ...]) -> None:
         self.squeeze_batch = lambda batch: batch
-        rank = input_shape.rank
+        rank = len(input_shape)
         if rank == 4:
             assert input_shape[1] == 1, "If the rank is 4, the second dimension must be length 1"
             self.squeeze_batch = lambda batch: tf.squeeze(batch, axis=1)

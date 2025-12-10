@@ -52,13 +52,7 @@ import numpy.typing as npt
 import librosa
 import pretty_midi
 
-from basic_pitch.constants import (
-    AUDIO_SAMPLE_RATE,
-    AUDIO_N_SAMPLES,
-    ANNOTATIONS_FPS,
-    FFT_HOP,
-    AUDIO_WINDOW_LENGTH,
-)
+from basic_pitch.constants import AUDIO_SAMPLE_RATE, AUDIO_N_SAMPLES, ANNOTATIONS_FPS, FFT_HOP, AUDIO_WINDOW_LENGTH
 from basic_pitch.commandline_printing import (
     generating_file_message,
     no_tf_warnings,
@@ -245,10 +239,7 @@ def get_audio_input(
 
 
 def unwrap_output(
-    output: npt.NDArray[np.float32],
-    audio_original_length: int,
-    n_overlapping_frames: int,
-    hop_size: int,
+    output: npt.NDArray[np.float32], audio_original_length: int, n_overlapping_frames: int, hop_size: int
 ) -> np.array:
     """Unwrap batched model predictions to a single matrix.
 

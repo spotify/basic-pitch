@@ -77,6 +77,7 @@ docs = ["mkdocs>=1.0.4"]
 dev = [
 	"basic_pitch[data,test,tf,coreml,onnx,docs]",
 	"mypy",
+	"scipy-stubs",
 	"tox",
 ]
 

@@ -458,6 +458,9 @@ def predict(
         multiple_pitch_bends: If True, allow overlapping notes in midi file to have pitch bends.
         melodia_trick: Use the melodia post-processing step.
         debug_file: An optional path to output debug data to. Useful for testing/verification.
+        midi_tempo: The tempo, in BPM, written to the output MIDI file's header. This only sets the
+            tempo metadata; note start/end times are taken from the audio in absolute seconds and are
+            not rescaled, so it does not change note timing or playback duration.
     Returns:
         The model output, midi data and note events from a single prediction
     """
@@ -544,6 +547,9 @@ def predict_and_save(
         melodia_trick: Use the melodia post-processing step.
         debug_file: An optional path to output debug data to. Useful for testing/verification.
         sonification_samplerate: Sample rate for rendering audio from MIDI.
+        midi_tempo: The tempo, in BPM, written to the output MIDI file's header. This only sets the
+            tempo metadata; note start/end times are taken from the audio in absolute seconds and are
+            not rescaled, so it does not change note timing or playback duration.
     """
     for audio_path in audio_path_list:
         print("")

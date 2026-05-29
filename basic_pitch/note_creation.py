@@ -232,6 +232,10 @@ def note_events_to_midi(
         multiple_pitch_bends : If True, allow overlapping notes to have pitch bends
             Note: this will assign each pitch to its own midi instrument, as midi does not yet
             support per-note pitch bends
+        midi_tempo : The tempo, in BPM, written to the output MIDI file's header via
+            initial_tempo. This only sets the tempo metadata, while the note start/end times are taken
+            from the audio in absolute seconds and are not rescaled, so it does not change note timing
+            or playback duration.
 
     Returns:
         pretty_midi.PrettyMIDI() object

@@ -122,7 +122,9 @@ def main() -> None:
         "--midi-tempo",
         type=float,
         default=120,
-        help="The tempo for the midi file.",
+        help="The tempo, in BPM, written to the MIDI file's header. Note: this only sets the tempo "
+        "metadata and does not change note timing or playback duration, which always follow the "
+        "original audio.",
     )
     parser.add_argument(
         "--debug-file",

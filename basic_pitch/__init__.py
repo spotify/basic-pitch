@@ -19,7 +19,6 @@ import enum
 import logging
 import pathlib
 
-
 try:
     import coremltools
 
@@ -79,7 +78,8 @@ class FilenameSuffix(enum.Enum):
 
 
 if TF_PRESENT:
-    _default_model_type = FilenameSuffix.tf
+    _tf_major_minor = tuple(int(part) for part in tensorflow.__version__.split(".")[:2])
+    _default_model_type = FilenameSuffix.tf if _tf_major_minor < (2, 16) else FilenameSuffix.tflite
 elif CT_PRESENT:
     _default_model_type = FilenameSuffix.coreml
 elif TFLITE_PRESENT:

@@ -14,15 +14,16 @@ jobs:
           - ubuntu-latest
           - windows-latest
         py:
+          - "3.12"
           - "3.11"
           - "3.10"
-          - "3.9"
-          - "3.8"
         include:
           - os: macos-latest-xlarge
             py: "3.10.11"
           - os: macos-latest-xlarge
             py: "3.11.8"
+          - os: macos-latest-xlarge
+            py: "3.12"
     steps:
       - name: Setup python for test ${{ matrix.py }}
         uses: actions/setup-python@v4

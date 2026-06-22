@@ -56,6 +56,6 @@ def test_visualize_callback_on_epoch_end(tmpdir: str) -> None:
         contours=True,
     )
 
-    vc.model = MockModel()
+    vc.set_model(MockModel())
 
     vc.on_epoch_end(1, {"loss": np.random.random(), "val_loss": np.random.random()})

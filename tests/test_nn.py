@@ -67,7 +67,6 @@ class TestHarmonicStacking(unittest.TestCase):
         model.compile(
             loss="binary_crossentropy",
             optimizer=tf.keras.optimizers.Adam(0.1),
-            sample_weight_mode=None,
         )
 
         model.fit(
@@ -102,7 +101,6 @@ class TestHarmonicStacking(unittest.TestCase):
         model.compile(
             loss="binary_crossentropy",
             optimizer=tf.keras.optimizers.Adam(0.1),
-            sample_weight_mode=None,
         )
 
         model.fit(

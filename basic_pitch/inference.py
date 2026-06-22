@@ -39,8 +39,11 @@ except ImportError:
 try:
     import tflite_runtime.interpreter as tflite
 except ImportError:
-    if TF_PRESENT:
-        import tensorflow.lite as tflite
+    try:
+        from ai_edge_litert import interpreter as tflite
+    except ImportError:
+        if TF_PRESENT:
+            import tensorflow.lite as tflite
 
 try:
     import onnxruntime as ort

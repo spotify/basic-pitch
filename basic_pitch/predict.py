@@ -27,7 +27,6 @@ from basic_pitch import (
 )
 from basic_pitch.inference import Model
 
-
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 

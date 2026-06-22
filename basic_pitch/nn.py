@@ -18,7 +18,6 @@
 from typing import Any, List
 
 import tensorflow as tf
-import tensorflow.keras.backend as K
 
 from basic_pitch.layers.math import log_base_b
 
@@ -97,7 +96,7 @@ class FlattenAudioCh(tf.keras.layers.Layer):
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
         """x: (batch, time, ch)"""
-        shapes = K.int_shape(x)
+        shapes = x.shape
         tf.assert_equal(shapes[2], 1)
         return tf.squeeze(x, axis=2)
 
@@ -111,7 +110,7 @@ class FlattenFreqCh(tf.keras.layers.Layer):
     """
 
     def call(self, x: tf.Tensor) -> tf.Tensor:
-        shapes = K.int_shape(x)
+        shapes = x.shape
         batch_size = tf.shape(x)[0]
         time_dim = shapes[1]
         freq_dim = shapes[2]

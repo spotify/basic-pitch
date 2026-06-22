@@ -44,7 +44,7 @@ To update Basic Pitch to the latest version, add `--upgrade` to the above comman
 
 #### Compatible Environments:
 - MacOS, Windows and Ubuntu operating systems
-- Python versions 3.7, 3.8, 3.9, 3.10, 3.11
+- Python versions 3.10, 3.11, 3.12
 - **For Mac M1 hardware, we currently only support python version 3.10. Otherwise, we suggest using a virtual machine.**
 
 

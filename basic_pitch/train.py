@@ -150,7 +150,6 @@ def main(
     model.compile(
         loss=loss,
         optimizer=tf.keras.optimizers.Adam(learning_rate),
-        sample_weight_mode={"contour": None, "note": None, "onset": None},
     )
 
     logging.info("--- Model Training specs ---")

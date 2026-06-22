@@ -32,6 +32,7 @@ from basic_pitch.constants import (
 from basic_pitch.layers import signal, nnaudio
 
 tfkl = tf.keras.layers
+keras_ops = tf.keras.ops if hasattr(tf.keras, "ops") else tf
 
 MAX_N_SEMITONES = int(np.floor(12.0 * np.log2(0.5 * AUDIO_SAMPLE_RATE / ANNOTATIONS_BASE_FREQUENCY)))
 
@@ -184,7 +185,7 @@ def get_cqt(inputs: tf.Tensor, n_harmonics: int, use_batchnorm: bool) -> tf.Tens
         bins_per_octave=12 * CONTOURS_BINS_PER_SEMITONE,
     )(x)
     x = signal.NormalizedLog()(x)
-    x = tf.expand_dims(x, -1)
+    x = keras_ops.expand_dims(x, -1)
     if use_batchnorm:
         x = tfkl.BatchNormalization()(x)
     return x
@@ -263,7 +264,7 @@ def model(
         x_contours = nn.FlattenFreqCh(name=contour_name)(x_contours)  # contour output
 
         # reduced contour output as input to notes
-        x_contours_reduced = tf.expand_dims(x_contours, -1)
+        x_contours_reduced = keras_ops.expand_dims(x_contours, -1)
     else:
         x_contours_reduced = x_contours
 

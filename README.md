@@ -131,7 +131,7 @@ import tensorflow as tf
 from basic_pitch.inference import predict, Model
 from basic_pitch import ICASSP_2022_MODEL_PATH
 
-basic_pitch_model = Model(ICASSP_2022_MODEL_PATH))
+basic_pitch_model = Model(ICASSP_2022_MODEL_PATH)
 
 for x in range():
     ...

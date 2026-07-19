@@ -31,7 +31,7 @@ from basic_pitch.inference import Model
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 
-def main() -> None:
+def main() -> int:
     """Handle command line arguments. Entrypoint for this script."""
     parser = argparse.ArgumentParser(description="Predict midi from audio.")
     parser.add_argument("output_dir", type=str, help="directory to save outputs")
@@ -185,14 +185,17 @@ def main() -> None:
             args.midi_tempo,
         )
         print("\n✨ Done ✨\n")
+        return 0
     except IOError as ioe:
         print(ioe)
+        return 1
     except Exception as e:
         print("🚨 Something went wrong 😔 - see the traceback below for details.")
         print("")
         print(e)
         print(traceback.format_exc())
+        return 1
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

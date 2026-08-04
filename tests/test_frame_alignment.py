@@ -15,6 +15,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Optional
+
 import numpy as np
 import pytest
 
@@ -59,7 +61,7 @@ def test_model_output_frame_samples_supports_custom_alignment() -> None:
     ],
 )
 def test_model_output_frame_samples_rejects_invalid_alignment(
-    n_frames: int, n_overlapping_frames: int, hop_size: int
+    n_frames: int, n_overlapping_frames: int, hop_size: Optional[int]
 ) -> None:
     with pytest.raises(ValueError):
         model_output_frame_samples(n_frames, n_overlapping_frames, hop_size)

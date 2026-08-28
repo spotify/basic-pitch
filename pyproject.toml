@@ -15,6 +15,7 @@ classifiers = [
 	"Programming Language :: Python :: 3.9",
 	"Programming Language :: Python :: 3.10",
 	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
 	"Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
@@ -23,12 +24,22 @@ dependencies = [
 	"mir_eval>=0.6.0",
 	"numpy>=1.18",
 	"onnxruntime; platform_system == 'Windows' and python_version < '3.11'",
+	# No tensorflow / tensorflow-macos wheel exists for cp312 below the
+	# <2.15.1 ceiling this project pins (TF only gained official Python 3.12
+	# wheels starting at 2.16). Pulling in tensorflow on 3.12 forces pip to
+	# try to build a transitive dependency from source, which fails against
+	# modern setuptools (see pypa/pip#11501). basic_pitch/__init__.py already
+	# falls back to the ONNX runtime + the onnx model asset that ships in
+	# this package when tensorflow isn't importable, so on 3.12 we install
+	# onnxruntime as the default backend instead of tensorflow, same as is
+	# already done for Windows < 3.11 above. No other code changes needed.
+	"onnxruntime; python_version >= '3.12'",
 	"pretty_midi>=0.2.9",
 	"resampy>=0.2.2,<0.4.3",
 	"scikit-learn",
 	"scipy>=1.4.1",
-	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11'",
-	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.11'",
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11' and python_version < '3.12'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.11' and python_version < '3.12'",
 	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
 	"typing_extensions",
 ]

@@ -15,7 +15,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from basic_pitch.note_creation import drop_overlapping_pitch_bends
+from basic_pitch.note_creation import drop_overlapping_pitch_bends, note_events_to_midi
 
 
 def test_drop_overlapping_pitch_bends() -> None:
@@ -48,3 +48,21 @@ def test_drop_overlapping_pitch_bends() -> None:
     ]
     result = drop_overlapping_pitch_bends(note_events_with_pitch_bends)
     assert sorted(result) == sorted(expected)
+
+
+def test_note_events_to_midi_pitch_bend_reset() -> None:
+    note_events = [
+        (0.0, 1.0, 60, 1.0, [0, 1]),
+        (2.0, 3.0, 62, 1.0, None),
+    ]
+    mid = note_events_to_midi(note_events)
+    pitch_bends = mid.instruments[0].pitch_bends
+    assert len(pitch_bends) > 0
+    assert pitch_bends[-1].pitch == 0
+    assert pitch_bends[-1].time == 1.0
+
+    mid_multi = note_events_to_midi(note_events, multiple_pitch_bends=True)
+    inst_60 = [inst for inst in mid_multi.instruments if any(n.pitch == 60 for n in inst.notes)][0]
+    assert len(inst_60.pitch_bends) > 0
+    assert inst_60.pitch_bends[-1].pitch == 0
+    assert inst_60.pitch_bends[-1].time == 1.0

@@ -256,7 +256,7 @@ def note_events_to_midi(
         instrument.notes.append(note)
         if not pitch_bend:
             continue
-        pitch_bend_times = np.linspace(start_time, end_time, len(pitch_bend))
+        pitch_bend_times = np.linspace(start_time, end_time, len(pitch_bend), endpoint=False)
         pitch_bend_midi_ticks = np.round(np.array(pitch_bend) * PITCH_BEND_SCALE / CONTOURS_BINS_PER_SEMITONE).astype(
             int
         )
@@ -266,6 +266,8 @@ def note_events_to_midi(
         pitch_bend_midi_ticks[pitch_bend_midi_ticks < -N_PITCH_BEND_TICKS] = -N_PITCH_BEND_TICKS
         for pb_time, pb_midi in zip(pitch_bend_times, pitch_bend_midi_ticks):
             instrument.pitch_bends.append(pretty_midi.PitchBend(pb_midi, pb_time))
+        if pitch_bend_midi_ticks[-1] != 0:
+            instrument.pitch_bends.append(pretty_midi.PitchBend(0, end_time))
     mid.instruments.extend(instruments.values())
 
     return mid

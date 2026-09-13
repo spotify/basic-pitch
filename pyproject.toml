@@ -15,6 +15,7 @@ classifiers = [
 	"Programming Language :: Python :: 3.9",
 	"Programming Language :: Python :: 3.10",
 	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
 	"Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
@@ -22,13 +23,18 @@ dependencies = [
 	"librosa>=0.8.0",
 	"mir_eval>=0.6.0",
 	"numpy>=1.18",
-	"onnxruntime; platform_system == 'Windows' and python_version < '3.11'",
+	# tensorflow(-macos) has no cp312 wheels below 2.16, and the bundled SavedModel
+	# can't be loaded by tensorflow>=2.16 (Keras 3's optimizer object graph is
+	# incompatible: "'_UserObject' object has no attribute 'add_slot'"), so on
+	# Python 3.12+ this falls back to onnxruntime (or, on Darwin, coremltools,
+	# already a dependency there) instead of an unsatisfiable/broken TF pin.
+	"onnxruntime; (platform_system == 'Windows' and python_version < '3.11') or (platform_system != 'Darwin' and python_version >= '3.12')",
 	"pretty_midi>=0.2.9",
 	"resampy>=0.2.2,<0.4.3",
 	"scikit-learn",
 	"scipy>=1.4.1",
-	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11'",
-	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.11'",
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11' and python_version < '3.12'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.11' and python_version < '3.12'",
 	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
 	"typing_extensions",
 ]
@@ -68,8 +74,12 @@ test = [
 	"mido"
 ]
 tf = [
-	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin'",
-	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.7'",
+	# See the `dependencies` comment above: no tensorflow(-macos) release both has
+	# cp312 wheels and can load the bundled SavedModel, so this extra is
+	# unavailable on Python 3.12+ rather than installing a backend that can't
+	# read the model.
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version < '3.12'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.7' and python_version < '3.12'",
 ]
 coreml = ["coremltools"] 
 onnx = ["onnxruntime"]

@@ -17,6 +17,7 @@
 
 import numpy as np
 import tensorflow as tf
+from basic_pitch._keras import keras
 
 from typing import Dict
 
@@ -24,7 +25,7 @@ from basic_pitch.callbacks import VisualizeCallback
 from basic_pitch.constants import AUDIO_N_SAMPLES, ANNOTATIONS_N_SEMITONES, ANNOT_N_FRAMES
 
 
-class MockModel(tf.keras.Model):
+class MockModel(keras.Model):
     def __init__(self) -> None:
         super(MockModel, self).__init__()
 

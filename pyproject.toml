@@ -15,6 +15,7 @@ classifiers = [
 	"Programming Language :: Python :: 3.9",
 	"Programming Language :: Python :: 3.10",
 	"Programming Language :: Python :: 3.11",
+	"Programming Language :: Python :: 3.12",
 	"Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
@@ -27,8 +28,12 @@ dependencies = [
 	"resampy>=0.2.2,<0.4.3",
 	"scikit-learn",
 	"scipy>=1.4.1",
-	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version >= '3.11'",
-	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.11'",
+	# resampy<0.4.3 imports pkg_resources, which Python 3.12 venvs don't ship and setuptools>=81 removed.
+	"setuptools<81; python_version >= '3.12'",
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version == '3.11'",
+	"tensorflow>=2.16.1; python_version >= '3.12'",
+	"tf-keras>=2.16.0; python_version >= '3.12'",
+	"tensorboard; python_version >= '3.12'",
 	"tflite-runtime; platform_system == 'Linux' and python_version < '3.11'",
 	"typing_extensions",
 ]
@@ -68,8 +73,11 @@ test = [
 	"mido"
 ]
 tf = [
-	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin'",
-	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.7'",
+	"tensorflow>=2.4.1,<2.15.1; platform_system != 'Darwin' and python_version < '3.12'",
+	"tensorflow-macos>=2.4.1,<2.15.1; platform_system == 'Darwin' and python_version > '3.7' and python_version < '3.12'",
+	"tensorflow>=2.16.1; python_version >= '3.12'",
+	"tf-keras>=2.16.0; python_version >= '3.12'",
+	"tensorboard; python_version >= '3.12'",
 ]
 coreml = ["coremltools"] 
 onnx = ["onnxruntime"]

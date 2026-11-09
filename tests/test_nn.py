@@ -20,6 +20,7 @@ import unittest
 
 import numpy as np
 import tensorflow as tf
+from basic_pitch._keras import keras
 
 from basic_pitch import models, nn
 from basic_pitch.constants import (
@@ -31,7 +32,7 @@ from basic_pitch.constants import (
 
 BATCH_SIZE = 3
 
-tfkl = tf.keras.layers
+tfkl = keras.layers
 
 
 class TestHarmonicStacking(unittest.TestCase):
@@ -55,18 +56,18 @@ class TestHarmonicStacking(unittest.TestCase):
         return ds
 
     def test_defaults(self) -> None:
-        inputs = tf.keras.Input(shape=(AUDIO_N_SAMPLES, 1))
+        inputs = keras.Input(shape=(AUDIO_N_SAMPLES, 1))
         x = models.get_cqt(inputs, 5, True)
         conv = nn.HarmonicStacking(3, [1, 2, 3, 4, 5], N_FREQ_BINS_CONTOURS)(x)
         outputs = tfkl.Conv2D(1, (3, 3), padding="same")(conv)
-        model = tf.keras.Model(inputs=inputs, outputs=outputs)
+        model = keras.Model(inputs=inputs, outputs=outputs)
 
         train_ds = self._dummy_dataset()
         valid_ds = self._dummy_dataset()
 
         model.compile(
             loss="binary_crossentropy",
-            optimizer=tf.keras.optimizers.Adam(0.1),
+            optimizer=keras.optimizers.Adam(0.1),
             sample_weight_mode=None,
         )
 
@@ -90,18 +91,18 @@ class TestHarmonicStacking(unittest.TestCase):
             break
 
     def test_fractions(self) -> None:
-        inputs = tf.keras.Input(shape=(AUDIO_N_SAMPLES, 1))
+        inputs = keras.Input(shape=(AUDIO_N_SAMPLES, 1))
         x = models.get_cqt(inputs, 2, True)
         conv = nn.HarmonicStacking(3, [0.5, 1, 2], N_FREQ_BINS_CONTOURS)(x)
         outputs = tfkl.Conv2D(1, (3, 3), padding="same")(conv)
-        model = tf.keras.Model(inputs=inputs, outputs=outputs)
+        model = keras.Model(inputs=inputs, outputs=outputs)
 
         train_ds = self._dummy_dataset()
         valid_ds = self._dummy_dataset()
 
         model.compile(
             loss="binary_crossentropy",
-            optimizer=tf.keras.optimizers.Adam(0.1),
+            optimizer=keras.optimizers.Adam(0.1),
             sample_weight_mode=None,
         )
 

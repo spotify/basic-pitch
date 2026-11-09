@@ -17,10 +17,11 @@
 
 from typing import Any, Callable, Optional
 import tensorflow as tf
+from basic_pitch._keras import keras
 from basic_pitch.layers.math import log_base_b
 
 
-class Stft(tf.keras.layers.Layer):
+class Stft(keras.layers.Layer):
     def __init__(
         self,
         fft_length: int = 2048,
@@ -77,7 +78,7 @@ class Stft(tf.keras.layers.Layer):
             self.final_window_fn = padded_window
 
         if self.center:
-            self.spec = tf.keras.layers.Lambda(
+            self.spec = keras.layers.Lambda(
                 lambda x: tf.pad(
                     x,
                     [[0, 0] for _ in range(input_shape.rank - 1)] + [[self.fft_length // 2, self.fft_length // 2]],
@@ -85,7 +86,7 @@ class Stft(tf.keras.layers.Layer):
                 )
             )
         else:
-            self.spec = tf.keras.layers.Lambda(lambda x: x)
+            self.spec = keras.layers.Lambda(lambda x: x)
 
     def call(self, inputs: tf.Tensor) -> tf.Tensor:
         return tf.signal.stft(
@@ -151,7 +152,7 @@ class Spectrogram(Stft):
         return config
 
 
-class NormalizedLog(tf.keras.layers.Layer):
+class NormalizedLog(keras.layers.Layer):
     """
     Takes an input with a shape of either (batch, x, y, z) or (batch, y, z)
     and rescales each (y, z) to dB, scaled 0 - 1.

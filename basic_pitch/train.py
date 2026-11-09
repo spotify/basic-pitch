@@ -23,6 +23,7 @@ from typing import List
 
 import numpy as np
 import tensorflow as tf
+from basic_pitch._keras import keras
 
 from basic_pitch import models
 from basic_pitch.callbacks import VisualizeCallback
@@ -124,13 +125,11 @@ def main(
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M")
     tensorboard_log_dir = os.path.join(output, timestamp, "tensorboard")
     callbacks = [
-        tf.keras.callbacks.TensorBoard(log_dir=tensorboard_log_dir, histogram_freq=1),
-        tf.keras.callbacks.EarlyStopping(patience=25, verbose=2),
-        tf.keras.callbacks.ReduceLROnPlateau(verbose=1, patience=10, factor=0.5),
-        tf.keras.callbacks.ModelCheckpoint(filepath=os.path.join(output, timestamp, "model.best"), save_best_only=True),
-        tf.keras.callbacks.ModelCheckpoint(
-            filepath=os.path.join(output, timestamp, "checkpoints", "model.{epoch:02d}")
-        ),
+        keras.callbacks.TensorBoard(log_dir=tensorboard_log_dir, histogram_freq=1),
+        keras.callbacks.EarlyStopping(patience=25, verbose=2),
+        keras.callbacks.ReduceLROnPlateau(verbose=1, patience=10, factor=0.5),
+        keras.callbacks.ModelCheckpoint(filepath=os.path.join(output, timestamp, "model.best"), save_best_only=True),
+        keras.callbacks.ModelCheckpoint(filepath=os.path.join(output, timestamp, "checkpoints", "model.{epoch:02d}")),
         VisualizeCallback(
             train_visualization_ds,
             validation_visualization_ds,
@@ -149,7 +148,7 @@ def main(
     # train
     model.compile(
         loss=loss,
-        optimizer=tf.keras.optimizers.Adam(learning_rate),
+        optimizer=keras.optimizers.Adam(learning_rate),
         sample_weight_mode={"contour": None, "note": None, "onset": None},
     )
 

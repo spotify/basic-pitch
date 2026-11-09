@@ -20,13 +20,14 @@ import os
 from typing import Any, Dict
 
 import tensorflow as tf
+from basic_pitch._keras import keras
 
 from basic_pitch import visualize
 
 TENSORBOARD_LOGS_SUBDIR = "tensorboard_logs"
 
 
-class VisualizeCallback(tf.keras.callbacks.Callback):
+class VisualizeCallback(keras.callbacks.Callback):
     # TODO RACHEL make this WAY faster
     """
     Callback to run during training to create tensorboard visualizations per epoch.

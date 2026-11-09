@@ -18,6 +18,7 @@
 from typing import Any, Callable, Dict
 import numpy as np
 import tensorflow as tf
+from basic_pitch._keras import keras
 
 from basic_pitch import nn
 from basic_pitch.constants import (
@@ -31,7 +32,7 @@ from basic_pitch.constants import (
 )
 from basic_pitch.layers import signal, nnaudio
 
-tfkl = tf.keras.layers
+tfkl = keras.layers
 
 MAX_N_SEMITONES = int(np.floor(12.0 * np.log2(0.5 * AUDIO_SAMPLE_RATE / ANNOTATIONS_BASE_FREQUENCY)))
 
@@ -64,7 +65,7 @@ def transcription_loss(y_true: tf.Tensor, y_pred: tf.Tensor, label_smoothing: fl
     Returns:
         The transcription loss.
     """
-    bce = tf.keras.losses.binary_crossentropy(y_true, y_pred, label_smoothing=label_smoothing)
+    bce = keras.losses.binary_crossentropy(y_true, y_pred, label_smoothing=label_smoothing)
     return bce
 
 
@@ -84,12 +85,12 @@ def weighted_transcription_loss(
     """
     negative_mask = tf.equal(y_true, 0)
     nonnegative_mask = tf.logical_not(negative_mask)
-    bce_negative = tf.keras.losses.binary_crossentropy(
+    bce_negative = keras.losses.binary_crossentropy(
         tf.boolean_mask(y_true, negative_mask),
         tf.boolean_mask(y_pred, negative_mask),
         label_smoothing=label_smoothing,
     )
-    bce_nonnegative = tf.keras.losses.binary_crossentropy(
+    bce_nonnegative = keras.losses.binary_crossentropy(
         tf.boolean_mask(y_true, nonnegative_mask),
         tf.boolean_mask(y_pred, nonnegative_mask),
         label_smoothing=label_smoothing,
@@ -146,12 +147,12 @@ def loss(
     }
 
 
-def _initializer() -> tf.keras.initializers.VarianceScaling:
-    return tf.keras.initializers.VarianceScaling(scale=2.0, mode="fan_avg", distribution="uniform", seed=None)
+def _initializer() -> keras.initializers.VarianceScaling:
+    return keras.initializers.VarianceScaling(scale=2.0, mode="fan_avg", distribution="uniform", seed=None)
 
 
-def _kernel_constraint() -> tf.keras.constraints.UnitNorm:
-    return tf.keras.constraints.UnitNorm(axis=[0, 1, 2])
+def _kernel_constraint() -> keras.constraints.UnitNorm:
+    return keras.constraints.UnitNorm(axis=[0, 1, 2])
 
 
 def get_cqt(inputs: tf.Tensor, n_harmonics: int, use_batchnorm: bool) -> tf.Tensor:
@@ -196,7 +197,7 @@ def model(
     n_filters_onsets: int = 32,
     n_filters_notes: int = 32,
     no_contours: bool = False,
-) -> tf.keras.Model:
+) -> keras.Model:
     """Basic Pitch's model implementation.
 
     Args:
@@ -207,7 +208,7 @@ def model(
         no_contours: Whether or not to include contours in the output.
     """
     # input representation
-    inputs = tf.keras.Input(shape=(AUDIO_N_SAMPLES, 1))  # (batch, time, ch)
+    inputs = keras.Input(shape=(AUDIO_N_SAMPLES, 1))  # (batch, time, ch)
     x = get_cqt(inputs, n_harmonics, True)
 
     if n_harmonics > 1:
@@ -319,4 +320,4 @@ def model(
 
     outputs = {"onset": x_onset, "contour": x_contours, "note": x_notes}
 
-    return tf.keras.Model(inputs=inputs, outputs=outputs)
+    return keras.Model(inputs=inputs, outputs=outputs)

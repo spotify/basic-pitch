@@ -18,14 +18,16 @@
 from typing import Any, List
 
 import tensorflow as tf
-import tensorflow.keras.backend as K
+from basic_pitch._keras import keras
 
 from basic_pitch.layers.math import log_base_b
+
+K = keras.backend
 
 SEMITONES_PER_OCTAVE = 12
 
 
-class HarmonicStacking(tf.keras.layers.Layer):
+class HarmonicStacking(keras.layers.Layer):
     """Harmonic stacking layer
 
     Input shape: (n_batch, n_times, n_freqs, 1)
@@ -88,7 +90,7 @@ class HarmonicStacking(tf.keras.layers.Layer):
         return x
 
 
-class FlattenAudioCh(tf.keras.layers.Layer):
+class FlattenAudioCh(keras.layers.Layer):
     """Layer which removes a "channels" dimension of size 1.
 
     Input shape: (batch, time, 1)
@@ -102,7 +104,7 @@ class FlattenAudioCh(tf.keras.layers.Layer):
         return tf.squeeze(x, axis=2)
 
 
-class FlattenFreqCh(tf.keras.layers.Layer):
+class FlattenFreqCh(keras.layers.Layer):
     """Layer to flatten the frequency channel and make each channel
     part of the frequency dimension.
 

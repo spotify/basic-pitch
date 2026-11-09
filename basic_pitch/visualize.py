@@ -18,6 +18,7 @@
 import logging
 import numpy as np
 import tensorflow as tf
+from basic_pitch._keras import keras
 import mir_eval
 import librosa
 
@@ -52,11 +53,11 @@ TIMES = librosa.core.frames_to_time(
 )
 
 
-def get_input_model() -> tf.keras.Model:
+def get_input_model() -> keras.Model:
     """define a model that generates the CQT (Constant-Q Transform) of input audio"""
-    inputs = tf.keras.Input(shape=(AUDIO_N_SAMPLES, 1))  # (batch, time, ch)
+    inputs = keras.Input(shape=(AUDIO_N_SAMPLES, 1))  # (batch, time, ch)
     x = models.get_cqt(inputs, 1, False)
-    model = tf.keras.Model(inputs=inputs, outputs=x)
+    model = keras.Model(inputs=inputs, outputs=x)
     model.compile()
     return model
 

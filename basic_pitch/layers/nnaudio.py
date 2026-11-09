@@ -21,6 +21,7 @@
 
 import warnings
 import tensorflow as tf
+from basic_pitch._keras import keras
 import numpy as np
 from typing import Any, List, Optional, Tuple, Union
 
@@ -218,7 +219,7 @@ def get_cqt_complex(
     cqt_kernels_real: tf.Tensor,
     cqt_kernels_imag: tf.Tensor,
     hop_length: int,
-    padding: tf.keras.layers.Layer,
+    padding: keras.layers.Layer,
 ) -> tf.Tensor:
     """Multiplying the STFT result with the cqt_kernel, check out the 1992 CQT paper [1]
     for how to multiple the STFT result with the CQT kernel
@@ -284,14 +285,14 @@ def downsampling_by_n(x: tf.Tensor, filter_kernel: tf.Tensor, n: float, match_to
     return result_ncw
 
 
-class ReflectionPad1D(tf.keras.layers.Layer):
+class ReflectionPad1D(keras.layers.Layer):
     """
     Replica of Torch's nn.ReflectionPad1D in TF.
     """
 
     def __init__(self, padding: Union[int, Tuple[int]] = 1, **kwargs: Any):
         self.padding = padding
-        self.input_spec = [tf.keras.layers.InputSpec(ndim=3)]
+        self.input_spec = [keras.layers.InputSpec(ndim=3)]
         super(ReflectionPad1D, self).__init__(**kwargs)
 
     def compute_output_shape(self, s: List[int]) -> Tuple[int, int, int]:
@@ -301,7 +302,7 @@ class ReflectionPad1D(tf.keras.layers.Layer):
         return tf.pad(x, [[0, 0], [0, 0], [self.padding, self.padding]], "REFLECT")
 
 
-class ConstantPad1D(tf.keras.layers.Layer):
+class ConstantPad1D(keras.layers.Layer):
     """
     Replica of Torch's nn.ConstantPad1D in TF.
     """
@@ -309,7 +310,7 @@ class ConstantPad1D(tf.keras.layers.Layer):
     def __init__(self, padding: Union[int, Tuple[int]] = 1, value: int = 0, **kwargs: Any):
         self.padding = padding
         self.value = value
-        self.input_spec = [tf.keras.layers.InputSpec(ndim=3)]
+        self.input_spec = [keras.layers.InputSpec(ndim=3)]
         super(ConstantPad1D, self).__init__(**kwargs)
 
     def compute_output_shape(self, s: List[int]) -> Tuple[int, int, int]:
@@ -387,7 +388,7 @@ def pad_center(data: np.ndarray, size: int, axis: int = -1, **kwargs: Any) -> np
     return np.pad(data, lengths, **kwargs)
 
 
-class CQT2010v2(tf.keras.layers.Layer):
+class CQT2010v2(keras.layers.Layer):
     """This layer calculates the CQT of the input signal.
     Input signal should be in either of the following shapes.
     1. (len_audio)

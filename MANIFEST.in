@@ -1,4 +1,5 @@
 include *.txt tox.ini *.rst *.md LICENSE
+include CITATION.cff
 include Dockerfile .dockerignore
 recursive-include tests *.py *.wav *.npz *.jams *.zip *.mid *.flac *.yaml *.json
 recursive-include basic_pitch *.py *.md

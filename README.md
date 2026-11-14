@@ -119,6 +119,30 @@ model_output, midi_data, note_events = predict(<input-audio-path>)
 - `midi_data` is the transcribed MIDI data derived from the `model_output`
 - `note_events` is a list of note events derived from the `model_output`
 
+**Frame-level timestamps**
+
+The `note`, `onset`, and `contour` arrays in `model_output` concatenate predictions
+from overlapping inference windows. Frames are 256 samples apart within a window,
+but the default window hop is 36,164 samples for 142 retained frames. Treating the
+entire array as a uniform 256-sample grid accumulates 188 samples of error per
+window (about 2.7 seconds over a 530-second recording).
+
+Use `model_frames_to_samples` to map each output frame to its position in the
+original audio, at Basic Pitch's 22,050 Hz sample rate:
+
+```python
+from basic_pitch.constants import AUDIO_SAMPLE_RATE
+from basic_pitch.inference import model_frames_to_samples
+
+frame_samples = model_frames_to_samples(model_output["note"].shape[0])
+frame_times = frame_samples / AUDIO_SAMPLE_RATE
+```
+
+These positions describe the raw frame grid. They do not apply the empirical
+alignment correction used for decoded note events. The helper leaves predictions
+and MIDI output unchanged. When calling `unwrap_output` with a custom overlap or
+window hop, pass the same values to `model_frames_to_samples`.
+
 Note: As mentioned previously, ICASSP_2022_MODEL_PATH will default to the runtime first supported in the list TensorFlow, CoreML, TensorFlowLite, ONNX.
 
 **predict() in a loop**

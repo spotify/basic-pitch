@@ -55,6 +55,7 @@ import pretty_midi
 from basic_pitch.constants import (
     AUDIO_SAMPLE_RATE,
     AUDIO_N_SAMPLES,
+    ANNOT_N_FRAMES,
     ANNOTATIONS_FPS,
     FFT_HOP,
     AUDIO_WINDOW_LENGTH,
@@ -244,6 +245,53 @@ def get_audio_input(
         yield np.expand_dims(window, axis=0), window_time, original_length
 
 
+def model_frames_to_samples(
+    n_frames: int,
+    n_overlapping_frames: int = DEFAULT_OVERLAPPING_FRAMES,
+    hop_size: Optional[int] = None,
+) -> npt.NDArray[np.int64]:
+    """Map unwrapped model frames to sample positions in the original audio.
+
+    Frames are FFT_HOP samples apart within each inference window, but the
+    window hop is not necessarily a multiple of FFT_HOP. Account for both
+    the discarded overlapping frames and the initial padding in get_audio_input.
+    This describes the raw frame grid, without the empirical alignment offset
+    used by note_creation.model_frames_to_time for decoded note events.
+
+    Args:
+        n_frames: Number of frames in an array returned by unwrap_output.
+        n_overlapping_frames: Overlap passed to unwrap_output. The input audio
+            must have been padded with n_overlapping_frames * FFT_HOP / 2 samples,
+            as in run_inference. Odd overlaps can give a negative first position.
+        hop_size: Input window hop in samples. Defaults to AUDIO_N_SAMPLES minus
+            n_overlapping_frames * FFT_HOP, as in run_inference.
+
+    Returns:
+        An int64 array of original-audio sample positions, one per output frame.
+        Divide by AUDIO_SAMPLE_RATE to obtain seconds. Padding positions are
+        not clipped to the audio duration.
+
+    Raises:
+        ValueError: If the frame count is negative, the overlap is outside
+            [0, ANNOT_N_FRAMES), or the input window hop is not positive.
+    """
+    if n_frames < 0:
+        raise ValueError("n_frames must be non-negative")
+    if not 0 <= n_overlapping_frames < ANNOT_N_FRAMES:
+        raise ValueError("n_overlapping_frames must be in [0, ANNOT_N_FRAMES)")
+    overlap_len = n_overlapping_frames * FFT_HOP
+    if hop_size is None:
+        hop_size = AUDIO_N_SAMPLES - overlap_len
+    if hop_size <= 0:
+        raise ValueError("hop_size must be positive")
+
+    n_olap = n_overlapping_frames // 2
+    frames_per_window = ANNOT_N_FRAMES - 2 * n_olap
+    window_indices, frame_indices = np.divmod(np.arange(n_frames, dtype=np.int64), frames_per_window)
+    padding_offset = n_olap * FFT_HOP - overlap_len // 2
+    return window_indices * hop_size + frame_indices * FFT_HOP + padding_offset
+
+
 def unwrap_output(
     output: npt.NDArray[np.float32],
     audio_original_length: int,
@@ -260,6 +308,14 @@ def unwrap_output(
 
     Returns:
         array (n_times, n_freqs)
+
+    Note:
+        Concatenated frames do not have a uniformly spaced FFT_HOP sample grid.
+        With the default overlap, each window retains 142 frames (36352 samples
+        on that grid), while input windows advance by only 36164 samples.
+        Using frame_index * FFT_HOP therefore accumulates 188 samples of error
+        per window. Use model_frames_to_samples with the same overlap and hop
+        to locate frames in the original audio without changing their values.
     """
     if len(output.shape) != 3:
         return None
@@ -293,6 +349,8 @@ def run_inference(
 
     Returns:
        A dictionary with the notes, onsets and contours from model inference.
+       For original-audio frame timestamps, use model_frames_to_samples with
+       the length of any output array and divide by AUDIO_SAMPLE_RATE.
     """
     if isinstance(model_or_model_path, Model):
         model = model_or_model_path

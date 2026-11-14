@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: >-
+  If you use Basic Pitch in academic research, please cite the paper below
+  and the version of the software that you used.
+type: software
+title: "Basic Pitch"
+authors:
+  - name: "Spotify"
+version: 0.4.0
+repository-code: "https://github.com/spotify/basic-pitch"
+url: "https://basicpitch.spotify.com/"
+license: Apache-2.0
+preferred-citation:
+  type: conference-paper
+  title: >-
+    A Lightweight Instrument-Agnostic Model for Polyphonic Note Transcription
+    and Multipitch Estimation
+  authors:
+    - family-names: Bittner
+      given-names: "Rachel M."
+    - family-names: Bosch
+      given-names: "Juan José"
+    - family-names: Rubinstein
+      given-names: David
+    - family-names: Meseguer-Brocal
+      given-names: Gabriel
+    - family-names: Ewert
+      given-names: Sebastian
+  collection-title: >-
+    Proceedings of the IEEE International Conference on Acoustics, Speech,
+    and Signal Processing (ICASSP)
+  year: 2022
+  url: "https://arxiv.org/abs/2203.09893"
